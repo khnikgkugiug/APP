@@ -53,7 +53,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .customer-actions .btn{flex:1;padding:10px;font-size:.9rem;justify-content:center}
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:1000;overflow-y:auto}
 .modal-overlay.active{display:flex;justify-content:center;align-items:flex-start;padding:30px 20px}
-.modal-content{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,.2);border-radius:20px;width:100%;max-width:900px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-content{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,.2);border-radius:20px;width:100%;max-width:1100px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .modal-header{padding:25px 30px;border-bottom:1px solid rgba(255,255,255,.15);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:inherit;z-index:10}
 .modal-header h2{color:#fff;font-size:1.4rem;text-shadow:0 0 10px rgba(255,255,255,.2)}
 .modal-close{background:none;border:none;color:rgba(255,255,255,.8);font-size:1.5rem;cursor:pointer}
@@ -111,6 +111,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .highlight{background:#fdcb6e;color:#1a1a2e;padding:2px 4px;border-radius:3px;font-weight:600}
 @media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}}
 </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -342,24 +343,48 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>✅ التأكد من التركيب</h3>
 <div class="form-grid">
-<div class="checkbox-group"><input type="checkbox" id="s_check_connections"><label for="s_check_connections">التأكد من الوصلات</label></div>
-<div class="checkbox-group"><input type="checkbox" id="s_check_electricity"><label for="s_check_electricity">التأكد من مصدر الكهرباء</label></div>
-<div class="checkbox-group"><input type="checkbox" id="s_check_drain"><label for="s_check_drain">التأكد من الصرف</label></div>
-<div class="checkbox-group"><input type="checkbox" id="s_check_inlet_pressure"><label for="s_check_inlet_pressure">التأكد من ضغط الدخول</label></div>
-<div class="checkbox-group"><input type="checkbox" id="s_check_motor_pressure"><label for="s_check_motor_pressure">التأكد من ضغط الموتور</label></div>
-<div class="checkbox-group"><input type="checkbox" id="s_check_production"><label for="s_check_production">التأكد من كمية الإنتاج</label></div>
-<div class="checkbox-group"><input type="checkbox" id="s_check_tank_pressure"><label for="s_check_tank_pressure">التأكد من ضغط الخزان</label></div>
+<div class="form-group"><label>التأكد من الوصلات</label><select id="s_check_connections"><option value="">اختر...</option><option>ممتازة</option><option>جيدة</option><option>سيئة</option></select></div>
+<div class="form-group"><label>التأكد من مصدر الكهرباء</label><select id="s_check_electricity"><option value="">اختر...</option><option>يعمل</option><option>لا يعمل</option></select></div>
+<div class="form-group"><label>التأكد من الصرف</label><select id="s_check_drain"><option value="">اختر...</option><option>طبيعي</option><option>زائد عن الحد</option><option>مقطوع</option></select></div>
+<div class="form-group"><label>التأكد من ضغط الدخول</label><select id="s_check_inlet_pressure"><option value="">اختر...</option><option>زائد عن المسموح</option><option>جيد</option><option>ضعيف</option></select></div>
+<div class="form-group"><label>التأكد من ضغط الموتور</label><select id="s_check_motor_pressure"><option value="">اختر...</option><option>جيد</option><option>ضعيف</option><option>الموتور فاصل</option></select></div>
+<div class="form-group"><label>التأكد من كمية الإنتاج بدون الخزان (المميرين)</label><select id="s_check_production"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>ضعيف</option><option>مقطوع</option></select></div>
+<div class="form-group"><label>التأكد من ضغط الخزان</label><select id="s_check_tank_pressure"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>ضعيف</option></select></div>
 </div>
 </div>
 <div class="form-section">
 <h3>🧪 اختبارات الجودة</h3>
 <div class="form-grid">
-<div class="form-group"><label>قياس TDS قبل</label><input type="number" id="s_tds_before"></div>
-<div class="form-group"><label>قياس TDS بعد</label><input type="number" id="s_tds_after"></div>
-<div class="checkbox-group"><input type="checkbox" id="s_check_leak"><label for="s_check_leak">التأكد من التسريب</label></div>
-<div class="checkbox-group"><input type="checkbox" id="s_taste_check"><label for="s_taste_check">طعم في الماء</label></div>
-<div class="checkbox-group"><input type="checkbox" id="s_color_check"><label for="s_color_check">لون في الماء</label></div>
-<div class="form-group"><label>مكان الجهاز</label><input type="text" id="s_device_location"></div>
+<div class="form-group"><label>قياس TDS قبل الفلتر</label><input type="number" id="s_tds_before"></div>
+<div class="form-group"><label>قياس TDS بعد الفلتر</label><input type="number" id="s_tds_after"></div>
+<div class="form-group"><label>التأكد من التسريب</label><select id="s_check_leak"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>طعم في الماء بعد الفلتر</label><select id="s_taste_check"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>لون في الماء بعد الفلتر</label><select id="s_color_check"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>مكان الجهاز</label><select id="s_device_location"><option value="">اختر...</option><option>داخل المطبخ</option><option>خارج المطبخ</option><option>أخرى</option></select></div>
+</div>
+</div>
+<div class="form-section">
+<h3>🔧 بيانات إضافية</h3>
+<div class="form-grid">
+<div class="form-group"><label>سوفتنر</label><select id="s_softener"><option value="">اختر...</option><option>10</option><option>13</option><option>16</option><option>دبل</option><option>مقر</option></select></div>
+<div class="form-group"><label>نوع الماء</label><select id="s_water_type"><option value="">اختر...</option><option>حكومي</option><option>بئر</option></select></div>
+<div class="form-group"><label>التأكد من الوصلات (تقييم)</label><select id="s_connections_rating"><option value="">اختر...</option><option>ممتازة</option><option>جيدة</option><option>سيئة</option></select></div>
+<div class="form-group"><label>التأكد من مصدر الكهرباء (تقييم)</label><select id="s_electricity_rating"><option value="">اختر...</option><option>يعمل</option><option>لا يعمل</option></select></div>
+<div class="form-group"><label>نوع الوصلات</label><select id="s_connection_type"><option value="">اختر...</option><option>هاي بريشر</option><option>تكنو</option></select></div>
+<div class="form-group"><label>ضغط الدخول قيمة العداد</label><input type="number" id="s_inlet_pressure_value"></div>
+<div class="form-group"><label>هل راكب فاكهوم</label><select id="s_vacuum_installed"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>حالة الرزين</label><select id="s_resin_status"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>ألوان متغيرة</option></select></div>
+<div class="form-group"><label>قياس TDS قبل السوفتنر</label><input type="number" id="s_tds_before_softener"></div>
+<div class="form-group"><label>قياس TDS بعد السوفتنر</label><input type="number" id="s_tds_after_softener"></div>
+<div class="form-group"><label>قياس الكلس قبل السوفتنر</label><input type="number" id="s_limescale_before_softener"></div>
+<div class="form-group"><label>قياس الكلس بعد السوفتنر</label><input type="number" id="s_limescale_after_softener"></div>
+<div class="form-group"><label>التأكد من التسريبات</label><select id="s_leak_check"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>لون في الماء بعد السوفتنر</label><select id="s_color_after_softener"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>ضبط وقت القسيل العكسي</label><input type="time" id="s_backwash_time"></div>
+<div class="form-group"><label>ضبط القسيل العكسي</label><input type="time" id="s_backwash_duration"></div>
+<div class="form-group"><label>ضبط القسيل السريع</label><input type="time" id="s_fast_rinse_time"></div>
+<div class="form-group"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option>زائد عن الحد</option><option>مناسب</option><option>منخفض</option><option>جاف</option></select></div>
+<div class="form-group"><label>هل هناك مظلة</label><select id="s_has_shelter"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
 </div>
 </div>
 </div>
@@ -677,7 +702,6 @@ function openManagerModal(index){
     document.getElementById('m_phone').value=c.phone;
     document.getElementById('m_state').value=c.state;
     const ex=managerData[index]||{};
-    // Pre-fill with saved data first, then sheet data, then empty
     document.getElementById('m_transaction_type').value=ex.transaction_type||c.transactionType||'';
     document.getElementById('m_location_attached').value=ex.location_attached||c.locationAttached||'';
     document.getElementById('m_photo_attached').value=ex.photo_attached||c.photoAttached||'';
@@ -754,7 +778,6 @@ function openSupervisorModal(index){
     document.getElementById('s_name').value=c.name;
     document.getElementById('s_phone').value=c.phone;
     const ex=supervisorData[index]||{};
-    // Pre-fill with sheet data if available, otherwise from saved data
     document.getElementById('s_supervisor_name').value=ex.supervisor_name||c.supervisorName||'';
     document.getElementById('s_technician').value=ex.technician||'';
     document.getElementById('s_car').value=ex.car||'';
@@ -774,16 +797,36 @@ function openSupervisorModal(index){
     document.getElementById('s_tds_before').value=ex.tds_before||'';
     document.getElementById('s_tds_after').value=ex.tds_after||'';
     document.getElementById('s_device_location').value=ex.device_location||'';
-    document.getElementById('s_check_connections').checked=ex.check_connections||false;
-    document.getElementById('s_check_electricity').checked=ex.check_electricity||false;
-    document.getElementById('s_check_drain').checked=ex.check_drain||false;
-    document.getElementById('s_check_inlet_pressure').checked=ex.check_inlet_pressure||false;
-    document.getElementById('s_check_motor_pressure').checked=ex.check_motor_pressure||false;
-    document.getElementById('s_check_production').checked=ex.check_production||false;
-    document.getElementById('s_check_tank_pressure').checked=ex.check_tank_pressure||false;
-    document.getElementById('s_check_leak').checked=ex.check_leak||false;
-    document.getElementById('s_taste_check').checked=ex.taste_check||false;
-    document.getElementById('s_color_check').checked=ex.color_check||false;
+    document.getElementById('s_check_connections').value=ex.check_connections||'';
+    document.getElementById('s_check_electricity').value=ex.check_electricity||'';
+    document.getElementById('s_check_drain').value=ex.check_drain||'';
+    document.getElementById('s_check_inlet_pressure').value=ex.check_inlet_pressure||'';
+    document.getElementById('s_check_motor_pressure').value=ex.check_motor_pressure||'';
+    document.getElementById('s_check_production').value=ex.check_production||'';
+    document.getElementById('s_check_tank_pressure').value=ex.check_tank_pressure||'';
+    document.getElementById('s_check_leak').value=ex.check_leak||'';
+    document.getElementById('s_taste_check').value=ex.taste_check||'';
+    document.getElementById('s_color_check').value=ex.color_check||'';
+    // New fields
+    document.getElementById('s_softener').value=ex.softener||'';
+    document.getElementById('s_water_type').value=ex.water_type||'';
+    document.getElementById('s_connections_rating').value=ex.connections_rating||'';
+    document.getElementById('s_electricity_rating').value=ex.electricity_rating||'';
+    document.getElementById('s_connection_type').value=ex.connection_type||'';
+    document.getElementById('s_inlet_pressure_value').value=ex.inlet_pressure_value||'';
+    document.getElementById('s_vacuum_installed').value=ex.vacuum_installed||'';
+    document.getElementById('s_resin_status').value=ex.resin_status||'';
+    document.getElementById('s_tds_before_softener').value=ex.tds_before_softener||'';
+    document.getElementById('s_tds_after_softener').value=ex.tds_after_softener||'';
+    document.getElementById('s_limescale_before_softener').value=ex.limescale_before_softener||'';
+    document.getElementById('s_limescale_after_softener').value=ex.limescale_after_softener||'';
+    document.getElementById('s_leak_check').value=ex.leak_check||'';
+    document.getElementById('s_color_after_softener').value=ex.color_after_softener||'';
+    document.getElementById('s_backwash_time').value=ex.backwash_time||'';
+    document.getElementById('s_backwash_duration').value=ex.backwash_duration||'';
+    document.getElementById('s_fast_rinse_time').value=ex.fast_rinse_time||'';
+    document.getElementById('s_salt_level').value=ex.salt_level||'';
+    document.getElementById('s_has_shelter').value=ex.has_shelter||'';
     document.getElementById('supervisorModal').classList.add('active');
 }
 
@@ -808,16 +851,36 @@ async function saveSupervisorData(){
         tds_before:document.getElementById('s_tds_before').value,
         tds_after:document.getElementById('s_tds_after').value,
         device_location:document.getElementById('s_device_location').value,
-        check_connections:document.getElementById('s_check_connections').checked,
-        check_electricity:document.getElementById('s_check_electricity').checked,
-        check_drain:document.getElementById('s_check_drain').checked,
-        check_inlet_pressure:document.getElementById('s_check_inlet_pressure').checked,
-        check_motor_pressure:document.getElementById('s_check_motor_pressure').checked,
-        check_production:document.getElementById('s_check_production').checked,
-        check_tank_pressure:document.getElementById('s_check_tank_pressure').checked,
-        check_leak:document.getElementById('s_check_leak').checked,
-        taste_check:document.getElementById('s_taste_check').checked,
-        color_check:document.getElementById('s_color_check').checked
+        check_connections:document.getElementById('s_check_connections').value,
+        check_electricity:document.getElementById('s_check_electricity').value,
+        check_drain:document.getElementById('s_check_drain').value,
+        check_inlet_pressure:document.getElementById('s_check_inlet_pressure').value,
+        check_motor_pressure:document.getElementById('s_check_motor_pressure').value,
+        check_production:document.getElementById('s_check_production').value,
+        check_tank_pressure:document.getElementById('s_check_tank_pressure').value,
+        check_leak:document.getElementById('s_check_leak').value,
+        taste_check:document.getElementById('s_taste_check').value,
+        color_check:document.getElementById('s_color_check').value,
+        // New fields
+        softener:document.getElementById('s_softener').value,
+        water_type:document.getElementById('s_water_type').value,
+        connections_rating:document.getElementById('s_connections_rating').value,
+        electricity_rating:document.getElementById('s_electricity_rating').value,
+        connection_type:document.getElementById('s_connection_type').value,
+        inlet_pressure_value:document.getElementById('s_inlet_pressure_value').value,
+        vacuum_installed:document.getElementById('s_vacuum_installed').value,
+        resin_status:document.getElementById('s_resin_status').value,
+        tds_before_softener:document.getElementById('s_tds_before_softener').value,
+        tds_after_softener:document.getElementById('s_tds_after_softener').value,
+        limescale_before_softener:document.getElementById('s_limescale_before_softener').value,
+        limescale_after_softener:document.getElementById('s_limescale_after_softener').value,
+        leak_check:document.getElementById('s_leak_check').value,
+        color_after_softener:document.getElementById('s_color_after_softener').value,
+        backwash_time:document.getElementById('s_backwash_time').value,
+        backwash_duration:document.getElementById('s_backwash_duration').value,
+        fast_rinse_time:document.getElementById('s_fast_rinse_time').value,
+        salt_level:document.getElementById('s_salt_level').value,
+        has_shelter:document.getElementById('s_has_shelter').value
     };
     supervisorData[currentCustomerIndex]=data;
     saveToLocalStorage();
@@ -984,24 +1047,39 @@ function printSingleReport(index){
         html += addRow('في حساب', sData.in_account);
         html += addRow('باقي', sData.balance);
         html += addRow('ميعاد الدفع', sData.payment_date);
-        html += addRow('TDS قبل', sData.tds_before);
-        html += addRow('TDS بعد', sData.tds_after);
+        html += addRow('TDS قبل الفلتر', sData.tds_before);
+        html += addRow('TDS بعد الفلتر', sData.tds_after);
         html += addRow('مكان الجهاز', sData.device_location);
-
-        const checks = [];
-        if(sData.check_connections) checks.push('الوصلات');
-        if(sData.check_electricity) checks.push('مصدر الكهرباء');
-        if(sData.check_drain) checks.push('الصرف');
-        if(sData.check_inlet_pressure) checks.push('ضغط الدخول');
-        if(sData.check_motor_pressure) checks.push('ضغط الموتور');
-        if(sData.check_production) checks.push('كمية الإنتاج');
-        if(sData.check_tank_pressure) checks.push('ضغط الخزان');
-        if(sData.check_leak) checks.push('التسريب');
-        if(sData.taste_check) checks.push('طعم الماء');
-        if(sData.color_check) checks.push('لون الماء');
-        if(checks.length > 0){
-            html += addRowFull('✅ التأكد من', checks.join(' • '));
-        }
+        html += addRow('التأكد من الوصلات', sData.check_connections);
+        html += addRow('التأكد من الكهرباء', sData.check_electricity);
+        html += addRow('التأكد من الصرف', sData.check_drain);
+        html += addRow('ضغط الدخول', sData.check_inlet_pressure);
+        html += addRow('ضغط الموتور', sData.check_motor_pressure);
+        html += addRow('كمية الإنتاج', sData.check_production);
+        html += addRow('ضغط الخزان', sData.check_tank_pressure);
+        html += addRow('التسريب', sData.check_leak);
+        html += addRow('طعم الماء', sData.taste_check);
+        html += addRow('لون الماء', sData.color_check);
+        // New fields in print
+        html += addRow('سوفتنر', sData.softener);
+        html += addRow('نوع الماء', sData.water_type);
+        html += addRow('تقييم الوصلات', sData.connections_rating);
+        html += addRow('تقييم الكهرباء', sData.electricity_rating);
+        html += addRow('نوع الوصلات', sData.connection_type);
+        html += addRow('ضغط الدخول قيمة', sData.inlet_pressure_value);
+        html += addRow('فاكهوم', sData.vacuum_installed);
+        html += addRow('حالة الرزين', sData.resin_status);
+        html += addRow('TDS قبل السوفتنر', sData.tds_before_softener);
+        html += addRow('TDS بعد السوفتنر', sData.tds_after_softener);
+        html += addRow('الكلس قبل السوفتنر', sData.limescale_before_softener);
+        html += addRow('الكلس بعد السوفتنر', sData.limescale_after_softener);
+        html += addRow('تسريبات', sData.leak_check);
+        html += addRow('لون بعد السوفتنر', sData.color_after_softener);
+        html += addRow('وقت القسيل العكسي', sData.backwash_time);
+        html += addRow('مدة القسيل العكسي', sData.backwash_duration);
+        html += addRow('وقت القسيل السريع', sData.fast_rinse_time);
+        html += addRow('منسوب الملح', sData.salt_level);
+        html += addRow('مظلة', sData.has_shelter);
         html += addRowFull('ملاحظات المشرف', sData.notes);
         html += `</table>`;
     }
@@ -1082,24 +1160,39 @@ function showPrintModal(){
             html += addRow('في حساب', sData.in_account);
             html += addRow('باقي', sData.balance);
             html += addRow('ميعاد الدفع', sData.payment_date);
-            html += addRow('TDS قبل', sData.tds_before);
-            html += addRow('TDS بعد', sData.tds_after);
+            html += addRow('TDS قبل الفلتر', sData.tds_before);
+            html += addRow('TDS بعد الفلتر', sData.tds_after);
             html += addRow('مكان الجهاز', sData.device_location);
-
-            const checks = [];
-            if(sData.check_connections) checks.push('الوصلات');
-            if(sData.check_electricity) checks.push('مصدر الكهرباء');
-            if(sData.check_drain) checks.push('الصرف');
-            if(sData.check_inlet_pressure) checks.push('ضغط الدخول');
-            if(sData.check_motor_pressure) checks.push('ضغط الموتور');
-            if(sData.check_production) checks.push('كمية الإنتاج');
-            if(sData.check_tank_pressure) checks.push('ضغط الخزان');
-            if(sData.check_leak) checks.push('التسريب');
-            if(sData.taste_check) checks.push('طعم الماء');
-            if(sData.color_check) checks.push('لون الماء');
-            if(checks.length > 0){
-                html += addRowFull('✅ التأكد من', checks.join(' • '));
-            }
+            html += addRow('التأكد من الوصلات', sData.check_connections);
+            html += addRow('التأكد من الكهرباء', sData.check_electricity);
+            html += addRow('التأكد من الصرف', sData.check_drain);
+            html += addRow('ضغط الدخول', sData.check_inlet_pressure);
+            html += addRow('ضغط الموتور', sData.check_motor_pressure);
+            html += addRow('كمية الإنتاج', sData.check_production);
+            html += addRow('ضغط الخزان', sData.check_tank_pressure);
+            html += addRow('التسريب', sData.check_leak);
+            html += addRow('طعم الماء', sData.taste_check);
+            html += addRow('لون الماء', sData.color_check);
+            // New fields in print
+            html += addRow('سوفتنر', sData.softener);
+            html += addRow('نوع الماء', sData.water_type);
+            html += addRow('تقييم الوصلات', sData.connections_rating);
+            html += addRow('تقييم الكهرباء', sData.electricity_rating);
+            html += addRow('نوع الوصلات', sData.connection_type);
+            html += addRow('ضغط الدخول قيمة', sData.inlet_pressure_value);
+            html += addRow('فاكهوم', sData.vacuum_installed);
+            html += addRow('حالة الرزين', sData.resin_status);
+            html += addRow('TDS قبل السوفتنر', sData.tds_before_softener);
+            html += addRow('TDS بعد السوفتنر', sData.tds_after_softener);
+            html += addRow('الكلس قبل السوفتنر', sData.limescale_before_softener);
+            html += addRow('الكلس بعد السوفتنر', sData.limescale_after_softener);
+            html += addRow('تسريبات', sData.leak_check);
+            html += addRow('لون بعد السوفتنر', sData.color_after_softener);
+            html += addRow('وقت القسيل العكسي', sData.backwash_time);
+            html += addRow('مدة القسيل العكسي', sData.backwash_duration);
+            html += addRow('وقت القسيل السريع', sData.fast_rinse_time);
+            html += addRow('منسوب الملح', sData.salt_level);
+            html += addRow('مظلة', sData.has_shelter);
             html += addRowFull('ملاحظات المشرف', sData.notes);
             html += `</table>`;
         }
@@ -1192,24 +1285,39 @@ function viewDetails(index){
         html += detailRow('في حساب', sData.in_account);
         html += detailRow('باقي', sData.balance);
         html += detailRow('ميعاد الدفع', sData.payment_date);
-        html += detailRow('TDS قبل', sData.tds_before);
-        html += detailRow('TDS بعد', sData.tds_after);
+        html += detailRow('TDS قبل الفلتر', sData.tds_before);
+        html += detailRow('TDS بعد الفلتر', sData.tds_after);
         html += detailRow('مكان الجهاز', sData.device_location);
-
-        const checks = [];
-        if(sData.check_connections) checks.push('الوصلات');
-        if(sData.check_electricity) checks.push('مصدر الكهرباء');
-        if(sData.check_drain) checks.push('الصرف');
-        if(sData.check_inlet_pressure) checks.push('ضغط الدخول');
-        if(sData.check_motor_pressure) checks.push('ضغط الموتور');
-        if(sData.check_production) checks.push('كمية الإنتاج');
-        if(sData.check_tank_pressure) checks.push('ضغط الخزان');
-        if(sData.check_leak) checks.push('التسريب');
-        if(sData.taste_check) checks.push('طعم الماء');
-        if(sData.color_check) checks.push('لون الماء');
-        if(checks.length > 0){
-            html += detailRow('✅ التأكد من', checks.join(' • '));
-        }
+        html += detailRow('التأكد من الوصلات', sData.check_connections);
+        html += detailRow('التأكد من الكهرباء', sData.check_electricity);
+        html += detailRow('التأكد من الصرف', sData.check_drain);
+        html += detailRow('ضغط الدخول', sData.check_inlet_pressure);
+        html += detailRow('ضغط الموتور', sData.check_motor_pressure);
+        html += detailRow('كمية الإنتاج', sData.check_production);
+        html += detailRow('ضغط الخزان', sData.check_tank_pressure);
+        html += detailRow('التسريب', sData.check_leak);
+        html += detailRow('طعم الماء', sData.taste_check);
+        html += detailRow('لون الماء', sData.color_check);
+        // New fields in view details
+        html += detailRow('سوفتنر', sData.softener);
+        html += detailRow('نوع الماء', sData.water_type);
+        html += detailRow('تقييم الوصلات', sData.connections_rating);
+        html += detailRow('تقييم الكهرباء', sData.electricity_rating);
+        html += detailRow('نوع الوصلات', sData.connection_type);
+        html += detailRow('ضغط الدخول قيمة', sData.inlet_pressure_value);
+        html += detailRow('فاكهوم', sData.vacuum_installed);
+        html += detailRow('حالة الرزين', sData.resin_status);
+        html += detailRow('TDS قبل السوفتنر', sData.tds_before_softener);
+        html += detailRow('TDS بعد السوفتنر', sData.tds_after_softener);
+        html += detailRow('الكلس قبل السوفتنر', sData.limescale_before_softener);
+        html += detailRow('الكلس بعد السوفتنر', sData.limescale_after_softener);
+        html += detailRow('تسريبات', sData.leak_check);
+        html += detailRow('لون بعد السوفتنر', sData.color_after_softener);
+        html += detailRow('وقت القسيل العكسي', sData.backwash_time);
+        html += detailRow('مدة القسيل العكسي', sData.backwash_duration);
+        html += detailRow('وقت القسيل السريع', sData.fast_rinse_time);
+        html += detailRow('منسوب الملح', sData.salt_level);
+        html += detailRow('مظلة', sData.has_shelter);
         html += detailRow('ملاحظات المشرف', sData.notes);
         html += `</div>`;
     }
