@@ -113,6 +113,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -305,7 +306,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-grid">
 <div class="form-group"><label>فني التركيب</label><select id="s_technician"><option value="">اختر...</option><option>رمضان</option><option>أبوزيد</option><option>رضا</option><option>صبري</option><option>سامي</option><option>مصطفى</option><option>عبدالرحمن</option><option>مجدي</option></select></div>
 <div class="form-group"><label>السيارة</label><select id="s_car"><option value="">اختر...</option><option>بانميرو</option><option>شانجان</option><option>MG</option><option>رينو724</option><option>رينو772</option></select></div>
-<div class="form-group"><label>حالة التركيب</label><select id="s_installation_status"><option value="">اختر...</option><option>مكتمل</option><option>غير مكتمل</option><option>مؤجل</option><option>ملغي</option></select></div>
+<div class="form-group"><label>حالة التركيب</label><select id="s_installation_status"><option value="">اختر...</option><option>تركيب جزئي</option><option>تركيب بدون تشغيل</option><option>تأجيل</option><option>تركيب وتشغيل</option></select></div>
 <div class="form-group"><label>سبب التأجيل</label><textarea id="s_delay_reason"></textarea></div>
 </div>
 </div>
@@ -326,8 +327,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>🔩 قطع الغيار</h3>
 <div class="form-grid">
-<div class="form-group"><label>هل تم احتياج قطعة غيار؟</label><select id="s_spare_needed"><option value="">اختر...</option><option>نعم</option><option>لا</option></select></div>
-<div class="form-group"><label>قطعة الغيار وثمنها</label><textarea id="s_spare_details"></textarea></div>
+<div class="form-group"><label>هل تم احتياج قطعة غيار؟</label><select id="s_spare_needed" onchange="toggleSpareFields()"><option value="">اختر...</option><option>نعم</option><option>لا</option></select></div>
+<div class="form-group conditional-field" id="spare_details_group"><label>قطعة الغيار وثمنها</label><textarea id="s_spare_details"></textarea></div>
 </div>
 </div>
 <div class="form-section">
@@ -336,7 +337,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>المبلغ المدفوع</label><input type="number" id="s_amount_paid"></div>
 <div class="form-group"><label>في حساب</label><input type="text" id="s_in_account"></div>
 <div class="form-group"><label>باقي</label><input type="number" id="s_balance"></div>
-<div class="form-group"><label>الميعاد المتوقع للدفع</label><input type="date" id="s_payment_date"></div>
+<div class="form-group"><label>الميعاد المتوقع للدفع</label><input type="text" id="s_payment_date" placeholder="اكتب الميعاد..."></div>
 <div class="form-group"><label>ملاحظات</label><textarea id="s_notes"></textarea></div>
 </div>
 </div>
@@ -366,23 +367,23 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>🔧 بيانات إضافية</h3>
 <div class="form-grid">
-<div class="form-group"><label>سوفتنر</label><select id="s_softener"><option value="">اختر...</option><option>10</option><option>13</option><option>16</option><option>دبل</option><option>مقر</option></select></div>
+<div class="form-group"><label>سوفتنر</label><select id="s_softener"><option value="">اختر...</option><option>10</option><option>13</option><option>16</option><option>دبل</option><option>منفرد</option></select></div>
 <div class="form-group"><label>نوع الماء</label><select id="s_water_type"><option value="">اختر...</option><option>حكومي</option><option>بئر</option></select></div>
-<div class="form-group"><label>التأكد من الوصلات (تقييم)</label><select id="s_connections_rating"><option value="">اختر...</option><option>ممتازة</option><option>جيدة</option><option>سيئة</option></select></div>
-<div class="form-group"><label>التأكد من مصدر الكهرباء (تقييم)</label><select id="s_electricity_rating"><option value="">اختر...</option><option>يعمل</option><option>لا يعمل</option></select></div>
+<div class="form-group"><label>التأكد من الوصلات </label><select id="s_connections_rating"><option value="">اختر...</option><option>ممتازة</option><option>جيدة</option><option>سيئة</option></select></div>
+<div class="form-group"><label>التأكد من مصدر الكهرباء </label><select id="s_electricity_rating"><option value="">اختر...</option><option>يعمل</option><option>لا يعمل</option></select></div>
 <div class="form-group"><label>نوع الوصلات</label><select id="s_connection_type"><option value="">اختر...</option><option>هاي بريشر</option><option>تكنو</option></select></div>
 <div class="form-group"><label>ضغط الدخول قيمة العداد</label><input type="number" id="s_inlet_pressure_value"></div>
-<div class="form-group"><label>هل راكب فاكهوم</label><select id="s_vacuum_installed"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
-<div class="form-group"><label>حالة الرزين</label><select id="s_resin_status"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>ألوان متغيرة</option></select></div>
+<div class="form-group"><label>هل راكب فاكيوم</label><select id="s_vacuum_installed"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>حالة الرزين</label><select id="s_resin_status"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>لون متغير</option></select></div>
 <div class="form-group"><label>قياس TDS قبل السوفتنر</label><input type="number" id="s_tds_before_softener"></div>
 <div class="form-group"><label>قياس TDS بعد السوفتنر</label><input type="number" id="s_tds_after_softener"></div>
 <div class="form-group"><label>قياس الكلس قبل السوفتنر</label><input type="number" id="s_limescale_before_softener"></div>
 <div class="form-group"><label>قياس الكلس بعد السوفتنر</label><input type="number" id="s_limescale_after_softener"></div>
 <div class="form-group"><label>التأكد من التسريبات</label><select id="s_leak_check"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
 <div class="form-group"><label>لون في الماء بعد السوفتنر</label><select id="s_color_after_softener"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
-<div class="form-group"><label>ضبط وقت القسيل العكسي</label><input type="time" id="s_backwash_time"></div>
-<div class="form-group"><label>ضبط القسيل العكسي</label><input type="time" id="s_backwash_duration"></div>
-<div class="form-group"><label>ضبط القسيل السريع</label><input type="time" id="s_fast_rinse_time"></div>
+<div class="form-group"><label>ضبط وقت الغسيل العكسي</label><input type="time" id="s_backwash_time"></div>
+<div class="form-group"><label>ضبط الغسيل البطئ</label><input type="time" id="s_backwash_duration"></div>
+<div class="form-group"><label>ضبط الغسيل السريع</label><input type="time" id="s_fast_rinse_time"></div>
 <div class="form-group"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option>زائد عن الحد</option><option>مناسب</option><option>منخفض</option><option>جاف</option></select></div>
 <div class="form-group"><label>هل هناك مظلة</label><select id="s_has_shelter"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
 </div>
@@ -680,6 +681,17 @@ if(hasM && hasS){
     });
 }
 
+function toggleSpareFields(){
+    const spareValue = document.getElementById('s_spare_needed').value;
+    const detailsGroup = document.getElementById('spare_details_group');
+    if(spareValue === 'نعم'){
+        detailsGroup.classList.add('visible');
+    }else{
+        detailsGroup.classList.remove('visible');
+        document.getElementById('s_spare_details').value = '';
+    }
+}
+
 function toggleSoftenerFields(){
     const softenerValue = document.getElementById('m_softener').value;
     const sizeGroup = document.getElementById('softener_size_group');
@@ -789,6 +801,7 @@ function openSupervisorModal(index){
     document.getElementById('s_end_time').value=ex.end_time||'';
     document.getElementById('s_spare_needed').value=ex.spare_needed||'';
     document.getElementById('s_spare_details').value=ex.spare_details||'';
+    toggleSpareFields();
     document.getElementById('s_amount_paid').value=ex.amount_paid||'';
     document.getElementById('s_in_account').value=ex.in_account||'';
     document.getElementById('s_balance').value=ex.balance||'';
