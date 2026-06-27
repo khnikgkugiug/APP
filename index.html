@@ -111,6 +111,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .highlight{background:#fdcb6e;color:#1a1a2e;padding:2px 4px;border-radius:3px;font-weight:600}
 @media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}}
 </style>
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -165,6 +166,16 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <input type="date" id="customDate" onchange="applyFilters()">
 </div>
 <div class="filter-group">
+<label>حالة التركيب</label>
+<select id="transactionFilter" onchange="applyFilters()">
+<option value="all">الكل</option>
+<option value="تركيب فقط">تركيب فقط</option>
+<option value="تشغيل فقط">تشغيل فقط</option>
+<option value="تركيب مع التشغيل">تركيب مع التشغيل</option>
+<option value="تأجيل">تأجيل</option>
+</select>
+</div>
+<div class="filter-group">
 <label>حالة البيانات</label>
 <select id="statusFilter" onchange="applyFilters()">
 <option value="all">الكل</option>
@@ -210,7 +221,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>🔧 بيانات التركيب</h3>
 <div class="form-grid">
-<div class="form-group"><label>نوع المعاملة</label><select id="m_transaction_type"><option value="">اختر...</option><option>تركيب فقط</option><option>تشغيل فقط</option><option>تركيب مع التشغيل</option><option>تأجيل</option></select></div>
+<div class="form-group"><label>نوع المعاملة</label><select id="m_transaction_type"><option value="">اختر...</option><option> تركيب </option><option> تشغيل </option></select></div>
 <div class="form-group"><label>تم إرفاق الموقع</label><select id="m_location_attached"><option value="">اختر...</option><option>نعم</option><option>لا</option></select></div>
 <div class="form-group"><label>تم إرفاق صورة</label><select id="m_photo_attached"><option value="">اختر...</option><option>نعم</option><option>لا</option></select></div>
 <div class="form-group"><label>نوع مصدر الماء</label><select id="m_water_source"><option value="">اختر...</option><option>ماء حكومي</option><option>بئر</option></select></div>
@@ -230,21 +241,24 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>نوع الطلب</label><select id="m_order_type"><option value="">اختر...</option><option>باقة</option><option>فلتر</option><option>منتج آخر</option></select></div>
 <div class="form-group"><label>اسم الباقة</label><input type="text" id="m_package_name"></div>
 <div class="form-group"><label>تفاصيل الفلتر</label><select id="m_filter_details"><option value="">اختر...</option>
-<option>ديجيتال</option>
-<option>اقتصادي 100</option>
-<option>بلازما 100</option>
-<option>اقتصادي 400</option>
-<option>بلازما 400</option>
-<option>جلاكسي</option>
-<option>مبرد ابيض زووم</option>
-<option>مبرد اسود</option>
-<option>مبرد ذهبي </option>
-<option>فلتر خزان 2 </option>
-<option>فلتر خزان 3 </option>
-<option>قارورة عادية </option>
-<option>قارورة مسطحة</option>
-<option>سوبر ايكو</option>
-<option>الترا</option>
+<option>نبيسل</option>
+<option>100 اقتصادي</option>
+<option>100 بلازما</option>
+<option>400 اقتصادي</option>
+<option>400 بلازما</option>
+<option>هاكني</option>
+<option>سير 5 مراحل زووم</option>
+<option>سير 5 مراحل</option>
+<option>سير 5 مراحل ذهبي</option>
+<option>فلتر خزان 2</option>
+<option>فلتر خزان 3</option>
+<option>فلتر خزان 5</option>
+<option>فلتر خزان 6</option>
+<option>فلتر زووم</option>
+<option>فلتر زووم عادي</option>
+<option>فلتر زووم سفنجة</option>
+<option>فلتر زووم سيراميك</option>
+<option>فلتر زووم كربون</option>
 </select></div>
 <div class="form-group"><label>منتج آخر</label><input type="text" id="m_other_product"></div>
 <div class="form-group"><label>الإجمالي</label><input type="number" id="m_total"></div>
@@ -255,9 +269,9 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>📅 الموعد</h3>
 <div class="form-grid">
-<div class="form-group"><label>توقيت الموعد</label><select id="m_appointment_time"><option value="">اختر...</option><option>صباحا</option><option>مساءا</option><option>وقت محدد</option></select></div>
+<div class="form-group"><label>توقيت الموعد</label><select id="m_appointment_time"><option value="">اختر...</option><option>صباحاً</option><option>مساءً</option><option>موعد محدد</option></select></div>
 <div class="form-group"><label>تاريخ/وقت الموعد</label><input type="datetime-local" id="m_appointment_date"></div>
-<div class="form-group"><label>طباعة</label><select id="m_print"><option value="">اختر...</option><option>طباعة</option><option>انتهاء</option></select></div>
+<div class="form-group"><label>طباعة</label><select id="m_print"><option value="">اختر...</option><option>طباعة</option><option>لا</option></select></div>
 <div class="form-group"><label>لوكيشن</label><input type="text" id="m_location_link"></div>
 </div>
 </div>
@@ -536,6 +550,7 @@ function applyFilters(){
     const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
     const dateFilter = document.getElementById('dateFilter').value;
     const statusFilter = document.getElementById('statusFilter').value;
+    const transactionFilter = document.getElementById('transactionFilter').value;
     const customDateStr = document.getElementById('customDate').value;
     document.getElementById('customDateGroup').style.display = dateFilter === 'custom' ? 'block' : 'none';
     const today = new Date(); today.setHours(0,0,0,0);
@@ -562,6 +577,11 @@ function applyFilters(){
             if(statusFilter === 'manager' && (!hasM || hasS)) return false;
             if(statusFilter === 'completed' && (!hasM || !hasS)) return false;
         }
+        if(transactionFilter !== 'all'){
+            const mData = managerData[c.rowIndex] || {};
+            const transactionType = mData.transaction_type || c.transactionType || '';
+            if(transactionType !== transactionFilter) return false;
+        }
         return true;
     });
     renderCustomers();
@@ -577,6 +597,7 @@ function clearFilters(){
     document.getElementById('searchInput').value = '';
     document.getElementById('dateFilter').value = 'all';
     document.getElementById('statusFilter').value = 'all';
+    document.getElementById('transactionFilter').value = 'all';
     document.getElementById('customDate').value = '';
     document.getElementById('customDateGroup').style.display = 'none';
     applyFilters();
