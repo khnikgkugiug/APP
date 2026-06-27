@@ -638,9 +638,11 @@ function renderCustomers(){
         const card=document.createElement('div');
         card.className='customer-card';
         let printBtn='';
-        if(hasM && hasS){
-            printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">✅ تم إكمال جميع البيانات</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير هذا العميل</button></div>`;
-        }
+if(hasM && hasS){
+    printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">✅ تم إكمال جميع البيانات</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير هذا العميل</button></div>`;
+} else if(hasM && currentUser==='manager'){
+    printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">📋 بيانات مدير خط السير</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير</button></div>`;
+}
         let displayName = customer.name;
         if(searchTerm){
             const regex = new RegExp(`(${searchTerm})`, 'gi');
