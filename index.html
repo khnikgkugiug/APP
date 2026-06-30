@@ -420,7 +420,7 @@ const CONFIG = {
     API_KEY: 'AIzaSyCBaf2mbc1jzHUg2K34sGhinFHsrSWcQ-0',
     SHEET_ID: '1PtWLPmkyU5eML40mTaZsM-Xs9imAc_1OMwnnHe7MlqA',
     SHEET_NAME: 'قاعدة البيانات',
-    GAS_URL: 'https://script.google.com/macros/s/AKfycbzR45sMK_y8Q1WsCAco8jv8u6Ib8kAsi68rk6zvJD3_YA2GTjurY44noDDMZri9_9Oj/exec',
+    GAS_URL: 'https://script.google.com/macros/s/AKfycbybd9IkaHH9yN-bqnwCmQ2boC_ML3MSuqA4FIU2zp77QZVKkL5yTSI2LvgRoTHIMJMA/exec',
     MAX_RETRIES: 3,
     RETRY_DELAY: 2000
 };
@@ -892,39 +892,45 @@ async function saveSupervisorData(){
     }
 }
 
-async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
-    let lastError=null;
-    for(let attempt=1;attempt<=3;attempt++){
-        try{
-            const customer=customers.find(c=>c.rowIndex===rowIndex);
-            const customerName=customer?customer.name:'';
-            const payload={
-                customerName:customerName,
-                rowIndex:rowIndex,
-                managerData:managerDataArg||{},
-                supervisorData:supervisorDataArg||{},
-                action:'saveData',
-                timestamp:new Date().toISOString()
+aasync function sendToSheet(rowIndex, managerDataArg, supervisorDataArg) {
+    let lastError = null;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+            const customer = customers.find(c => c.rowIndex === rowIndex);
+            const customerName = customer ? customer.name : '';
+            const payload = {
+                customerName: customerName,
+                rowIndex: rowIndex,
+                managerData: managerDataArg || {},
+                supervisorData: supervisorDataArg || {},
+                action: 'saveData',
+                timestamp: new Date().toISOString()
             };
-            const response=await fetch(CONFIG.GAS_URL,{
-                method:'POST',
-                headers:{'Content-Type':'text/plain;charset=utf-8'},
-                body:JSON.stringify(payload)
+            
+            // ✅ GET بدل POST - أسرع ويتجنب CORS + 302 redirects
+            const dataParam = encodeURIComponent(JSON.stringify(payload));
+            const url = `${CONFIG.GAS_URL}?data=${dataParam}`;
+            
+            const response = await fetch(url, {
+                method: 'GET'
             });
+            
             let responseData;
-            try{
-                const text=await response.text();
-                if(text) responseData=JSON.parse(text);
-            }catch(parseError){}
-            if(responseData&&responseData.success) return{success:true,data:responseData};
-            if(response.status===200||response.status===0) return{success:true};
+            try {
+                const text = await response.text();
+                if (text) responseData = JSON.parse(text);
+            } catch (parseError) {}
+            
+            if (responseData && responseData.success) return { success: true, data: responseData };
+            if (response.status === 200) return { success: true };
+            
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }catch(error){
-            lastError=error;
-            if(attempt<3) await new Promise(resolve=>setTimeout(resolve,2000));
+        } catch (error) {
+            lastError = error;
+            if (attempt < 3) await new Promise(resolve => setTimeout(resolve, 2000));
         }
     }
-    return{success:false,error:lastError?lastError.message:'Unknown error'};
+    return { success: false, error: lastError ? lastError.message : 'Unknown error' };
 }
 
 async function saveAllToSheet(){
