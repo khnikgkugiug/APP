@@ -153,8 +153,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="filter-group">
 <label>تصفية بالتاريخ</label>
 <select id="dateFilter" onchange="applyFilters()">
-<option value="all">كل المواعيد</option>
 <option value="today">اليوم</option>
+<option value="all">كل المواعيد</option>
 <option value="tomorrow">غداً</option>
 <option value="week">هذا الأسبوع</option>
 <option value="custom">تاريخ محدد...</option>
@@ -520,6 +520,7 @@ async function loadSheetData(){
         supervisorData=savedSupervisor;
         applyFilters();
         document.getElementById('loadingSection').style.display='none';
+        showAlert('📅 تم عرض عملاء اليوم فقط - استخدم الفلاتر لعرض الكل','info');
         const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
         if(localCount>0) showAlert(`📦 ${localCount} بيانات محلية محفوظة - استخدم "استيراد البيانات" لو محتاج ترجّعها`,'info');
     }catch(error){
