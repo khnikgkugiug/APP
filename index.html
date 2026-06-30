@@ -111,10 +111,6 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .highlight{background:#fdcb6e;color:#1a1a2e;padding:2px 4px;border-radius:3px;font-weight:600}
 @media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}}
 </style>
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -206,6 +202,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 </div>
 </div>
 
+<!-- Manager Modal -->
 <div class="modal-overlay" id="managerModal">
 <div class="modal-content">
 <div class="modal-header">
@@ -224,40 +221,29 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>🔧 بيانات التركيب</h3>
 <div class="form-grid">
-<div class="form-group"><label>نوع المعاملة</label><select id="m_transaction_type"><option value="">اختر...</option><option value="تركيب فقط">تركيب فقط</option><option value="تشغيل فقط">تشغيل فقط</option><option value="تركيب مع التشغيل">تركيب مع التشغيل</option><option value="تأجيل">تأجيل</option></select></div>
-<div class="form-group"><label>تم إرفاق الموقع</label><select id="m_location_attached"><option value="">اختر...</option><option value="نعم">نعم</option><option value="لا">لا</option></select></div>
-<div class="form-group"><label>تم إرفاق صورة</label><select id="m_photo_attached"><option value="">اختر...</option><option value="نعم">نعم</option><option value="لا">لا</option></select></div>
-<div class="form-group"><label>نوع مصدر الماء</label><select id="m_water_source"><option value="">اختر...</option><option value="ماء حكومي">ماء حكومي</option><option value="بئر">بئر</option></select></div>
-<div class="form-group"><label>سوفتنر</label><select id="m_softener" onchange="toggleSoftenerFields()"><option value="">اختر...</option><option>نعم</option><option>لا</option></select></div>
-<div class="form-group conditional-field" id="softener_size_group"><label>مقاس السوفتنر</label><select id="m_softener_size"><option value="">اختر...</option><option value="10">10</option><option value="13">13</option><option value="16">16</option></select></div>
-<div class="form-group conditional-field" id="softener_type_group"><label>نوع السوفتنر</label><select id="m_softener_type"><option value="">اختر...</option><option value="سنجل">سنجل</option><option value="دبل">دبل</option></select></div>
-<div class="form-group"><label>الكهرباء</label><select id="m_electricity"><option value="">اختر...</option><option value="متوفرة">متوفرة</option><option value="غير متوفرة">غير متوفرة</option><option value="تحتاج تمديد">تحتاج تمديد</option></select></div>
-<div class="form-group"><label>ضغط الماء</label><select id="m_water_pressure"><option value="">اختر...</option><option value="ممتاز">ممتاز</option><option value="جيد">جيد</option><option value="ضعيف">ضعيف</option></select></div>
-<div class="form-group"><label>نوع المواسير</label><select id="m_pipes_type"><option value="">اختر...</option><option value="تكنو">تكنو</option><option value="هاي بريشر">هاي بريشر</option><option value="نحاس">نحاس</option></select></div>
-<div class="form-group"><label>مقاس المواسير</label><select id="m_pipes_size"><option value="">اختر...</option><option value="4/3 بوصة">4/3 بوصة</option><option value="بوصة">بوصة</option><option value="بوصة ونص">بوصة ونص</option></select></div>
+<div class="form-group"><label>نوع المعاملة</label><select id="m_transaction_type"><option value="">اختر...</option><option>تركيب فقط</option><option>تشغيل فقط</option><option>تركيب مع التشغيل</option><option>تأجيل</option></select></div>
+<div class="form-group"><label>تم إرفاق الموقع</label><select id="m_location_attached"><option value="">اختر...</option><option>نعم</option><option>لا</option></select></div>
+<div class="form-group"><label>تم إرفاق صورة</label><select id="m_photo_attached"><option value="">اختر...</option><option>نعم</option><option>لا</option></select></div>
+<div class="form-group"><label>نوع مصدر الماء</label><select id="m_water_source"><option value="">اختر...</option><option>ماء حكومي</option><option>بئر</option></select></div>
+<div class="form-group"><label>سوفتنر</label><select id="m_softener" onchange="toggleSoftenerFields()"><option value="نعم">نعم</option><option value="لا">لا</option></select></div>
+<div class="form-group conditional-field" id="softener_size_group"><label>مقاس السوفتنر</label><select id="m_softener_size"><option value="">اختر...</option><option>10</option><option>13</option><option>16</option></select></div>
+<div class="form-group conditional-field" id="softener_type_group"><label>نوع السوفتنر</label><select id="m_softener_type"><option value="">اختر...</option><option>سنجل</option><option>دبل</option></select></div>
+<div class="form-group"><label>الكهرباء</label><select id="m_electricity"><option value="">اختر...</option><option>متوفرة</option><option>غير متوفرة</option><option>تحتاج تمديد</option></select></div>
+<div class="form-group"><label>ضغط الماء</label><select id="m_water_pressure"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>ضعيف</option></select></div>
+<div class="form-group"><label>نوع المواسير</label><select id="m_pipes_type"><option value="">اختر...</option><option>تكنو</option><option>هاي بريشر</option><option>نحاس</option></select></div>
+<div class="form-group"><label>مقاس المواسير</label><select id="m_pipes_size"><option value="">اختر...</option><option>4/3 بوصة</option><option>بوصة</option><option>بوصة ونص</option></select></div>
 <div class="form-group"><label>ملاحظات</label><textarea id="m_notes"></textarea></div>
 </div>
 </div>
 <div class="form-section">
 <h3>💰 المالية</h3>
 <div class="form-grid">
-<div class="form-group"><label>نوع الطلب</label><select id="m_order_type"><option value="">اختر...</option><option value="باقة">باقة</option><option value="فلتر">فلتر</option><option value="منتج آخر">منتج آخر</option></select></div>
+<div class="form-group"><label>نوع الطلب</label><select id="m_order_type"><option value="">اختر...</option><option>باقة</option><option>فلتر</option><option>منتج آخر</option></select></div>
 <div class="form-group"><label>اسم الباقة</label><input type="text" id="m_package_name"></div>
 <div class="form-group"><label>تفاصيل الفلتر</label><select id="m_filter_details"><option value="">اختر...</option>
-<option value="ديجيتال">ديجيتال</option>
-<option value="100 اقتصادي">100 اقتصادي</option>
-<option value="100 بلازما">100 بلازما</option>
-<option value="400 اقتصادي">400 اقتصادي</option>
-<option value="400 بلازما">400 بلازما</option>
-<option value="جلاكسي">جلاكسي</option>
-<option value="مبرد ابيض زووم">مبرد ابيض زووم</option>
-<option value="مبرد اسود">مبرد اسود</option>
-<option value="مبرد ذهبي ">مبرد ذهبي </option>
-<option value="فلتر خزان 2">فلتر خزان 2</option>
-<option value="فلتر خزان 3">فلتر خزان 3</option>
-<option value="قارورة عادية ">قارورة عادية </option>
-<option value="قارورة مسطحة ">قارورة مسطحة </option>
-
+<option>ديجيتال</option><option>100 اقتصادي</option><option>100 بلازما</option><option>400 اقتصادي</option><option>400 بلازما</option>
+<option>جلاكسي</option><option>مبرد ابيض زووم</option><option>مبرد اسود</option><option>مبرد ذهبي</option>
+<option>فلتر خزان 2</option><option>فلتر خزان 3</option><option>قارورة عادية</option><option>قارورة مسطحة</option>
 </select></div>
 <div class="form-group"><label>منتج آخر</label><input type="text" id="m_other_product"></div>
 <div class="form-group"><label>الإجمالي</label><input type="number" id="m_total"></div>
@@ -268,9 +254,9 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>📅 الموعد</h3>
 <div class="form-grid">
-<div class="form-group"><label>توقيت الموعد</label><select id="m_appointment_time"><option value="">اختر...</option><option value="صباحا">صباحا</option><option value="مساءا">مساءا</option><option value="وقت محدد">وقت محدد</option></select></div>
+<div class="form-group"><label>توقيت الموعد</label><select id="m_appointment_time"><option value="">اختر...</option><option>صباحا</option><option>مساءا</option><option>وقت محدد</option></select></div>
 <div class="form-group"><label>تاريخ/وقت الموعد</label><input type="datetime-local" id="m_appointment_date"></div>
-<div class="form-group"><label>طباعة</label><select id="m_print"><option value="">اختر...</option><option value="طباعة">طباعة</option><option value="انتهاء">انتهاء</option></select></div>
+<div class="form-group"><label>طباعة</label><select id="m_print"><option value="">اختر...</option><option>طباعة</option><option>انتهاء</option></select></div>
 <div class="form-group"><label>لوكيشن</label><input type="text" id="m_location_link"></div>
 </div>
 </div>
@@ -282,6 +268,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 </div>
 </div>
 
+<!-- Supervisor Modal -->
 <div class="modal-overlay" id="supervisorModal">
 <div class="modal-content">
 <div class="modal-header">
@@ -299,22 +286,22 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>👤 معلومات المشرف</h3>
 <div class="form-grid">
-<div class="form-group"><label>اسم المشرف</label><select id="s_supervisor_name"><option value="">اختر...</option><option value="عبداللطيف">عبداللطيف</option><option value="معاذ">معاذ</option><option value="هاني">هاني</option><option value="عمر">عمر</option></select></div>
+<div class="form-group"><label>اسم المشرف</label><select id="s_supervisor_name"><option value="">اختر...</option><option>عبداللطيف</option><option>معاذ</option><option>هاني</option><option>عمر</option></select></div>
 </div>
 </div>
 <div class="form-section">
 <h3>👷 فني التركيب</h3>
 <div class="form-grid">
-<div class="form-group"><label>فني التركيب</label><select id="s_technician"><option value="">اختر...</option><option value="رمضان">رمضان</option><option value="أبوزيد">أبوزيد</option><option value="رضا">رضا</option><option value="صبري">صبري</option><option value="سامي">سامي</option><option value="مصطفى">مصطفى</option><option value="عبدالرحمن">عبدالرحمن</option><option value="مجدي">مجدي</option></select></div>
-<div class="form-group"><label>السيارة</label><select id="s_car"><option value="">اختر...</option><option value="باجيرو">باجيرو</option><option value="شانجان">شانجان</option><option value="MG">MG</option><option value="رينو724">رينو724</option><option value="رينو772">رينو772</option></select></div>
-<div class="form-group"><label>حالة التركيب</label><select id="s_installation_status" onchange="toggleDelayFields()"><option value="">اختر...</option><option value="تركيب جزئي">تركيب جزئي</option><option value="تركيب بدون تشغيل">تركيب بدون تشغيل</option><option value="تأجيل">تأجيل</option><option value="تركيب وتشغيل">تركيب وتشغيل</option></select></div>
+<div class="form-group"><label>فني التركيب</label><select id="s_technician"><option value="">اختر...</option><option>رمضان</option><option>أبوزيد</option><option>رضا</option><option>صبري</option><option>سامي</option><option>مصطفى</option><option>عبدالرحمن</option><option>مجدي</option></select></div>
+<div class="form-group"><label>السيارة</label><select id="s_car"><option value="">اختر...</option><option>باجيرو</option><option>شانجان</option><option>MG</option><option>رينو724</option><option>رينو772</option></select></div>
+<div class="form-group"><label>حالة التركيب</label><select id="s_installation_status" onchange="toggleDelayFields()"><option value="">اختر...</option><option>تركيب جزئي</option><option>تركيب بدون تشغيل</option><option>تأجيل</option><option>تركيب وتشغيل</option></select></div>
 <div class="form-group conditional-field" id="delay_reason_group"><label>سبب التأجيل</label><textarea id="s_delay_reason"></textarea></div>
 </div>
 </div>
 <div class="form-section">
 <h3>📦 الأغراض</h3>
 <div class="form-grid">
-<div class="form-group"><label>الأغراض</label><select id="s_items"><option value="">اختر...</option><option value="استرجاع كامل">استرجاع كامل</option><option value="استرجاع جزئي">استرجاع جزئي</option><option value="تركيب">تركيب</option></select></div>
+<div class="form-group"><label>الأغراض</label><select id="s_items"><option value="">اختر...</option><option>استرجاع كامل</option><option>استرجاع جزئي</option><option>تركيب</option></select></div>
 <div class="form-group"><label>الأغراض المسترجعة</label><textarea id="s_returned_items"></textarea></div>
 </div>
 </div>
@@ -345,13 +332,13 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>✅ التأكد من التركيب</h3>
 <div class="form-grid">
-<div class="form-group"><label>التأكد من الوصلات</label><select id="s_check_connections"><option value="">اختر...</option><option value="ممتازة">ممتازة</option><option value="جيدة">جيدة</option><option value="سيئة">سيئة</option></select></div>
-<div class="form-group"><label>التأكد من مصدر الكهرباء</label><select id="s_check_electricity"><option value="">اختر...</option><option value="يعمل">يعمل</option><option value="لا يعمل">لا يعمل</option></select></div>
-<div class="form-group"><label>التأكد من الصرف</label><select id="s_check_drain"><option value="">اختر...</option><option value="طبيعي">طبيعي</option><option value="زائد عن الحد">زائد عن الحد</option><option value="مقطوع">مقطوع</option></select></div>
-<div class="form-group"><label>التأكد من ضغط الدخول</label><select id="s_check_inlet_pressure"><option value="">اختر...</option><option value="زائد عن المسموح">زائد عن المسموح</option><option value="جيد">جيد</option><option value="ضعيف">ضعيف</option></select></div>
-<div class="form-group"><label>التأكد من ضغط الموتور</label><select id="s_check_motor_pressure"><option value="">اختر...</option><option value="جيد">جيد</option><option value="ضعيف">ضعيف</option><option value="الموتور فاصل">الموتور فاصل</option></select></div>
-<div class="form-group"><label>التأكد من كمية الإنتاج بدون الخزان (المميرين)</label><select id="s_check_production"><option value="">اختر...</option><option value="ممتاز">ممتاز</option><option value="جيد">جيد</option><option value="ضعيف">ضعيف</option><option value="مقطوع">مقطوع</option></select></div>
-<div class="form-group"><label>التأكد من ضغط الخزان</label><select id="s_check_tank_pressure"><option value="">اختر...</option><option value="ممتاز">ممتاز</option><option value="جيد">جيد</option><option value="ضعيف">ضعيف</option></select></div>
+<div class="form-group"><label>التأكد من الوصلات</label><select id="s_check_connections"><option value="">اختر...</option><option>ممتازة</option><option>جيدة</option><option>سيئة</option></select></div>
+<div class="form-group"><label>التأكد من مصدر الكهرباء</label><select id="s_check_electricity"><option value="">اختر...</option><option>يعمل</option><option>لا يعمل</option></select></div>
+<div class="form-group"><label>التأكد من الصرف</label><select id="s_check_drain"><option value="">اختر...</option><option>طبيعي</option><option>زائد عن الحد</option><option>مقطوع</option></select></div>
+<div class="form-group"><label>التأكد من ضغط الدخول</label><select id="s_check_inlet_pressure"><option value="">اختر...</option><option>زائد عن المسموح</option><option>جيد</option><option>ضعيف</option></select></div>
+<div class="form-group"><label>التأكد من ضغط الموتور</label><select id="s_check_motor_pressure"><option value="">اختر...</option><option>جيد</option><option>ضعيف</option><option>الموتور فاصل</option></select></div>
+<div class="form-group"><label>التأكد من كمية الإنتاج بدون الخزان (المميرين)</label><select id="s_check_production"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>ضعيف</option><option>مقطوع</option></select></div>
+<div class="form-group"><label>التأكد من ضغط الخزان</label><select id="s_check_tank_pressure"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>ضعيف</option></select></div>
 </div>
 </div>
 <div class="form-section">
@@ -359,34 +346,34 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-grid">
 <div class="form-group"><label>قياس TDS قبل الفلتر</label><input type="number" id="s_tds_before"></div>
 <div class="form-group"><label>قياس TDS بعد الفلتر</label><input type="number" id="s_tds_after"></div>
-<div class="form-group"><label>التأكد من التسريب</label><select id="s_check_leak"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
-<div class="form-group"><label>طعم في الماء بعد الفلتر</label><select id="s_taste_check"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
-<div class="form-group"><label>لون في الماء بعد الفلتر</label><select id="s_color_check"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
-<div class="form-group"><label>مكان الجهاز</label><select id="s_device_location"><option value="">اختر...</option><option value="داخل المطبخ">داخل المطبخ</option><option value="خارج المطبخ">خارج المطبخ</option><option value="أخرى">أخرى</option></select></div>
+<div class="form-group"><label>التأكد من التسريب</label><select id="s_check_leak"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>طعم في الماء بعد الفلتر</label><select id="s_taste_check"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>لون في الماء بعد الفلتر</label><select id="s_color_check"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>مكان الجهاز</label><select id="s_device_location"><option value="">اختر...</option><option>داخل المطبخ</option><option>خارج المطبخ</option><option>أخرى</option></select></div>
 </div>
 </div>
 <div class="form-section">
 <h3>🔧 بيانات إضافية</h3>
 <div class="form-grid">
-<div class="form-group"><label>سوفتنر</label><select id="s_softener"><option value="">اختر...</option><option value="10">10</option><option value="13">13</option><option value="16">16</option><option value="دبل">دبل</option><option value="منفرد">منفرد</option></select></div>
-<div class="form-group"><label>نوع الماء</label><select id="s_water_type"><option value="">اختر...</option><option value="حكومي">حكومي</option><option value="بئر">بئر</option></select></div>
-<div class="form-group"><label>التأكد من الوصلات </label><select id="s_connections_rating"><option value="">اختر...</option><option value="ممتازة">ممتازة</option><option value="جيدة">جيدة</option><option value="سيئة">سيئة</option></select></div>
-<div class="form-group"><label>التأكد من مصدر الكهرباء </label><select id="s_electricity_rating"><option value="">اختر...</option><option value="يعمل">يعمل</option><option value="لا يعمل">لا يعمل</option></select></div>
-<div class="form-group"><label>نوع الوصلات</label><select id="s_connection_type"><option value="">اختر...</option><option value="هاي بريشر">هاي بريشر</option><option value="تكنو">تكنو</option></select></div>
+<div class="form-group"><label>سوفتنر</label><select id="s_softener"><option value="">اختر...</option><option>10</option><option>13</option><option>16</option><option>دبل</option><option>منفرد</option></select></div>
+<div class="form-group"><label>نوع الماء</label><select id="s_water_type"><option value="">اختر...</option><option>حكومي</option><option>بئر</option></select></div>
+<div class="form-group"><label>التأكد من الوصلات</label><select id="s_connections_rating"><option value="">اختر...</option><option>ممتازة</option><option>جيدة</option><option>سيئة</option></select></div>
+<div class="form-group"><label>التأكد من مصدر الكهرباء</label><select id="s_electricity_rating"><option value="">اختر...</option><option>يعمل</option><option>لا يعمل</option></select></div>
+<div class="form-group"><label>نوع الوصلات</label><select id="s_connection_type"><option value="">اختر...</option><option>هاي بريشر</option><option>تكنو</option></select></div>
 <div class="form-group"><label>ضغط الدخول قيمة العداد</label><input type="number" id="s_inlet_pressure_value"></div>
-<div class="form-group"><label>هل راكب فاكيوم</label><select id="s_vacuum_installed"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
-<div class="form-group"><label>حالة الرزين</label><select id="s_resin_status"><option value="">اختر...</option><option value="ممتاز">ممتاز</option><option value="جيد">جيد</option><option value="لون متغير">لون متغير</option></select></div>
+<div class="form-group"><label>هل راكب فاكيوم</label><select id="s_vacuum_installed"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>حالة الرزين</label><select id="s_resin_status"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>لون متغير</option></select></div>
 <div class="form-group"><label>قياس TDS قبل السوفتنر</label><input type="number" id="s_tds_before_softener"></div>
 <div class="form-group"><label>قياس TDS بعد السوفتنر</label><input type="number" id="s_tds_after_softener"></div>
 <div class="form-group"><label>قياس الكلس قبل السوفتنر</label><input type="number" id="s_limescale_before_softener"></div>
 <div class="form-group"><label>قياس الكلس بعد السوفتنر</label><input type="number" id="s_limescale_after_softener"></div>
-<div class="form-group"><label>التأكد من التسريبات</label><select id="s_leak_check"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
-<div class="form-group"><label>لون في الماء بعد السوفتنر</label><select id="s_color_after_softener"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
+<div class="form-group"><label>التأكد من التسريبات</label><select id="s_leak_check"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>لون في الماء بعد السوفتنر</label><select id="s_color_after_softener"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
 <div class="form-group"><label>ضبط وقت الغسيل العكسي</label><input type="text" id="s_backwash_time" placeholder="اكتب الوقت..."></div>
 <div class="form-group"><label>ضبط الغسيل البطئ</label><input type="text" id="s_backwash_duration" placeholder="اكتب الوقت..."></div>
 <div class="form-group"><label>ضبط الغسيل السريع</label><input type="text" id="s_fast_rinse_time" placeholder="اكتب الوقت..."></div>
-<div class="form-group"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option value="زائد عن الحد">زائد عن الحد</option><option value="مناسب">مناسب</option><option value="منخفض">منخفض</option><option value="جاف">جاف</option></select></div>
-<div class="form-group"><label>هل هناك مظلة</label><select id="s_has_shelter"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
+<div class="form-group"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option>زائد عن الحد</option><option>مناسب</option><option>منخفض</option><option>جاف</option></select></div>
+<div class="form-group"><label>هل هناك مظلة</label><select id="s_has_shelter"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
 </div>
 </div>
 </div>
@@ -397,6 +384,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 </div>
 </div>
 
+<!-- Print Success Modal -->
 <div class="modal-overlay" id="printSuccessModal">
 <div class="modal-content" style="max-width:500px;text-align:center">
 <div class="modal-body" style="padding:40px">
@@ -411,6 +399,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 </div>
 </div>
 
+<!-- Print Modal -->
 <div class="modal-overlay" id="printModal">
 <div class="modal-content" style="max-width:1000px">
 <div class="modal-header">
@@ -431,7 +420,7 @@ const CONFIG = {
     API_KEY: 'AIzaSyCBaf2mbc1jzHUg2K34sGhinFHsrSWcQ-0',
     SHEET_ID: '1PtWLPmkyU5eML40mTaZsM-Xs9imAc_1OMwnnHe7MlqA',
     SHEET_NAME: 'قاعدة البيانات',
-    GAS_URL: 'https://script.google.com/macros/s/AKfycbw7HMyEW1yPGTg_yvU6YZ2Sqk_kkb7YRNjV8scWHoNuA-hMNZkldthf1cnAUiNPU_Jn/exec',
+    GAS_URL: 'https://script.google.com/macros/s/AKfycbzR45sMK_y8Q1WsCAco8jv8u6Ib8kAsi68rk6zvJD3_YA2GTjurY44noDDMZri9_9Oj/exec',
     MAX_RETRIES: 3,
     RETRY_DELAY: 2000
 };
@@ -440,35 +429,31 @@ let currentUser=null,customers=[],filteredCustomers=[],currentCustomerIndex=-1,m
 
 function loadFromLocalStorage(){
     try{
-        const savedManager = localStorage.getItem('zoom_managerData');
-        const savedSupervisor = localStorage.getItem('zoom_supervisorData');
-        if(savedManager) managerData = JSON.parse(savedManager);
-        if(savedSupervisor) supervisorData = JSON.parse(savedSupervisor);
-        const localCount = Object.keys(managerData).length + Object.keys(supervisorData).length;
-        const importBtn = document.getElementById('importBtn');
-        if(importBtn){
-            importBtn.style.display = localCount > 0 ? 'flex' : 'none';
-        }
+        const savedManager=localStorage.getItem('zoom_managerData');
+        const savedSupervisor=localStorage.getItem('zoom_supervisorData');
+        if(savedManager) managerData=JSON.parse(savedManager);
+        if(savedSupervisor) supervisorData=JSON.parse(savedSupervisor);
+        const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
+        const importBtn=document.getElementById('importBtn');
+        if(importBtn) importBtn.style.display=localCount>0?'flex':'none';
     }catch(e){console.error('Error loading from localStorage:',e)}
 }
 
 function importLocalData(){
     loadFromLocalStorage();
     applyFilters();
-    const localCount = Object.keys(managerData).length + Object.keys(supervisorData).length;
+    const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
     showAlert(`✅ تم استيراد ${localCount} بيانات محلية بنجاح!`,'success');
-    document.getElementById('importBtn').style.display = 'none';
+    document.getElementById('importBtn').style.display='none';
 }
 
 function saveToLocalStorage(){
     try{
-        localStorage.setItem('zoom_managerData', JSON.stringify(managerData));
-        localStorage.setItem('zoom_supervisorData', JSON.stringify(supervisorData));
-        const localCount = Object.keys(managerData).length + Object.keys(supervisorData).length;
-        const importBtn = document.getElementById('importBtn');
-        if(importBtn && localCount > 0){
-            importBtn.style.display = 'flex';
-        }
+        localStorage.setItem('zoom_managerData',JSON.stringify(managerData));
+        localStorage.setItem('zoom_supervisorData',JSON.stringify(supervisorData));
+        const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
+        const importBtn=document.getElementById('importBtn');
+        if(importBtn&&localCount>0) importBtn.style.display='flex';
     }catch(e){console.error('Error saving to localStorage:',e)}
 }
 
@@ -488,16 +473,16 @@ function logout(){
     document.getElementById('loginSection').style.display='flex';
     document.getElementById('mainContent').classList.remove('active');
     document.getElementById('customersGrid').innerHTML='';
-    const importBtn = document.getElementById('importBtn');
-    if(importBtn) importBtn.style.display = 'none';
+    const importBtn=document.getElementById('importBtn');
+    if(importBtn) importBtn.style.display='none';
 }
 
 async function loadSheetData(){
     document.getElementById('loadingSection').style.display='block';
     document.getElementById('customersGrid').innerHTML='';
     document.getElementById('emptyState').style.display='none';
-    const savedManager = {...managerData};
-    const savedSupervisor = {...supervisorData};
+    const savedManager={...managerData};
+    const savedSupervisor={...supervisorData};
     try{
         const url=`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(CONFIG.SHEET_NAME)}?key=${CONFIG.API_KEY}`;
         const response=await fetch(url);
@@ -518,19 +503,17 @@ async function loadSheetData(){
             phone:row[5]||'',
             state:row[6]||'',
             transactionType:row[7]||'',
-            supervisorName:row[30]||'', // Column AE - اسم المشرف
+            supervisorName:row[30]||'',
             rowIndex:index+2,
             rawData:row
         })).filter(c=>c.name);
-        customers.forEach(c => { c.parsedDate = parseSheetDate(c.date); });
-        managerData = savedManager;
-        supervisorData = savedSupervisor;
+        customers.forEach(c=>{c.parsedDate=parseSheetDate(c.date);});
+        managerData=savedManager;
+        supervisorData=savedSupervisor;
         applyFilters();
         document.getElementById('loadingSection').style.display='none';
-        const localCount = Object.keys(managerData).length + Object.keys(supervisorData).length;
-        if(localCount > 0){
-            showAlert(`📦 ${localCount} بيانات محلية محفوظة - استخدم "استيراد البيانات" لو محتاج ترجّعها`,'info');
-        }
+        const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
+        if(localCount>0) showAlert(`📦 ${localCount} بيانات محلية محفوظة - استخدم "استيراد البيانات" لو محتاج ترجّعها`,'info');
     }catch(error){
         console.error('Error:',error);
         showAlert('❌ خطأ: '+error.message,'error');
@@ -541,88 +524,84 @@ async function loadSheetData(){
 
 function parseSheetDate(dateStr){
     if(!dateStr) return null;
-    let date = new Date(dateStr);
+    let date=new Date(dateStr);
     if(!isNaN(date.getTime())) return date;
-    const parts = dateStr.split(/[/-]/);
-    if(parts.length === 3){
-        date = new Date(parts[2], parts[1]-1, parts[0]);
+    const parts=dateStr.split(/[/-]/);
+    if(parts.length===3){
+        date=new Date(parts[2],parts[1]-1,parts[0]);
         if(!isNaN(date.getTime())) return date;
-        date = new Date(parts[2], parts[0]-1, parts[1]);
+        date=new Date(parts[2],parts[0]-1,parts[1]);
         if(!isNaN(date.getTime())) return date;
     }
     return null;
 }
 
-function isSameDate(d1, d2){
-    if(!d1 || !d2) return false;
-    return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+function isSameDate(d1,d2){
+    if(!d1||!d2) return false;
+    return d1.getFullYear()===d2.getFullYear()&&d1.getMonth()===d2.getMonth()&&d1.getDate()===d2.getDate();
 }
 
 function isThisWeek(date){
     if(!date) return false;
-    const now = new Date();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay());
+    const now=new Date();
+    const startOfWeek=new Date(now);
+    startOfWeek.setDate(now.getDate()-now.getDay());
     startOfWeek.setHours(0,0,0,0);
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 7);
-    return date >= startOfWeek && date < endOfWeek;
+    const endOfWeek=new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate()+7);
+    return date>=startOfWeek&&date<endOfWeek;
 }
 
 function applyFilters(){
-    const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-    const dateFilter = document.getElementById('dateFilter').value;
-    const statusFilter = document.getElementById('statusFilter').value;
-    const transactionFilter = document.getElementById('transactionFilter').value;
-    const customDateStr = document.getElementById('customDate').value;
-    document.getElementById('customDateGroup').style.display = dateFilter === 'custom' ? 'block' : 'none';
-    const today = new Date(); today.setHours(0,0,0,0);
-    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
-    filteredCustomers = customers.filter(c => {
+    const searchTerm=document.getElementById('searchInput').value.trim().toLowerCase();
+    const dateFilter=document.getElementById('dateFilter').value;
+    const statusFilter=document.getElementById('statusFilter').value;
+    const transactionFilter=document.getElementById('transactionFilter').value;
+    const customDateStr=document.getElementById('customDate').value;
+    document.getElementById('customDateGroup').style.display=dateFilter==='custom'?'block':'none';
+    const today=new Date();today.setHours(0,0,0,0);
+    const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
+    filteredCustomers=customers.filter(c=>{
         if(searchTerm){
-            const nameMatch = c.name.toLowerCase().includes(searchTerm);
-            const phoneMatch = c.phone.toLowerCase().includes(searchTerm);
-            if(!nameMatch && !phoneMatch) return false;
+            const nameMatch=c.name.toLowerCase().includes(searchTerm);
+            const phoneMatch=c.phone.toLowerCase().includes(searchTerm);
+            if(!nameMatch&&!phoneMatch) return false;
         }
-        if(dateFilter !== 'all'){
-            if(dateFilter === 'today'){ if(!isSameDate(c.parsedDate, today)) return false; }
-            else if(dateFilter === 'tomorrow'){ if(!isSameDate(c.parsedDate, tomorrow)) return false; }
-            else if(dateFilter === 'week'){ if(!isThisWeek(c.parsedDate)) return false; }
-            else if(dateFilter === 'custom' && customDateStr){
-                const customDate = new Date(customDateStr); customDate.setHours(0,0,0,0);
-                if(!isSameDate(c.parsedDate, customDate)) return false;
+        if(dateFilter!=='all'){
+            if(dateFilter==='today'){if(!isSameDate(c.parsedDate,today)) return false;}
+            else if(dateFilter==='tomorrow'){if(!isSameDate(c.parsedDate,tomorrow)) return false;}
+            else if(dateFilter==='week'){if(!isThisWeek(c.parsedDate)) return false;}
+            else if(dateFilter==='custom'&&customDateStr){
+                const customDate=new Date(customDateStr);customDate.setHours(0,0,0,0);
+                if(!isSameDate(c.parsedDate,customDate)) return false;
             }
         }
-        if(statusFilter !== 'all'){
-            const hasM = managerData[c.rowIndex] && Object.keys(managerData[c.rowIndex]).length > 0;
-            const hasS = supervisorData[c.rowIndex] && Object.keys(supervisorData[c.rowIndex]).length > 0;
-            if(statusFilter === 'none' && (hasM || hasS)) return false;
-            if(statusFilter === 'manager' && (!hasM || hasS)) return false;
-            if(statusFilter === 'completed' && (!hasM || !hasS)) return false;
+        if(statusFilter!=='all'){
+            const hasM=managerData[c.rowIndex]&&Object.keys(managerData[c.rowIndex]).length>0;
+            const hasS=supervisorData[c.rowIndex]&&Object.keys(supervisorData[c.rowIndex]).length>0;
+            if(statusFilter==='none'&&(hasM||hasS)) return false;
+            if(statusFilter==='manager'&&(!hasM||hasS)) return false;
+            if(statusFilter==='completed'&&(!hasM||!hasS)) return false;
         }
-        if(transactionFilter !== 'all'){
-            const mData = managerData[c.rowIndex] || {};
-            const transactionType = mData.transaction_type || c.transactionType || '';
-            if(transactionType !== transactionFilter) return false;
+        if(transactionFilter!=='all'){
+            const mData=managerData[c.rowIndex]||{};
+            const transactionType=mData.transaction_type||c.transactionType||'';
+            if(transactionType!==transactionFilter) return false;
         }
         return true;
     });
     renderCustomers();
-    const countEl = document.getElementById('resultsCount');
-    if(filteredCustomers.length !== customers.length){
-        countEl.textContent = `(${filteredCustomers.length} من ${customers.length})`;
-    }else{
-        countEl.textContent = `(${customers.length} عميل)`;
-    }
+    const countEl=document.getElementById('resultsCount');
+    countEl.textContent=filteredCustomers.length!==customers.length?`(${filteredCustomers.length} من ${customers.length})`:`(${customers.length} عميل)`;
 }
 
 function clearFilters(){
-    document.getElementById('searchInput').value = '';
-    document.getElementById('dateFilter').value = 'all';
-    document.getElementById('statusFilter').value = 'all';
-    document.getElementById('transactionFilter').value = 'all';
-    document.getElementById('customDate').value = '';
-    document.getElementById('customDateGroup').style.display = 'none';
+    document.getElementById('searchInput').value='';
+    document.getElementById('dateFilter').value='all';
+    document.getElementById('statusFilter').value='all';
+    document.getElementById('transactionFilter').value='all';
+    document.getElementById('customDate').value='';
+    document.getElementById('customDateGroup').style.display='none';
     applyFilters();
 }
 
@@ -630,125 +609,111 @@ function refreshData(){loadSheetData();showAlert('🔄 تم التحديث','suc
 
 function getDateBadgeClass(date){
     if(!date) return '';
-    const today = new Date(); today.setHours(0,0,0,0);
-    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
-    if(isSameDate(date, today)) return 'today';
-    if(isSameDate(date, tomorrow)) return 'tomorrow';
+    const today=new Date();today.setHours(0,0,0,0);
+    const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
+    if(isSameDate(date,today)) return 'today';
+    if(isSameDate(date,tomorrow)) return 'tomorrow';
     return '';
 }
 
 function getDateBadgeText(date){
     if(!date) return '';
-    const today = new Date(); today.setHours(0,0,0,0);
-    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
-    if(isSameDate(date, today)) return 'اليوم';
-    if(isSameDate(date, tomorrow)) return 'غداً';
+    const today=new Date();today.setHours(0,0,0,0);
+    const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
+    if(isSameDate(date,today)) return 'اليوم';
+    if(isSameDate(date,tomorrow)) return 'غداً';
     return date.toLocaleDateString('ar-SA');
 }
 
 function renderCustomers(){
     const grid=document.getElementById('customersGrid');
     grid.innerHTML='';
-    if(filteredCustomers.length===0){
-        document.getElementById('emptyState').style.display='block';
-        return;
-    }
+    if(filteredCustomers.length===0){document.getElementById('emptyState').style.display='block';return;}
     document.getElementById('emptyState').style.display='none';
-    const searchTerm = document.getElementById('searchInput').value.trim();
+    const searchTerm=document.getElementById('searchInput').value.trim();
     filteredCustomers.forEach((customer)=>{
-        const index = customer.rowIndex;
+        const index=customer.rowIndex;
         const hasM=managerData[index]&&Object.keys(managerData[index]).length>0;
         const hasS=supervisorData[index]&&Object.keys(supervisorData[index]).length>0;
-        let status='pending',statusText='قيد الانتظار',statusClass='status-pending';
-        if(hasM && !hasS){status='manager-done';statusText='بانتظار المشرف';statusClass='status-manager-done'}
-        else if(hasS){status='completed';statusText='مكتمل';statusClass='status-completed'}
+        let statusText='قيد الانتظار',statusClass='status-pending';
+        if(hasM&&!hasS){statusText='بانتظار المشرف';statusClass='status-manager-done';}
+        else if(hasS){statusText='مكتمل';statusClass='status-completed';}
         const card=document.createElement('div');
         card.className='customer-card';
         let printBtn='';
-if(hasM && hasS){
-    printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">✅ تم إكمال جميع البيانات</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير هذا العميل</button></div>`;
-} else if(hasM && currentUser==='manager'){
-    printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">📋 بيانات مدير خط السير</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير</button></div>`;
-}
-        let displayName = customer.name;
-        if(searchTerm){
-            const regex = new RegExp(`(${searchTerm})`, 'gi');
-            displayName = displayName.replace(regex, '<span class="highlight">$1</span>');
+        if(hasM&&hasS){
+            printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">✅ تم إكمال جميع البيانات</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير هذا العميل</button></div>`;
+        }else if(hasM&&currentUser==='manager'){
+            printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">📋 بيانات مدير خط السير</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير</button></div>`;
         }
-        const dateBadgeClass = getDateBadgeClass(customer.parsedDate);
-        const dateBadgeText = getDateBadgeText(customer.parsedDate);
-        card.innerHTML=`<div class="customer-header"><div class="customer-info"><h3>${displayName}</h3><div class="phone">📞 ${customer.phone}</div><div class="state">📍 ${customer.state} - ${customer.governorate}</div>${customer.parsedDate ? `<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>` : ''}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
+        let displayName=customer.name;
+        if(searchTerm){
+            const regex=new RegExp(`(${searchTerm})`,'gi');
+            displayName=displayName.replace(regex,'<span class="highlight">$1</span>');
+        }
+        const dateBadgeClass=getDateBadgeClass(customer.parsedDate);
+        const dateBadgeText=getDateBadgeText(customer.parsedDate);
+        card.innerHTML=`<div class="customer-header"><div class="customer-info"><h3>${displayName}</h3><div class="phone">📞 ${customer.phone}</div><div class="state">📍 ${customer.state} - ${customer.governorate}</div>${customer.parsedDate?`<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>`:''}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
         grid.appendChild(card);
     });
 }
 
 function toggleDelayFields(){
-    const statusValue = document.getElementById('s_installation_status').value;
-    const delayGroup = document.getElementById('delay_reason_group');
-    if(statusValue === 'تأجيل'){
-        delayGroup.classList.add('visible');
-    }else{
-        delayGroup.classList.remove('visible');
-        document.getElementById('s_delay_reason').value = '';
-    }
+    const v=document.getElementById('s_installation_status').value;
+    const g=document.getElementById('delay_reason_group');
+    if(v==='تأجيل') g.classList.add('visible');
+    else{g.classList.remove('visible');document.getElementById('s_delay_reason').value='';}
 }
 
 function toggleSpareFields(){
-    const spareValue = document.getElementById('s_spare_needed').value;
-    const detailsGroup = document.getElementById('spare_details_group');
-    if(spareValue === 'نعم'){
-        detailsGroup.classList.add('visible');
-    }else{
-        detailsGroup.classList.remove('visible');
-        document.getElementById('s_spare_details').value = '';
-    }
+    const v=document.getElementById('s_spare_needed').value;
+    const g=document.getElementById('spare_details_group');
+    if(v==='نعم') g.classList.add('visible');
+    else{g.classList.remove('visible');document.getElementById('s_spare_details').value='';}
 }
 
 function toggleSoftenerFields(){
-    const softenerValue = document.getElementById('m_softener').value;
-    const sizeGroup = document.getElementById('softener_size_group');
-    const typeGroup = document.getElementById('softener_type_group');
-    if(softenerValue === 'نعم'){
-        sizeGroup.classList.add('visible');
-        typeGroup.classList.add('visible');
-    }else{
-        sizeGroup.classList.remove('visible');
-        typeGroup.classList.remove('visible');
-        document.getElementById('m_softener_size').value = '';
-        document.getElementById('m_softener_type').value = '';
+    const v=document.getElementById('m_softener').value;
+    const sg=document.getElementById('softener_size_group');
+    const tg=document.getElementById('softener_type_group');
+    if(v==='نعم'){sg.classList.add('visible');tg.classList.add('visible');}
+    else{
+        sg.classList.remove('visible');tg.classList.remove('visible');
+        document.getElementById('m_softener_size').value='';
+        document.getElementById('m_softener_type').value='';
     }
 }
 
 function openManagerModal(index){
     currentCustomerIndex=index;
-    const c=customers.find(cust => cust.rowIndex === index) || customers[index];
+    const c=customers.find(cust=>cust.rowIndex===index)||customers[index];
     document.getElementById('m_name').value=c.name;
     document.getElementById('m_phone').value=c.phone;
     document.getElementById('m_state').value=c.state;
     const ex=managerData[index]||{};
     document.getElementById('m_transaction_type').value=ex.transaction_type||c.transactionType||'';
-    document.getElementById('m_location_attached').value=ex.location_attached||c.locationAttached||'';
-    document.getElementById('m_photo_attached').value=ex.photo_attached||c.photoAttached||'';
-    document.getElementById('m_water_source').value=ex.water_source||c.waterSource||'';
-    document.getElementById('m_softener').value=ex.softener||c.softener||'';
-    document.getElementById('m_softener_size').value=ex.softener_size||c.softenerSize||'';
-    document.getElementById('m_softener_type').value=ex.softener_type||c.softenerType||'';
-    document.getElementById('m_electricity').value=ex.electricity||c.electricity||'';
-    document.getElementById('m_water_pressure').value=ex.water_pressure||c.waterPressure||'';
-    document.getElementById('m_pipes_type').value=ex.pipes_type||c.pipesType||'';
-    document.getElementById('m_pipes_size').value=ex.pipes_size||c.pipesSize||'';
-    document.getElementById('m_notes').value=ex.notes||c.notes||'';
-    document.getElementById('m_order_type').value=ex.order_type||c.orderType||'';
-    document.getElementById('m_package_name').value=ex.package_name||c.packageName||'';
-    document.getElementById('m_filter_details').value=ex.filter_details||c.filterDetails||'';
-    document.getElementById('m_other_product').value=ex.other_product||c.otherProduct||'';
-    document.getElementById('m_total').value=ex.total||c.total||'';
-    document.getElementById('m_paid').value=ex.paid||c.paid||'';
-    document.getElementById('m_remaining').value=ex.remaining||c.remaining||'';
-    document.getElementById('m_appointment_time').value=ex.appointment_time||c.appointmentTime||'';
-    document.getElementById('m_appointment_date').value=ex.appointment_date||c.appointmentDate||'';
-    document.getElementById('m_print').value=ex.print||c.print||'';
-    document.getElementById('m_location_link').value=ex.location_link||c.locationLink||'';
+    document.getElementById('m_location_attached').value=ex.location_attached||'';
+    document.getElementById('m_photo_attached').value=ex.photo_attached||'';
+    document.getElementById('m_water_source').value=ex.water_source||'';
+    document.getElementById('m_softener').value=ex.softener||'';
+    document.getElementById('m_softener_size').value=ex.softener_size||'';
+    document.getElementById('m_softener_type').value=ex.softener_type||'';
+    document.getElementById('m_electricity').value=ex.electricity||'';
+    document.getElementById('m_water_pressure').value=ex.water_pressure||'';
+    document.getElementById('m_pipes_type').value=ex.pipes_type||'';
+    document.getElementById('m_pipes_size').value=ex.pipes_size||'';
+    document.getElementById('m_notes').value=ex.notes||'';
+    document.getElementById('m_order_type').value=ex.order_type||'';
+    document.getElementById('m_package_name').value=ex.package_name||'';
+    document.getElementById('m_filter_details').value=ex.filter_details||'';
+    document.getElementById('m_other_product').value=ex.other_product||'';
+    document.getElementById('m_total').value=ex.total||'';
+    document.getElementById('m_paid').value=ex.paid||'';
+    document.getElementById('m_remaining').value=ex.remaining||'';
+    document.getElementById('m_appointment_time').value=ex.appointment_time||'';
+    document.getElementById('m_appointment_date').value=ex.appointment_date||'';
+    document.getElementById('m_print').value=ex.print||'';
+    document.getElementById('m_location_link').value=ex.location_link||'';
     toggleSoftenerFields();
     document.getElementById('managerModal').classList.add('active');
 }
@@ -798,7 +763,7 @@ async function saveManagerData(){
 
 function openSupervisorModal(index){
     currentCustomerIndex=index;
-    const c=customers.find(cust => cust.rowIndex === index) || customers[index];
+    const c=customers.find(cust=>cust.rowIndex===index)||customers[index];
     document.getElementById('s_name').value=c.name;
     document.getElementById('s_phone').value=c.phone;
     const ex=supervisorData[index]||{};
@@ -833,8 +798,8 @@ function openSupervisorModal(index){
     document.getElementById('s_check_leak').value=ex.check_leak||'';
     document.getElementById('s_taste_check').value=ex.taste_check||'';
     document.getElementById('s_color_check').value=ex.color_check||'';
-    // New fields
-    document.getElementById('s_softener').value=ex.softener||'';
+    // FIX: use supervisor_softener key
+    document.getElementById('s_softener').value=ex.supervisor_softener||'';
     document.getElementById('s_water_type').value=ex.water_type||'';
     document.getElementById('s_connections_rating').value=ex.connections_rating||'';
     document.getElementById('s_electricity_rating').value=ex.electricity_rating||'';
@@ -887,8 +852,8 @@ async function saveSupervisorData(){
         check_leak:document.getElementById('s_check_leak').value,
         taste_check:document.getElementById('s_taste_check').value,
         color_check:document.getElementById('s_color_check').value,
-        // New fields
-        softener:document.getElementById('s_softener').value,
+        // FIX: use supervisor_softener key
+        supervisor_softener:document.getElementById('s_softener').value,
         water_type:document.getElementById('s_water_type').value,
         connections_rating:document.getElementById('s_connections_rating').value,
         electricity_rating:document.getElementById('s_electricity_rating').value,
@@ -918,10 +883,8 @@ async function saveSupervisorData(){
         renderCustomers();
         lastSavedIndex=currentCustomerIndex;
         showAlert('✅ تم الحفظ في الشيت والجهاز!','success');
-        const hasM = managerData[currentCustomerIndex] && Object.keys(managerData[currentCustomerIndex]).length > 0;
-        if(hasM){
-            setTimeout(()=>{document.getElementById('printSuccessModal').classList.add('active')},500);
-        }
+        const hasM=managerData[currentCustomerIndex]&&Object.keys(managerData[currentCustomerIndex]).length>0;
+        if(hasM) setTimeout(()=>{document.getElementById('printSuccessModal').classList.add('active')},500);
     }else{
         showAlert('⚠️ تم الحفظ محلياً لكن فشل الإرسال للشيت: '+result.error,'error');
         closeModal('supervisorModal');
@@ -929,57 +892,39 @@ async function saveSupervisorData(){
     }
 }
 
-async function sendToSheet(rowIndex, managerData, supervisorData) {
-    let lastError = null;
-    for (let attempt = 1; attempt <= 3; attempt++) {
-        try {
-            const customer = customers.find(c => c.rowIndex === rowIndex);
-            const customerName = customer ? customer.name : '';
-            const payload = {
-                customerName: customerName,
-                rowIndex: rowIndex,
-                managerData: managerData || {},
-                supervisorData: supervisorData || {},
-                action: 'saveData',
-                timestamp: new Date().toISOString()
+async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
+    let lastError=null;
+    for(let attempt=1;attempt<=3;attempt++){
+        try{
+            const customer=customers.find(c=>c.rowIndex===rowIndex);
+            const customerName=customer?customer.name:'';
+            const payload={
+                customerName:customerName,
+                rowIndex:rowIndex,
+                managerData:managerDataArg||{},
+                supervisorData:supervisorDataArg||{},
+                action:'saveData',
+                timestamp:new Date().toISOString()
             };
-            console.log(`Attempt ${attempt}: Sending to sheet:`, payload);
-            const response = await fetch(CONFIG.GAS_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8',
-                },
-                body: JSON.stringify(payload)
+            const response=await fetch(CONFIG.GAS_URL,{
+                method:'POST',
+                headers:{'Content-Type':'text/plain;charset=utf-8'},
+                body:JSON.stringify(payload)
             });
-            console.log(`Attempt ${attempt}: Response status:`, response.status);
             let responseData;
-            try {
-                const text = await response.text();
-                console.log(`Attempt ${attempt}: Response text:`, text.substring(0, 200));
-                if (text) {
-                    responseData = JSON.parse(text);
-                }
-            } catch (parseError) {
-                console.log('Could not parse response, but request may have succeeded');
-            }
-            if (responseData && responseData.success) {
-                console.log('✅ Data saved successfully');
-                return { success: true, data: responseData };
-            }
-            if (response.status === 200 || response.status === 0) {
-                return { success: true };
-            }
+            try{
+                const text=await response.text();
+                if(text) responseData=JSON.parse(text);
+            }catch(parseError){}
+            if(responseData&&responseData.success) return{success:true,data:responseData};
+            if(response.status===200||response.status===0) return{success:true};
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        } catch (error) {
-            console.error(`Attempt ${attempt} failed:`, error);
-            lastError = error;
-            if (attempt < 3) {
-                console.log(`Waiting 2 seconds before retry...`);
-                await new Promise(resolve => setTimeout(resolve, 2000));
-            }
+        }catch(error){
+            lastError=error;
+            if(attempt<3) await new Promise(resolve=>setTimeout(resolve,2000));
         }
     }
-    return { success: false, error: lastError ? lastError.message : 'Unknown error' };
+    return{success:false,error:lastError?lastError.message:'Unknown error'};
 }
 
 async function saveAllToSheet(){
@@ -987,245 +932,155 @@ async function saveAllToSheet(){
     showAlert('⏳ جاري الحفظ للشيت...','info');
     let successCount=0,failCount=0;
     for(let i=0;i<customers.length;i++){
-        const idx = customers[i].rowIndex;
+        const idx=customers[i].rowIndex;
         const hasM=managerData[idx]&&Object.keys(managerData[idx]).length>0;
         const hasS=supervisorData[idx]&&Object.keys(supervisorData[idx]).length>0;
         if(hasM||hasS){
             const result=await sendToSheet(idx,managerData[idx]||null,supervisorData[idx]||null);
-            if(result.success)successCount++;else failCount++
+            if(result.success) successCount++;else failCount++;
         }
     }
     showSaveIndicator(false);
-    if(failCount===0)showAlert(`✅ تم حفظ ${successCount} عميل في الشيت!`,'success');
-    else showAlert(`⚠️ نجح:${successCount} | فشل:${failCount} — تأكد من Console (F12)`,'error')
+    if(failCount===0) showAlert(`✅ تم حفظ ${successCount} عميل في الشيت!`,'success');
+    else showAlert(`⚠️ نجح:${successCount} | فشل:${failCount}`,'error');
 }
 
 function printFromSuccess(){
     closeModal('printSuccessModal');
-    if(lastSavedIndex>=0){
-        printSingleReport(lastSavedIndex)
+    if(lastSavedIndex>=0) printSingleReport(lastSavedIndex);
+}
+
+function buildPrintRows(mData,sData){
+    function addRow(label,value){
+        if(!value||value===''||value==='false'||value==='لا') return '';
+        return `<tr><th style="border:1px solid #333;padding:10px;background:#f0f0f0;text-align:right;width:25%">${label}</th><td style="border:1px solid #333;padding:10px;text-align:right;width:25%">${value}</td></tr>`;
     }
+    function addRowFull(label,value){
+        if(!value||value===''||value==='false'||value==='لا') return '';
+        return `<tr><th style="border:1px solid #333;padding:10px;background:#f0f0f0;text-align:right;width:25%">${label}</th><td style="border:1px solid #333;padding:10px;text-align:right" colspan="3">${value}</td></tr>`;
+    }
+    let html='';
+    if(Object.keys(mData).length>0){
+        html+=`<h3 style="color:#333;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:20px">👷 بيانات مدير خط السير</h3><table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333">`;
+        html+=addRow('نوع المعاملة',mData.transaction_type);
+        html+=addRow('تم إرفاق الموقع',mData.location_attached);
+        html+=addRow('تم إرفاق صورة',mData.photo_attached);
+        html+=addRow('مصدر الماء',mData.water_source);
+        if(mData.softener==='نعم'){
+            html+=addRow('سوفتنر','نعم');
+            html+=addRow('مقاس السوفتنر',mData.softener_size);
+            html+=addRow('نوع السوفتنر',mData.softener_type);
+        }
+        html+=addRow('الكهرباء',mData.electricity);
+        html+=addRow('ضغط الماء',mData.water_pressure);
+        html+=addRow('نوع المواسير',mData.pipes_type);
+        html+=addRow('مقاس المواسير',mData.pipes_size);
+        html+=addRow('نوع الطلب',mData.order_type);
+        html+=addRow('اسم الباقة',mData.package_name);
+        html+=addRowFull('تفاصيل الفلتر',mData.filter_details);
+        html+=addRow('منتج آخر',mData.other_product);
+        html+=addRow('الإجمالي',mData.total);
+        html+=addRow('مقدم',mData.paid);
+        html+=addRow('متبقي',mData.remaining);
+        html+=addRow('توقيت الموعد',mData.appointment_time);
+        html+=addRow('تاريخ الموعد',mData.appointment_date?new Date(mData.appointment_date).toLocaleString('ar-SA'):'');
+        html+=addRow('طباعة',mData.print);
+        html+=addRowFull('لوكيشن',mData.location_link);
+        html+=addRowFull('ملاحظات',mData.notes);
+        html+=`</table>`;
+    }
+    if(Object.keys(sData).length>0){
+        html+=`<h3 style="color:#333;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:20px">👨‍💼 بيانات المشرف</h3><table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333">`;
+        html+=addRow('اسم المشرف',sData.supervisor_name);
+        html+=addRow('فني التركيب',sData.technician);
+        html+=addRow('السيارة',sData.car);
+        html+=addRow('حالة التركيب',sData.installation_status);
+        html+=addRowFull('سبب التأجيل',sData.delay_reason);
+        html+=addRowFull('الأغراض',sData.items);
+        html+=addRowFull('الأغراض المسترجعة',sData.returned_items);
+        html+=addRow('بداية العمل',sData.start_time);
+        html+=addRow('انتهاء العمل',sData.end_time);
+        html+=addRow('قطع غيار',sData.spare_needed);
+        html+=addRowFull('تفاصيل قطع الغيار',sData.spare_details);
+        html+=addRow('المبلغ المدفوع',sData.amount_paid);
+        html+=addRow('في حساب',sData.in_account);
+        html+=addRow('باقي',sData.balance);
+        html+=addRow('ميعاد الدفع',sData.payment_date);
+        html+=addRow('TDS قبل الفلتر',sData.tds_before);
+        html+=addRow('TDS بعد الفلتر',sData.tds_after);
+        html+=addRow('مكان الجهاز',sData.device_location);
+        html+=addRow('التأكد من الوصلات',sData.check_connections);
+        html+=addRow('التأكد من الكهرباء',sData.check_electricity);
+        html+=addRow('التأكد من الصرف',sData.check_drain);
+        html+=addRow('ضغط الدخول',sData.check_inlet_pressure);
+        html+=addRow('ضغط الموتور',sData.check_motor_pressure);
+        html+=addRow('كمية الإنتاج',sData.check_production);
+        html+=addRow('ضغط الخزان',sData.check_tank_pressure);
+        html+=addRow('التسريب',sData.check_leak);
+        html+=addRow('طعم الماء',sData.taste_check);
+        html+=addRow('لون الماء',sData.color_check);
+        // FIX: use supervisor_softener key
+        html+=addRow('سوفتنر',sData.supervisor_softener);
+        html+=addRow('نوع الماء',sData.water_type);
+        html+=addRow('تقييم الوصلات',sData.connections_rating);
+        html+=addRow('تقييم الكهرباء',sData.electricity_rating);
+        html+=addRow('نوع الوصلات',sData.connection_type);
+        html+=addRow('ضغط الدخول قيمة',sData.inlet_pressure_value);
+        html+=addRow('فاكيوم',sData.vacuum_installed);
+        html+=addRow('حالة الرزين',sData.resin_status);
+        html+=addRow('TDS قبل السوفتنر',sData.tds_before_softener);
+        html+=addRow('TDS بعد السوفتنر',sData.tds_after_softener);
+        html+=addRow('الكلس قبل السوفتنر',sData.limescale_before_softener);
+        html+=addRow('الكلس بعد السوفتنر',sData.limescale_after_softener);
+        html+=addRow('تسريبات',sData.leak_check);
+        html+=addRow('لون بعد السوفتنر',sData.color_after_softener);
+        html+=addRow('وقت الغسيل العكسي',sData.backwash_time);
+        html+=addRow('مدة الغسيل البطئ',sData.backwash_duration);
+        html+=addRow('وقت الغسيل السريع',sData.fast_rinse_time);
+        html+=addRow('منسوب الملح',sData.salt_level);
+        html+=addRow('مظلة',sData.has_shelter);
+        html+=addRowFull('ملاحظات المشرف',sData.notes);
+        html+=`</table>`;
+    }
+    return html;
 }
 
 function printSingleReport(index){
-    const customer=customers.find(c => c.rowIndex === index) || customers[index];
+    const customer=customers.find(c=>c.rowIndex===index)||customers[index];
     const mData=managerData[index]||{};
     const sData=supervisorData[index]||{};
-
-    function addRow(label, value){
-        if(!value || value === '' || value === 'false' || value === 'لا') return '';
-        return `<tr><th style="border:1px solid #333;padding:10px;background:#f0f0f0;text-align:right;width:25%">${label}</th><td style="border:1px solid #333;padding:10px;text-align:right;width:25%">${value}</td></tr>`;
-    }
-    function addRowFull(label, value){
-        if(!value || value === '' || value === 'false' || value === 'لا') return '';
-        return `<tr><th style="border:1px solid #333;padding:10px;background:#f0f0f0;text-align:right;width:25%">${label}</th><td style="border:1px solid #333;padding:10px;text-align:right" colspan="3">${value}</td></tr>`;
-    }
-
-    let html=`<div style="border:2px solid #333;margin-bottom:30px;padding:20px;background:#fff;color:#000;page-break-inside:avoid"><div style="text-align:center;border-bottom:2px solid #667eea;padding-bottom:15px;margin-bottom:20px"><h2 style="color:#667eea;margin:0">Zoom</h2><p style="color:#666;margin:5px 0 0">${new Date().toLocaleDateString('ar-SA')}</p></div><h3 style="color:#333;border-bottom:1px solid #ccc;padding-bottom:5px">👤 ${customer.name}</h3><table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333">`;
-    html += addRow('الهاتف', customer.phone);
-    html += addRow('الولاية', customer.state + ' - ' + customer.governorate);
-    html += `</table>`;
-
-    if(Object.keys(mData).length > 0){
-        html+=`<h3 style="color:#333;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:20px">👷 بيانات مدير خط السير</h3><table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333">`;
-        html += addRow('نوع المعاملة', mData.transaction_type);
-        html += addRow('تم إرفاق الموقع', mData.location_attached);
-        html += addRow('تم إرفاق صورة', mData.photo_attached);
-        html += addRow('مصدر الماء', mData.water_source);
-        if(mData.softener === 'نعم'){
-            html += addRow('سوفتنر', 'نعم');
-            html += addRow('مقاس السوفتنر', mData.softener_size);
-            html += addRow('نوع السوفتنر', mData.softener_type);
-        }
-        html += addRow('الكهرباء', mData.electricity);
-        html += addRow('ضغط الماء', mData.water_pressure);
-        html += addRow('نوع المواسير', mData.pipes_type);
-        html += addRow('مقاس المواسير', mData.pipes_size);
-        html += addRow('نوع الطلب', mData.order_type);
-        html += addRow('اسم الباقة', mData.package_name);
-        html += addRowFull('تفاصيل الفلتر', mData.filter_details);
-        html += addRow('منتج آخر', mData.other_product);
-        html += addRow('الإجمالي', mData.total);
-        html += addRow('مقدم', mData.paid);
-        html += addRow('متبقي', mData.remaining);
-        html += addRow('توقيت الموعد', mData.appointment_time);
-        html += addRow('تاريخ الموعد', mData.appointment_date ? new Date(mData.appointment_date).toLocaleString('ar-SA') : '');
-        html += addRow('طباعة', mData.print);
-        html += addRowFull('لوكيشن', mData.location_link);
-        html += addRowFull('ملاحظات', mData.notes);
-        html += `</table>`;
-    }
-
-    if(Object.keys(sData).length > 0){
-        html+=`<h3 style="color:#333;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:20px">👨‍💼 بيانات المشرف</h3><table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333">`;
-        html += addRow('اسم المشرف', sData.supervisor_name);
-        html += addRow('فني التركيب', sData.technician);
-        html += addRow('السيارة', sData.car);
-        html += addRow('حالة التركيب', sData.installation_status);
-        html += addRowFull('سبب التأجيل', sData.delay_reason);
-        html += addRowFull('الأغراض', sData.items);
-        html += addRowFull('الأغراض المسترجعة', sData.returned_items);
-        html += addRow('بداية العمل', sData.start_time);
-        html += addRow('انتهاء العمل', sData.end_time);
-        html += addRow('قطع غيار', sData.spare_needed);
-        html += addRowFull('تفاصيل قطع الغيار', sData.spare_details);
-        html += addRow('المبلغ المدفوع', sData.amount_paid);
-        html += addRow('في حساب', sData.in_account);
-        html += addRow('باقي', sData.balance);
-        html += addRow('ميعاد الدفع', sData.payment_date);
-        html += addRow('TDS قبل الفلتر', sData.tds_before);
-        html += addRow('TDS بعد الفلتر', sData.tds_after);
-        html += addRow('مكان الجهاز', sData.device_location);
-        html += addRow('التأكد من الوصلات', sData.check_connections);
-        html += addRow('التأكد من الكهرباء', sData.check_electricity);
-        html += addRow('التأكد من الصرف', sData.check_drain);
-        html += addRow('ضغط الدخول', sData.check_inlet_pressure);
-        html += addRow('ضغط الموتور', sData.check_motor_pressure);
-        html += addRow('كمية الإنتاج', sData.check_production);
-        html += addRow('ضغط الخزان', sData.check_tank_pressure);
-        html += addRow('التسريب', sData.check_leak);
-        html += addRow('طعم الماء', sData.taste_check);
-        html += addRow('لون الماء', sData.color_check);
-        // New fields in print
-        html += addRow('سوفتنر', sData.softener);
-        html += addRow('نوع الماء', sData.water_type);
-        html += addRow('تقييم الوصلات', sData.connections_rating);
-        html += addRow('تقييم الكهرباء', sData.electricity_rating);
-        html += addRow('نوع الوصلات', sData.connection_type);
-        html += addRow('ضغط الدخول قيمة', sData.inlet_pressure_value);
-        html += addRow('فاكهوم', sData.vacuum_installed);
-        html += addRow('حالة الرزين', sData.resin_status);
-        html += addRow('TDS قبل السوفتنر', sData.tds_before_softener);
-        html += addRow('TDS بعد السوفتنر', sData.tds_after_softener);
-        html += addRow('الكلس قبل السوفتنر', sData.limescale_before_softener);
-        html += addRow('الكلس بعد السوفتنر', sData.limescale_after_softener);
-        html += addRow('تسريبات', sData.leak_check);
-        html += addRow('لون بعد السوفتنر', sData.color_after_softener);
-        html += addRow('وقت القسيل العكسي', sData.backwash_time);
-        html += addRow('مدة القسيل العكسي', sData.backwash_duration);
-        html += addRow('وقت القسيل السريع', sData.fast_rinse_time);
-        html += addRow('منسوب الملح', sData.salt_level);
-        html += addRow('مظلة', sData.has_shelter);
-        html += addRowFull('ملاحظات المشرف', sData.notes);
-        html += `</table>`;
-    }
-    html+=`</div>`;
-    const printContent=document.getElementById('printContent');
-    printContent.innerHTML=html;
+    let html=`<div style="border:2px solid #333;margin-bottom:30px;padding:20px;background:#fff;color:#000;page-break-inside:avoid">
+        <div style="text-align:center;border-bottom:2px solid #667eea;padding-bottom:15px;margin-bottom:20px">
+        <h2 style="color:#667eea;margin:0">Zoom</h2>
+        <p style="color:#666;margin:5px 0 0">${new Date().toLocaleDateString('ar-SA')}</p></div>
+        <h3 style="color:#333;border-bottom:1px solid #ccc;padding-bottom:5px">👤 ${customer.name}</h3>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333">
+        <tr><th style="border:1px solid #333;padding:10px;background:#f0f0f0;text-align:right;width:25%">الهاتف</th><td style="border:1px solid #333;padding:10px;text-align:right">${customer.phone}</td></tr>
+        <tr><th style="border:1px solid #333;padding:10px;background:#f0f0f0;text-align:right;width:25%">الولاية</th><td style="border:1px solid #333;padding:10px;text-align:right">${customer.state} - ${customer.governorate}</td></tr>
+        </table>${buildPrintRows(mData,sData)}</div>`;
+    document.getElementById('printContent').innerHTML=html;
     document.getElementById('printModal').classList.add('active');
 }
 
 function showPrintModal(){
-    const printContent=document.getElementById('printContent');
     let html='';
-
-    function addRow(label, value){
-        if(!value || value === '' || value === 'false' || value === 'لا') return '';
-        return `<tr><th style="border:1px solid #333;padding:10px;background:#f0f0f0;text-align:right;width:25%">${label}</th><td style="border:1px solid #333;padding:10px;text-align:right;width:25%">${value}</td></tr>`;
-    }
-    function addRowFull(label, value){
-        if(!value || value === '' || value === 'false' || value === 'لا') return '';
-        return `<tr><th style="border:1px solid #333;padding:10px;background:#f0f0f0;text-align:right;width:25%">${label}</th><td style="border:1px solid #333;padding:10px;text-align:right" colspan="3">${value}</td></tr>`;
-    }
-
     customers.forEach((customer)=>{
-        const index = customer.rowIndex;
+        const index=customer.rowIndex;
         const mData=managerData[index]||{};
         const sData=supervisorData[index]||{};
-        if(Object.keys(mData).length===0&&Object.keys(sData).length===0)return;
-
-        html+=`<div style="border:2px solid #333;margin-bottom:30px;padding:20px;background:#fff;color:#000;page-break-inside:avoid"><div style="text-align:center;border-bottom:2px solid #667eea;padding-bottom:15px;margin-bottom:20px"><h2 style="color:#667eea;margin:0">Zoom</h2><p style="color:#666;margin:5px 0 0">${new Date().toLocaleDateString('ar-SA')}</p></div><h3 style="color:#333;border-bottom:1px solid #ccc;padding-bottom:5px">👤 ${customer.name}</h3><table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333">`;
-        html += addRow('الهاتف', customer.phone);
-        html += addRow('الولاية', customer.state + ' - ' + customer.governorate);
-        html += `</table>`;
-
-        if(Object.keys(mData).length > 0){
-            html+=`<h3 style="color:#333;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:20px">👷 بيانات مدير خط السير</h3><table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333">`;
-            html += addRow('نوع المعاملة', mData.transaction_type);
-            html += addRow('تم إرفاق الموقع', mData.location_attached);
-            html += addRow('تم إرفاق صورة', mData.photo_attached);
-            html += addRow('مصدر الماء', mData.water_source);
-            if(mData.softener === 'نعم'){
-                html += addRow('سوفتنر', 'نعم');
-                html += addRow('مقاس السوفتنر', mData.softener_size);
-                html += addRow('نوع السوفتنر', mData.softener_type);
-            }
-            html += addRow('الكهرباء', mData.electricity);
-            html += addRow('ضغط الماء', mData.water_pressure);
-            html += addRow('نوع المواسير', mData.pipes_type);
-            html += addRow('مقاس المواسير', mData.pipes_size);
-            html += addRow('نوع الطلب', mData.order_type);
-            html += addRow('اسم الباقة', mData.package_name);
-            html += addRowFull('تفاصيل الفلتر', mData.filter_details);
-            html += addRow('منتج آخر', mData.other_product);
-            html += addRow('الإجمالي', mData.total);
-            html += addRow('مقدم', mData.paid);
-            html += addRow('متبقي', mData.remaining);
-            html += addRow('توقيت الموعد', mData.appointment_time);
-            html += addRow('تاريخ الموعد', mData.appointment_date ? new Date(mData.appointment_date).toLocaleString('ar-SA') : '');
-            html += addRow('طباعة', mData.print);
-            html += addRowFull('لوكيشن', mData.location_link);
-            html += addRowFull('ملاحظات', mData.notes);
-            html += `</table>`;
-        }
-
-        if(Object.keys(sData).length > 0){
-            html+=`<h3 style="color:#333;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:20px">👨‍💼 بيانات المشرف</h3><table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333">`;
-            html += addRow('اسم المشرف', sData.supervisor_name);
-            html += addRow('فني التركيب', sData.technician);
-            html += addRow('السيارة', sData.car);
-            html += addRow('حالة التركيب', sData.installation_status);
-            html += addRowFull('سبب التأجيل', sData.delay_reason);
-            html += addRowFull('الأغراض', sData.items);
-            html += addRowFull('الأغراض المسترجعة', sData.returned_items);
-            html += addRow('بداية العمل', sData.start_time);
-            html += addRow('انتهاء العمل', sData.end_time);
-            html += addRow('قطع غيار', sData.spare_needed);
-            html += addRowFull('تفاصيل قطع الغيار', sData.spare_details);
-            html += addRow('المبلغ المدفوع', sData.amount_paid);
-            html += addRow('في حساب', sData.in_account);
-            html += addRow('باقي', sData.balance);
-            html += addRow('ميعاد الدفع', sData.payment_date);
-            html += addRow('TDS قبل الفلتر', sData.tds_before);
-            html += addRow('TDS بعد الفلتر', sData.tds_after);
-            html += addRow('مكان الجهاز', sData.device_location);
-            html += addRow('التأكد من الوصلات', sData.check_connections);
-            html += addRow('التأكد من الكهرباء', sData.check_electricity);
-            html += addRow('التأكد من الصرف', sData.check_drain);
-            html += addRow('ضغط الدخول', sData.check_inlet_pressure);
-            html += addRow('ضغط الموتور', sData.check_motor_pressure);
-            html += addRow('كمية الإنتاج', sData.check_production);
-            html += addRow('ضغط الخزان', sData.check_tank_pressure);
-            html += addRow('التسريب', sData.check_leak);
-            html += addRow('طعم الماء', sData.taste_check);
-            html += addRow('لون الماء', sData.color_check);
-            // New fields in print
-            html += addRow('سوفتنر', sData.softener);
-            html += addRow('نوع الماء', sData.water_type);
-            html += addRow('تقييم الوصلات', sData.connections_rating);
-            html += addRow('تقييم الكهرباء', sData.electricity_rating);
-            html += addRow('نوع الوصلات', sData.connection_type);
-            html += addRow('ضغط الدخول قيمة', sData.inlet_pressure_value);
-            html += addRow('فاكهوم', sData.vacuum_installed);
-            html += addRow('حالة الرزين', sData.resin_status);
-            html += addRow('TDS قبل السوفتنر', sData.tds_before_softener);
-            html += addRow('TDS بعد السوفتنر', sData.tds_after_softener);
-            html += addRow('الكلس قبل السوفتنر', sData.limescale_before_softener);
-            html += addRow('الكلس بعد السوفتنر', sData.limescale_after_softener);
-            html += addRow('تسريبات', sData.leak_check);
-            html += addRow('لون بعد السوفتنر', sData.color_after_softener);
-            html += addRow('وقت القسيل العكسي', sData.backwash_time);
-            html += addRow('مدة القسيل العكسي', sData.backwash_duration);
-            html += addRow('وقت القسيل السريع', sData.fast_rinse_time);
-            html += addRow('منسوب الملح', sData.salt_level);
-            html += addRow('مظلة', sData.has_shelter);
-            html += addRowFull('ملاحظات المشرف', sData.notes);
-            html += `</table>`;
-        }
-        html+=`</div>`;
+        if(Object.keys(mData).length===0&&Object.keys(sData).length===0) return;
+        html+=`<div style="border:2px solid #333;margin-bottom:30px;padding:20px;background:#fff;color:#000;page-break-inside:avoid">
+            <div style="text-align:center;border-bottom:2px solid #667eea;padding-bottom:15px;margin-bottom:20px">
+            <h2 style="color:#667eea;margin:0">Zoom</h2>
+            <p style="color:#666;margin:5px 0 0">${new Date().toLocaleDateString('ar-SA')}</p></div>
+            <h3 style="color:#333;border-bottom:1px solid #ccc;padding-bottom:5px">👤 ${customer.name}</h3>
+            <table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333">
+            <tr><th style="border:1px solid #333;padding:10px;background:#f0f0f0;text-align:right;width:25%">الهاتف</th><td style="border:1px solid #333;padding:10px;text-align:right">${customer.phone}</td></tr>
+            <tr><th style="border:1px solid #333;padding:10px;background:#f0f0f0;text-align:right;width:25%">الولاية</th><td style="border:1px solid #333;padding:10px;text-align:right">${customer.state} - ${customer.governorate}</td></tr>
+            </table>${buildPrintRows(mData,sData)}</div>`;
     });
-    if(html==='')html='<p style="text-align:center;color:#a0a0a0">لا توجد بيانات للطباعة</p>';
-    printContent.innerHTML=html;
+    if(html==='') html='<p style="text-align:center;color:#a0a0a0">لا توجد بيانات للطباعة</p>';
+    document.getElementById('printContent').innerHTML=html;
     document.getElementById('printModal').classList.add('active');
 }
 
@@ -1233,19 +1088,14 @@ function printReport(){
     const content=document.getElementById('printContent').innerHTML;
     const printWindow=window.open('','_blank');
     printWindow.document.write(`<html dir="rtl" lang="ar"><head><title>تقرير Zoom</title><style>
-        @page { size: A4; margin: 15mm; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fff; color: #000; padding: 20px; }
-        h2 { color: #667eea; text-align: center; border-bottom: 2px solid #667eea; padding-bottom: 15px; margin-bottom: 20px; }
-        h3 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #333; }
-        th, td { border: 1px solid #333; padding: 10px; text-align: right; }
-        th { background: #f0f0f0; width: 25%; }
-        td { width: 25%; }
-        .page-break { page-break-after: always; }
-        @media print {
-            body { background: #fff; }
-            .no-print { display: none; }
-        }
+        @page{size:A4;margin:15mm}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#fff;color:#000;padding:20px}
+        h2{color:#667eea;text-align:center;border-bottom:2px solid #667eea;padding-bottom:15px;margin-bottom:20px}
+        h3{color:#333;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:20px}
+        table{width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333}
+        th,td{border:1px solid #333;padding:10px;text-align:right}
+        th{background:#f0f0f0;width:25%}
+        @media print{body{background:#fff}.no-print{display:none}}
     </style></head><body>${content}</body></html>`);
     printWindow.document.close();
     printWindow.print();
@@ -1254,98 +1104,102 @@ function printReport(){
 function showSaveIndicator(show){document.getElementById('saveIndicator').classList.toggle('show',show)}
 
 function viewDetails(index){
-    const c=customers.find(cust => cust.rowIndex === index) || customers[index];
+    const c=customers.find(cust=>cust.rowIndex===index)||customers[index];
     const mData=managerData[index]||{};
     const sData=supervisorData[index]||{};
-
-    function detailRow(label, value){
-        if(!value || value === '' || value === 'false' || value === 'لا') return '';
+    function detailRow(label,value){
+        if(!value||value===''||value==='false'||value==='لا') return '';
         return `<div class="detail-row"><span class="detail-label">${label}:</span><span class="detail-value">${value}</span></div>`;
     }
-
-    let html=`<div style="background:rgba(255,255,255,.1);border-radius:15px;padding:25px;max-width:700px;margin:0 auto"><h2 style="color:#fdcb6e;margin-bottom:20px;text-align:center">📋 تفاصيل العميل</h2><div style="margin-bottom:25px"><h3 style="color:#fff;margin-bottom:15px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:10px">👤 معلومات أساسية</h3><div class="detail-row"><span class="detail-label">الاسم:</span><span class="detail-value">${c.name}</span></div><div class="detail-row"><span class="detail-label">الهاتف:</span><span class="detail-value" style="direction:ltr">${c.phone}</span></div><div class="detail-row"><span class="detail-label">الولاية:</span><span class="detail-value">${c.state}</span></div><div class="detail-row"><span class="detail-label">المحافظة:</span><span class="detail-value">${c.governorate}</span></div></div>`;
-
-    if(currentUser === 'manager' && Object.keys(mData).length>0){
+    let html=`<div style="background:rgba(255,255,255,.1);border-radius:15px;padding:25px;max-width:700px;margin:0 auto">
+        <h2 style="color:#fdcb6e;margin-bottom:20px;text-align:center">📋 تفاصيل العميل</h2>
+        <div style="margin-bottom:25px">
+        <h3 style="color:#fff;margin-bottom:15px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:10px">👤 معلومات أساسية</h3>
+        <div class="detail-row"><span class="detail-label">الاسم:</span><span class="detail-value">${c.name}</span></div>
+        <div class="detail-row"><span class="detail-label">الهاتف:</span><span class="detail-value" style="direction:ltr">${c.phone}</span></div>
+        <div class="detail-row"><span class="detail-label">الولاية:</span><span class="detail-value">${c.state}</span></div>
+        <div class="detail-row"><span class="detail-label">المحافظة:</span><span class="detail-value">${c.governorate}</span></div></div>`;
+    if(currentUser==='manager'&&Object.keys(mData).length>0){
         html+=`<div style="margin-bottom:25px"><h3 style="color:#fdcb6e;margin-bottom:15px;border-bottom:1px solid rgba(253,203,110,.3);padding-bottom:10px">👷 بيانات مدير خط السير</h3>`;
-        html += detailRow('نوع المعاملة', mData.transaction_type);
-        html += detailRow('تم إرفاق الموقع', mData.location_attached);
-        html += detailRow('تم إرفاق صورة', mData.photo_attached);
-        html += detailRow('مصدر الماء', mData.water_source);
-        if(mData.softener === 'نعم'){
-            html += detailRow('سوفتنر', 'نعم');
-            html += detailRow('مقاس السوفتنر', mData.softener_size);
-            html += detailRow('نوع السوفتنر', mData.softener_type);
+        html+=detailRow('نوع المعاملة',mData.transaction_type);
+        html+=detailRow('تم إرفاق الموقع',mData.location_attached);
+        html+=detailRow('تم إرفاق صورة',mData.photo_attached);
+        html+=detailRow('مصدر الماء',mData.water_source);
+        if(mData.softener==='نعم'){
+            html+=detailRow('سوفتنر','نعم');
+            html+=detailRow('مقاس السوفتنر',mData.softener_size);
+            html+=detailRow('نوع السوفتنر',mData.softener_type);
         }
-        html += detailRow('الكهرباء', mData.electricity);
-        html += detailRow('ضغط الماء', mData.water_pressure);
-        html += detailRow('نوع المواسير', mData.pipes_type);
-        html += detailRow('مقاس المواسير', mData.pipes_size);
-        html += detailRow('نوع الطلب', mData.order_type);
-        html += detailRow('اسم الباقة', mData.package_name);
-        html += detailRow('تفاصيل الفلتر', mData.filter_details);
-        html += detailRow('منتج آخر', mData.other_product);
-        html += detailRow('الإجمالي', mData.total);
-        html += detailRow('مقدم', mData.paid);
-        html += detailRow('متبقي', mData.remaining);
-        html += detailRow('توقيت الموعد', mData.appointment_time);
-        html += detailRow('تاريخ الموعد', mData.appointment_date);
-        html += detailRow('طباعة', mData.print);
-        html += detailRow('لوكيشن', mData.location_link);
-        html += detailRow('ملاحظات', mData.notes);
-        html += `</div>`;
+        html+=detailRow('الكهرباء',mData.electricity);
+        html+=detailRow('ضغط الماء',mData.water_pressure);
+        html+=detailRow('نوع المواسير',mData.pipes_type);
+        html+=detailRow('مقاس المواسير',mData.pipes_size);
+        html+=detailRow('نوع الطلب',mData.order_type);
+        html+=detailRow('اسم الباقة',mData.package_name);
+        html+=detailRow('تفاصيل الفلتر',mData.filter_details);
+        html+=detailRow('منتج آخر',mData.other_product);
+        html+=detailRow('الإجمالي',mData.total);
+        html+=detailRow('مقدم',mData.paid);
+        html+=detailRow('متبقي',mData.remaining);
+        html+=detailRow('توقيت الموعد',mData.appointment_time);
+        html+=detailRow('تاريخ الموعد',mData.appointment_date);
+        html+=detailRow('طباعة',mData.print);
+        html+=detailRow('لوكيشن',mData.location_link);
+        html+=detailRow('ملاحظات',mData.notes);
+        html+=`</div>`;
     }
     if(Object.keys(sData).length>0){
         html+=`<div style="margin-bottom:25px"><h3 style="color:#00b894;margin-bottom:15px;border-bottom:1px solid rgba(0,184,148,.3);padding-bottom:10px">👨‍💼 بيانات المشرف</h3>`;
-        html += detailRow('اسم المشرف', sData.supervisor_name);
-        html += detailRow('فني التركيب', sData.technician);
-        html += detailRow('السيارة', sData.car);
-        html += detailRow('حالة التركيب', sData.installation_status);
-        html += detailRow('سبب التأجيل', sData.delay_reason);
-        html += detailRow('الأغراض', sData.items);
-        html += detailRow('الأغراض المسترجعة', sData.returned_items);
-        html += detailRow('بداية العمل', sData.start_time);
-        html += detailRow('انتهاء العمل', sData.end_time);
-        html += detailRow('قطع غيار', sData.spare_needed);
-        html += detailRow('تفاصيل قطع الغيار', sData.spare_details);
-        html += detailRow('المبلغ المدفوع', sData.amount_paid);
-        html += detailRow('في حساب', sData.in_account);
-        html += detailRow('باقي', sData.balance);
-        html += detailRow('ميعاد الدفع', sData.payment_date);
-        html += detailRow('TDS قبل الفلتر', sData.tds_before);
-        html += detailRow('TDS بعد الفلتر', sData.tds_after);
-        html += detailRow('مكان الجهاز', sData.device_location);
-        html += detailRow('التأكد من الوصلات', sData.check_connections);
-        html += detailRow('التأكد من الكهرباء', sData.check_electricity);
-        html += detailRow('التأكد من الصرف', sData.check_drain);
-        html += detailRow('ضغط الدخول', sData.check_inlet_pressure);
-        html += detailRow('ضغط الموتور', sData.check_motor_pressure);
-        html += detailRow('كمية الإنتاج', sData.check_production);
-        html += detailRow('ضغط الخزان', sData.check_tank_pressure);
-        html += detailRow('التسريب', sData.check_leak);
-        html += detailRow('طعم الماء', sData.taste_check);
-        html += detailRow('لون الماء', sData.color_check);
-        // New fields in view details
-        html += detailRow('سوفتنر', sData.softener);
-        html += detailRow('نوع الماء', sData.water_type);
-        html += detailRow('تقييم الوصلات', sData.connections_rating);
-        html += detailRow('تقييم الكهرباء', sData.electricity_rating);
-        html += detailRow('نوع الوصلات', sData.connection_type);
-        html += detailRow('ضغط الدخول قيمة', sData.inlet_pressure_value);
-        html += detailRow('فاكهوم', sData.vacuum_installed);
-        html += detailRow('حالة الرزين', sData.resin_status);
-        html += detailRow('TDS قبل السوفتنر', sData.tds_before_softener);
-        html += detailRow('TDS بعد السوفتنر', sData.tds_after_softener);
-        html += detailRow('الكلس قبل السوفتنر', sData.limescale_before_softener);
-        html += detailRow('الكلس بعد السوفتنر', sData.limescale_after_softener);
-        html += detailRow('تسريبات', sData.leak_check);
-        html += detailRow('لون بعد السوفتنر', sData.color_after_softener);
-        html += detailRow('وقت القسيل العكسي', sData.backwash_time);
-        html += detailRow('مدة القسيل العكسي', sData.backwash_duration);
-        html += detailRow('وقت القسيل السريع', sData.fast_rinse_time);
-        html += detailRow('منسوب الملح', sData.salt_level);
-        html += detailRow('مظلة', sData.has_shelter);
-        html += detailRow('ملاحظات المشرف', sData.notes);
-        html += `</div>`;
+        html+=detailRow('اسم المشرف',sData.supervisor_name);
+        html+=detailRow('فني التركيب',sData.technician);
+        html+=detailRow('السيارة',sData.car);
+        html+=detailRow('حالة التركيب',sData.installation_status);
+        html+=detailRow('سبب التأجيل',sData.delay_reason);
+        html+=detailRow('الأغراض',sData.items);
+        html+=detailRow('الأغراض المسترجعة',sData.returned_items);
+        html+=detailRow('بداية العمل',sData.start_time);
+        html+=detailRow('انتهاء العمل',sData.end_time);
+        html+=detailRow('قطع غيار',sData.spare_needed);
+        html+=detailRow('تفاصيل قطع الغيار',sData.spare_details);
+        html+=detailRow('المبلغ المدفوع',sData.amount_paid);
+        html+=detailRow('في حساب',sData.in_account);
+        html+=detailRow('باقي',sData.balance);
+        html+=detailRow('ميعاد الدفع',sData.payment_date);
+        html+=detailRow('TDS قبل الفلتر',sData.tds_before);
+        html+=detailRow('TDS بعد الفلتر',sData.tds_after);
+        html+=detailRow('مكان الجهاز',sData.device_location);
+        html+=detailRow('التأكد من الوصلات',sData.check_connections);
+        html+=detailRow('التأكد من الكهرباء',sData.check_electricity);
+        html+=detailRow('التأكد من الصرف',sData.check_drain);
+        html+=detailRow('ضغط الدخول',sData.check_inlet_pressure);
+        html+=detailRow('ضغط الموتور',sData.check_motor_pressure);
+        html+=detailRow('كمية الإنتاج',sData.check_production);
+        html+=detailRow('ضغط الخزان',sData.check_tank_pressure);
+        html+=detailRow('التسريب',sData.check_leak);
+        html+=detailRow('طعم الماء',sData.taste_check);
+        html+=detailRow('لون الماء',sData.color_check);
+        // FIX: use supervisor_softener key
+        html+=detailRow('سوفتنر',sData.supervisor_softener);
+        html+=detailRow('نوع الماء',sData.water_type);
+        html+=detailRow('تقييم الوصلات',sData.connections_rating);
+        html+=detailRow('تقييم الكهرباء',sData.electricity_rating);
+        html+=detailRow('نوع الوصلات',sData.connection_type);
+        html+=detailRow('ضغط الدخول قيمة',sData.inlet_pressure_value);
+        html+=detailRow('فاكيوم',sData.vacuum_installed);
+        html+=detailRow('حالة الرزين',sData.resin_status);
+        html+=detailRow('TDS قبل السوفتنر',sData.tds_before_softener);
+        html+=detailRow('TDS بعد السوفتنر',sData.tds_after_softener);
+        html+=detailRow('الكلس قبل السوفتنر',sData.limescale_before_softener);
+        html+=detailRow('الكلس بعد السوفتنر',sData.limescale_after_softener);
+        html+=detailRow('تسريبات',sData.leak_check);
+        html+=detailRow('لون بعد السوفتنر',sData.color_after_softener);
+        html+=detailRow('وقت الغسيل العكسي',sData.backwash_time);
+        html+=detailRow('مدة الغسيل البطئ',sData.backwash_duration);
+        html+=detailRow('وقت الغسيل السريع',sData.fast_rinse_time);
+        html+=detailRow('منسوب الملح',sData.salt_level);
+        html+=detailRow('مظلة',sData.has_shelter);
+        html+=detailRow('ملاحظات المشرف',sData.notes);
+        html+=`</div>`;
     }
     html+=`<div style="text-align:center;margin-top:20px"><button class="btn btn-secondary" onclick="closeModal('viewModal')">إغلاق</button></div></div>`;
     const modal=document.createElement('div');
@@ -1356,7 +1210,11 @@ function viewDetails(index){
     document.body.appendChild(modal);
 }
 
-function closeModal(id){document.getElementById(id).classList.remove('active')}
+function closeModal(id){
+    const el=document.getElementById(id);
+    if(el) el.classList.remove('active');
+}
+
 function showAlert(message,type){
     const alert=document.getElementById('alert');
     alert.textContent=message;
@@ -1368,7 +1226,7 @@ document.addEventListener('keydown',function(e){
     if(e.key==='Escape'){
         ['managerModal','supervisorModal','printModal','printSuccessModal'].forEach(id=>closeModal(id));
         const viewModal=document.getElementById('viewModal');
-        if(viewModal)viewModal.remove();
+        if(viewModal) viewModal.remove();
     }
 });
 </script>
