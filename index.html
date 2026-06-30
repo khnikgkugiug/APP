@@ -295,6 +295,13 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <h3>👤 معلومات المشرف</h3>
 <div class="form-grid">
 <div class="form-group"><label>اسم المشرف</label><select id="s_supervisor_name"><option value="">اختر...</option><option>عبداللطيف</option><option>معاذ</option><option>هاني</option><option>عمر</option></select></div>
+<div class="form-group" id="s_location_link_group" style="display:none">
+<label>📍 لوكيشن العميل</label>
+<div style="display:flex;gap:10px;align-items:center">
+<input type="text" id="s_location_link_display" readonly style="flex:1;background:rgba(255,255,255,.12);color:#fdcb6e;font-weight:600">
+<a id="s_location_link_btn" href="#" target="_blank" class="btn btn-primary" style="text-decoration:none;padding:10px 15px">🗺️ فتح في خرائط Google</a>
+</div>
+</div>
 </div>
 </div>
 <div class="form-section">
@@ -775,6 +782,26 @@ function openSupervisorModal(index){
     const c=customers.find(cust=>cust.rowIndex===index)||customers[index];
     document.getElementById('s_name').value=c.name;
     document.getElementById('s_phone').value=c.phone;
+
+    // Show location link if manager filled it
+    const mData=managerData[index]||{};
+    const locationLink=mData.location_link||'';
+    const locationGroup=document.getElementById('s_location_link_group');
+    const locationDisplay=document.getElementById('s_location_link_display');
+    const locationBtn=document.getElementById('s_location_link_btn');
+
+    if(locationLink){
+        locationGroup.style.display='block';
+        locationDisplay.value=locationLink;
+        // Build Google Maps URL
+        const mapsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(locationLink);
+        locationBtn.href=mapsUrl;
+    }else{
+        locationGroup.style.display='none';
+        locationDisplay.value='';
+        locationBtn.href='#';
+    }
+
     const ex=supervisorData[index]||{};
     document.getElementById('s_supervisor_name').value=ex.supervisor_name||c.supervisorName||'';
     document.getElementById('s_technician').value=ex.technician||'';
