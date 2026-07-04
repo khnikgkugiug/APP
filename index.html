@@ -112,6 +112,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 @media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}}
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -622,6 +623,12 @@ function applyFilters(){
             const supervisorName=mData.supervisor_name||c.supervisorName||'';
             if(supervisorName!==supervisorFilter) return false;
         }
+        // Hide "تأجيل" customers for supervisors
+        if(currentUser==='supervisor'){
+            const mData=managerData[c.rowIndex]||{};
+            const transactionType=mData.transaction_type||c.transactionType||'';
+            if(transactionType==='تأجيل') return false;
+        }
         return true;
     });
     renderCustomers();
@@ -671,7 +678,10 @@ function renderCustomers(){
         const hasM=managerData[index]&&Object.keys(managerData[index]).length>0;
         const hasS=supervisorData[index]&&Object.keys(supervisorData[index]).length>0;
         let statusText='قيد الانتظار',statusClass='status-pending';
-        if(hasM&&!hasS){statusText='بانتظار المشرف';statusClass='status-manager-done';}
+        const mDataForStatus=managerData[index]||{};
+        const transactionTypeForStatus=mDataForStatus.transaction_type||customer.transactionType||'';
+        if(transactionTypeForStatus==='تأجيل'){statusText='مؤجل';statusClass='status-pending';}
+        else if(hasM&&!hasS){statusText='بانتظار المشرف';statusClass='status-manager-done';}
         else if(hasS){statusText='مكتمل';statusClass='status-completed';}
         const card=document.createElement('div');
         card.className='customer-card';
