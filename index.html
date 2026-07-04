@@ -554,33 +554,45 @@ async function loadSheetData(){
 
 function parseSheetDate(dateStr){
     if(!dateStr) return null;
-    // Try direct parse first (handles ISO format like 2026-07-05)
-    let date=new Date(dateStr);
-    if(!isNaN(date.getTime())) return date;
+    // Clean the string - remove any extra spaces
+    dateStr = dateStr.toString().trim();
 
-    const parts=dateStr.split(/[/-]/);
-    if(parts.length===3){
-        const p1=parseInt(parts[0]), p2=parseInt(parts[1]), p3=parseInt(parts[2]);
-        // Format: year-month-day (e.g., 2026-7-5 = 5 July 2026)
-        if(p1>1000){
-            date=new Date(p1, p2-1, p3);
+    // Try direct parse first (handles 2026-7-5, 2026/7/5, etc.)
+    let date = new Date(dateStr);
+    if(!isNaN(date.getTime())) {
+        // Ensure we're using local timezone by reconstructing
+        const y = date.getFullYear();
+        const m = date.getMonth();
+        const d = date.getDate();
+        return new Date(y, m, d);
+    }
+
+    const parts = dateStr.split(/[/-]/);
+    if(parts.length === 3){
+        const p1 = parseInt(parts[0].trim());
+        const p2 = parseInt(parts[1].trim());
+        const p3 = parseInt(parts[2].trim());
+
+        // If first part is a year (4 digits)
+        if(p1 > 1000){
+            date = new Date(p1, p2 - 1, p3);
             if(!isNaN(date.getTime())) return date;
         }
-        // Format: day-month-year (fallback)
-        if(p3>1000){
-            date=new Date(p3, p2-1, p1);
+        // If last part is a year (4 digits) - day/month/year
+        if(p3 > 1000){
+            date = new Date(p3, p2 - 1, p1);
             if(!isNaN(date.getTime())) return date;
         }
-        // Format: month-day-year (fallback)
-        date=new Date(p3, p1-1, p2);
-        if(!isNaN(date.getTime())) return date;
     }
     return null;
 }
 
 function isSameDate(d1,d2){
     if(!d1||!d2) return false;
-    return d1.getFullYear()===d2.getFullYear()&&d1.getMonth()===d2.getMonth()&&d1.getDate()===d2.getDate();
+    // Normalize both dates to midnight local time
+    const nd1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
+    const nd2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+    return nd1.getTime() === nd2.getTime();
 }
 
 function isThisWeek(date){
@@ -614,7 +626,8 @@ function applyFilters(){
             else if(dateFilter==='tomorrow'){if(!isSameDate(c.parsedDate,tomorrow)) return false;}
             else if(dateFilter==='week'){if(!isThisWeek(c.parsedDate)) return false;}
             else if(dateFilter==='custom'&&customDateStr){
-                const customDate=new Date(customDateStr);customDate.setHours(0,0,0,0);
+                const customDateParts = customDateStr.split('-');
+                const customDate = new Date(parseInt(customDateParts[0]), parseInt(customDateParts[1])-1, parseInt(customDateParts[2]));
                 if(!isSameDate(c.parsedDate,customDate)) return false;
             }
         }
