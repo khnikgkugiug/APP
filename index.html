@@ -537,6 +537,15 @@ async function loadSheetData(){
             rawData:row
         })).filter(c=>c.name);
         customers.forEach(c=>{c.parsedDate=parseSheetDate(c.date);});
+        // DEBUG: Log first few dates
+        console.log('=== DATE DEBUG ===');
+        customers.slice(0,3).forEach(c=>{
+            console.log('Raw date:', c.date, '| Parsed:', c.parsedDate, '| Type:', typeof c.date);
+        });
+        const today = new Date(); today.setHours(0,0,0,0);
+        console.log('Today:', today);
+        console.log('Sample isSameDate:', customers[0] ? isSameDate(customers[0].parsedDate, today) : 'no customers');
+        console.log('===================');
         managerData=savedManager;
         supervisorData=savedSupervisor;
         applyFilters();
@@ -554,45 +563,21 @@ async function loadSheetData(){
 
 function parseSheetDate(dateStr){
     if(!dateStr) return null;
-    // Clean the string - remove any extra spaces
-    dateStr = dateStr.toString().trim();
-
-    // Try direct parse first (handles 2026-7-5, 2026/7/5, etc.)
-    let date = new Date(dateStr);
-    if(!isNaN(date.getTime())) {
-        // Ensure we're using local timezone by reconstructing
-        const y = date.getFullYear();
-        const m = date.getMonth();
-        const d = date.getDate();
-        return new Date(y, m, d);
-    }
-
-    const parts = dateStr.split(/[/-]/);
-    if(parts.length === 3){
-        const p1 = parseInt(parts[0].trim());
-        const p2 = parseInt(parts[1].trim());
-        const p3 = parseInt(parts[2].trim());
-
-        // If first part is a year (4 digits)
-        if(p1 > 1000){
-            date = new Date(p1, p2 - 1, p3);
-            if(!isNaN(date.getTime())) return date;
-        }
-        // If last part is a year (4 digits) - day/month/year
-        if(p3 > 1000){
-            date = new Date(p3, p2 - 1, p1);
-            if(!isNaN(date.getTime())) return date;
-        }
+    let date=new Date(dateStr);
+    if(!isNaN(date.getTime())) return date;
+    const parts=dateStr.split(/[/-]/);
+    if(parts.length===3){
+        date=new Date(parts[2],parts[1]-1,parts[0]);
+        if(!isNaN(date.getTime())) return date;
+        date=new Date(parts[2],parts[0]-1,parts[1]);
+        if(!isNaN(date.getTime())) return date;
     }
     return null;
 }
 
 function isSameDate(d1,d2){
     if(!d1||!d2) return false;
-    // Normalize both dates to midnight local time
-    const nd1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
-    const nd2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
-    return nd1.getTime() === nd2.getTime();
+    return d1.getFullYear()===d2.getFullYear()&&d1.getMonth()===d2.getMonth()&&d1.getDate()===d2.getDate();
 }
 
 function isThisWeek(date){
@@ -615,6 +600,10 @@ function applyFilters(){
     document.getElementById('customDateGroup').style.display=dateFilter==='custom'?'block':'none';
     const today=new Date();today.setHours(0,0,0,0);
     const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
+    console.log('=== FILTER DEBUG ===');
+    console.log('Date filter:', dateFilter);
+    console.log('Today:', today);
+    console.log('Total customers:', customers.length);
     filteredCustomers=customers.filter(c=>{
         if(searchTerm){
             const nameMatch=c.name.toLowerCase().includes(searchTerm);
@@ -626,8 +615,7 @@ function applyFilters(){
             else if(dateFilter==='tomorrow'){if(!isSameDate(c.parsedDate,tomorrow)) return false;}
             else if(dateFilter==='week'){if(!isThisWeek(c.parsedDate)) return false;}
             else if(dateFilter==='custom'&&customDateStr){
-                const customDateParts = customDateStr.split('-');
-                const customDate = new Date(parseInt(customDateParts[0]), parseInt(customDateParts[1])-1, parseInt(customDateParts[2]));
+                const customDate=new Date(customDateStr);customDate.setHours(0,0,0,0);
                 if(!isSameDate(c.parsedDate,customDate)) return false;
             }
         }
@@ -658,6 +646,8 @@ function applyFilters(){
         return true;
     });
     renderCustomers();
+    console.log('Filtered count:', filteredCustomers.length);
+    console.log('===================');
     const countEl=document.getElementById('resultsCount');
     countEl.textContent=filteredCustomers.length!==customers.length?`(${filteredCustomers.length} من ${customers.length})`:`(${customers.length} عميل)`;
 }
