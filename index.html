@@ -111,6 +111,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .highlight{background:#fdcb6e;color:#1a1a2e;padding:2px 4px;border-radius:3px;font-weight:600}
 @media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}}
 </style>
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -183,6 +184,16 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <option value="completed">مكتمل (الكل)</option>
 </select>
 </div>
+<div class="filter-group">
+<label>المشرف</label>
+<select id="supervisorFilter" onchange="applyFilters()">
+<option value="all">كل المشرفين</option>
+<option>عبداللطيف</option>
+<option>معاذ</option>
+<option>هاني</option>
+<option>عمر</option>
+</select>
+</div>
 </div>
 <div class="filter-actions">
 <button class="btn btn-secondary" onclick="clearFilters()">🗑️ مسح الفلاتر</button>
@@ -216,6 +227,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>اسم العميل</label><input type="text" id="m_name" readonly></div>
 <div class="form-group"><label>رقم الهاتف</label><input type="text" id="m_phone" readonly style="direction:ltr;text-align:right"></div>
 <div class="form-group"><label>الولاية</label><input type="text" id="m_state" readonly></div>
+<div class="form-group"><label>اسم المشرف</label><select id="m_supervisor_name"><option value="">اختر...</option><option>عبداللطيف</option><option>معاذ</option><option>هاني</option><option>عمر</option></select></div>
 </div>
 </div>
 <div class="form-section">
@@ -604,6 +616,12 @@ function applyFilters(){
             const transactionType=mData.transaction_type||c.transactionType||'';
             if(transactionType!==transactionFilter) return false;
         }
+        const supervisorFilter=document.getElementById('supervisorFilter').value;
+        if(supervisorFilter!=='all'){
+            const mData=managerData[c.rowIndex]||{};
+            const supervisorName=mData.supervisor_name||c.supervisorName||'';
+            if(supervisorName!==supervisorFilter) return false;
+        }
         return true;
     });
     renderCustomers();
@@ -613,9 +631,10 @@ function applyFilters(){
 
 function clearFilters(){
     document.getElementById('searchInput').value='';
-    document.getElementById('dateFilter').value='all';
+    document.getElementById('dateFilter').value='today';
     document.getElementById('statusFilter').value='all';
     document.getElementById('transactionFilter').value='all';
+    document.getElementById('supervisorFilter').value='all';
     document.getElementById('customDate').value='';
     document.getElementById('customDateGroup').style.display='none';
     applyFilters();
@@ -707,6 +726,7 @@ function openManagerModal(index){
     document.getElementById('m_phone').value=c.phone;
     document.getElementById('m_state').value=c.state;
     const ex=managerData[index]||{};
+    document.getElementById('m_supervisor_name').value=ex.supervisor_name||c.supervisorName||'';
     document.getElementById('m_transaction_type').value=ex.transaction_type||c.transactionType||'';
     document.getElementById('m_location_attached').value=ex.location_attached||'';
     document.getElementById('m_photo_attached').value=ex.photo_attached||'';
@@ -736,6 +756,7 @@ function openManagerModal(index){
 
 async function saveManagerData(){
     const data={
+        supervisor_name:document.getElementById('m_supervisor_name').value,
         transaction_type:document.getElementById('m_transaction_type').value,
         location_attached:document.getElementById('m_location_attached').value,
         photo_attached:document.getElementById('m_photo_attached').value,
@@ -1154,7 +1175,8 @@ function viewDetails(index){
         <div class="detail-row"><span class="detail-label">الاسم:</span><span class="detail-value">${c.name}</span></div>
         <div class="detail-row"><span class="detail-label">الهاتف:</span><span class="detail-value" style="direction:ltr">${c.phone}</span></div>
         <div class="detail-row"><span class="detail-label">الولاية:</span><span class="detail-value">${c.state}</span></div>
-        <div class="detail-row"><span class="detail-label">المحافظة:</span><span class="detail-value">${c.governorate}</span></div></div>`;
+        <div class="detail-row"><span class="detail-label">المحافظة:</span><span class="detail-value">${c.governorate}</span></div>
+        <div class="detail-row"><span class="detail-label">المشرف:</span><span class="detail-value">${mData.supervisor_name||c.supervisorName||'-'}</span></div></div>`;
     if(currentUser==='manager'&&Object.keys(mData).length>0){
         html+=`<div style="margin-bottom:25px"><h3 style="color:#fdcb6e;margin-bottom:15px;border-bottom:1px solid rgba(253,203,110,.3);padding-bottom:10px">👷 بيانات مدير خط السير</h3>`;
         html+=detailRow('نوع المعاملة',mData.transaction_type);
