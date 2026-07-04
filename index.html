@@ -537,15 +537,6 @@ async function loadSheetData(){
             rawData:row
         })).filter(c=>c.name);
         customers.forEach(c=>{c.parsedDate=parseSheetDate(c.date);});
-        // DEBUG: Log first few dates
-        console.log('=== DATE DEBUG ===');
-        customers.slice(0,3).forEach(c=>{
-            console.log('Raw date:', c.date, '| Parsed:', c.parsedDate, '| Type:', typeof c.date);
-        });
-        const today = new Date(); today.setHours(0,0,0,0);
-        console.log('Today:', today);
-        console.log('Sample isSameDate:', customers[0] ? isSameDate(customers[0].parsedDate, today) : 'no customers');
-        console.log('===================');
         managerData=savedManager;
         supervisorData=savedSupervisor;
         applyFilters();
@@ -563,15 +554,52 @@ async function loadSheetData(){
 
 function parseSheetDate(dateStr){
     if(!dateStr) return null;
-    let date=new Date(dateStr);
-    if(!isNaN(date.getTime())) return date;
-    const parts=dateStr.split(/[/-]/);
-    if(parts.length===3){
-        date=new Date(parts[2],parts[1]-1,parts[0]);
-        if(!isNaN(date.getTime())) return date;
-        date=new Date(parts[2],parts[0]-1,parts[1]);
-        if(!isNaN(date.getTime())) return date;
+    const original = dateStr;
+    dateStr = dateStr.toString().trim();
+
+    // Log for debugging
+    console.log('Parsing date:', original, '| trimmed:', dateStr);
+
+    // Try direct parse
+    let date = new Date(dateStr);
+    if(!isNaN(date.getTime())) {
+        console.log('  Direct parse result:', date.toDateString());
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     }
+
+    const parts = dateStr.split(/[/-]/);
+    if(parts.length === 3){
+        const p1 = parseInt(parts[0].trim());
+        const p2 = parseInt(parts[1].trim());
+        const p3 = parseInt(parts[2].trim());
+        console.log('  Parts:', p1, p2, p3);
+
+        // Try year-month-day (p1 > 1000)
+        if(p1 > 1000){
+            date = new Date(p1, p2 - 1, p3);
+            if(!isNaN(date.getTime())) {
+                console.log('  Parsed as Y-M-D:', date.toDateString());
+                return date;
+            }
+        }
+        // Try day-month-year (p3 > 1000, p1 <= 31, p2 <= 12)
+        if(p3 > 1000 && p1 <= 31 && p2 <= 12){
+            date = new Date(p3, p2 - 1, p1);
+            if(!isNaN(date.getTime())) {
+                console.log('  Parsed as D-M-Y:', date.toDateString());
+                return date;
+            }
+        }
+        // Try month-day-year (p3 > 1000, p2 <= 31, p1 <= 12)
+        if(p3 > 1000 && p2 <= 31 && p1 <= 12){
+            date = new Date(p3, p1 - 1, p2);
+            if(!isNaN(date.getTime())) {
+                console.log('  Parsed as M-D-Y:', date.toDateString());
+                return date;
+            }
+        }
+    }
+    console.log('  FAILED to parse');
     return null;
 }
 
@@ -600,10 +628,6 @@ function applyFilters(){
     document.getElementById('customDateGroup').style.display=dateFilter==='custom'?'block':'none';
     const today=new Date();today.setHours(0,0,0,0);
     const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
-    console.log('=== FILTER DEBUG ===');
-    console.log('Date filter:', dateFilter);
-    console.log('Today:', today);
-    console.log('Total customers:', customers.length);
     filteredCustomers=customers.filter(c=>{
         if(searchTerm){
             const nameMatch=c.name.toLowerCase().includes(searchTerm);
@@ -646,8 +670,6 @@ function applyFilters(){
         return true;
     });
     renderCustomers();
-    console.log('Filtered count:', filteredCustomers.length);
-    console.log('===================');
     const countEl=document.getElementById('resultsCount');
     countEl.textContent=filteredCustomers.length!==customers.length?`(${filteredCustomers.length} من ${customers.length})`:`(${customers.length} عميل)`;
 }
