@@ -824,19 +824,18 @@ function getCheckedTags(containerId){
     const container = document.getElementById(containerId);
     if(!container) return '';
     const checked = container.querySelectorAll('input[type="checkbox"]:checked');
-    return Array.from(checked).map(cb => cb.value).join(' + ');
+    return Array.from(checked).map(cb => cb.value).join(' ');  // ← مسافة
 }
 
 function setCheckedTags(containerId, valueStr){
     const container = document.getElementById(containerId);
     if(!container) return;
-    // Uncheck all first
     container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
         cb.closest('.tag').classList.remove('checked');
     });
     if(!valueStr) return;
-    const values = valueStr.split(' + ').map(v => v.trim());
+    const values = valueStr.split(' ').map(v => v.trim()).filter(v => v);
     container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         if(values.includes(cb.value)){
             cb.checked = true;
