@@ -261,11 +261,24 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-grid">
 <div class="form-group"><label>نوع الطلب المنزلي</label><select id="m_order_type"><option value="">اختر...</option><option>باقة</option><option>فلتر منفرد</option></select></div>
 <div class="form-group"><label>اسم الباقة</label><input type="text" id="m_package_name"></div>
-<div class="form-group"><label>تفاصيل الفلتر</label><select id="m_filter_details"><option value="">اختر...</option>
-<option>ديجيتال</option><option>100 اقتصادي</option><option>100 بلازما</option><option>400 اقتصادي</option><option>400 بلازما</option>
-<option>جلاكسي</option><option>مبرد ابيض زووم</option><option>مبرد اسود</option><option>مبرد ذهبي</option>
-<option>فلتر خزان 2</option><option>فلتر خزان 3</option><option>قارورة عادية</option><option>قارورة مسطحة</option>
-</select></div>
+<div class="form-group">
+    <label>تفاصيل الفلتر <small style="color:#fdcb6e">(اضغط Ctrl/Cmd للاختيار المتعدد)</small></label>
+    <select id="m_filter_details" multiple size="4">
+        <option>ديجيتال</option>
+        <option>100 اقتصادي</option>
+        <option>100 بلازما</option>
+        <option>400 اقتصادي</option>
+        <option>400 بلازما</option>
+        <option>جلاكسي</option>
+        <option>مبرد ابيض زووم</option>
+        <option>مبرد اسود</option>
+        <option>مبرد ذهبي</option>
+        <option>فلتر خزان 2</option>
+        <option>فلتر خزان 3</option>
+        <option>قارورة عادية</option>
+        <option>قارورة مسطحة</option>
+    </select>
+</div>
 <div class="form-group"><label>منتج آخر</label><input type="text" id="m_other_product"></div>
 <div class="form-group"><label>الإجمالي</label><input type="number" id="m_total"></div>
 <div class="form-group"><label>مقدم</label><input type="number" id="m_paid"></div>
