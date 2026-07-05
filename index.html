@@ -94,6 +94,21 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .print-btn-container p{color:#2c3e50;margin-bottom:10px;font-size:.9rem;font-weight:700}
 .conditional-field{display:none}
 .conditional-field.visible{display:block;animation:fadeIn 0.3s ease}
+
+/* Readonly fields styling */
+input[readonly],select[readonly],textarea[readonly]{
+    background:rgba(255,255,255,.06)!important;
+    cursor:not-allowed!important;
+    opacity:.8;
+}
+input[readonly]:focus,select[readonly]:focus,textarea[readonly]:focus{
+    border-color:rgba(255,255,255,.25)!important;
+    box-shadow:none!important;
+}
+
+/* Connection status animation */
+@keyframes pulse{0%{opacity:1}50%{opacity:.5}100%{opacity:1}}
+#connectionStatus{animation:pulse 2s infinite}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 .filter-section{background:rgba(255,255,255,.08);border-radius:15px;padding:20px;margin-bottom:25px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15)}
 .filter-section h3{color:#fdcb6e;margin-bottom:15px;font-size:1.1rem}
@@ -146,6 +161,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="main-content" id="mainContent">
 <div class="toolbar">
 <h2 id="userTitle">👷 مدير خط السير</h2>
+<span id="connectionStatus" style="font-size:.85rem;font-weight:600;color:#00b894;margin-right:auto;margin-left:15px">🟢 متصل</span>
+<span id="syncStatus" style="font-size:.85rem;font-weight:600;color:#fdcb6e;margin-right:10px;display:none">⏳ بيانات غير متزامنة</span>
 <div class="toolbar-buttons">
 <button class="btn btn-secondary" onclick="logout()">🚪 خروج</button>
 <button class="btn btn-primary" onclick="refreshData()">🔄 تحديث</button>
@@ -488,18 +505,196 @@ const CONFIG = {
     RETRY_DELAY: 2000
 };
 
+let isOnline=navigator.onLine;
+window.addEventListener('online',()=>{isOnline=true;updateConnectionStatus();showAlert('🌐 تم استعادة الاتصال','success');});
+window.addEventListener('offline',()=>{isOnline=false;updateConnectionStatus();showAlert('📴 انقطع الاتصال - البيانات محفوظة محلياً','error');});
+
+function updateConnectionStatus(){
+    const indicator=document.getElementById('connectionStatus');
+    if(indicator){
+        indicator.textContent=isOnline?'🟢 متصل':'🔴 غير متصل';
+        indicator.style.color=isOnline?'#00b894':'#e74c3c';
+    }
+}
+
+async function updateSyncStatus(){
+    const syncIndicator=document.getElementById('syncStatus');
+    if(!syncIndicator) return;
+    const queue=await getSyncQueue();
+    if(queue.length>0){
+        syncIndicator.textContent=`⏳ ${queue.length} بيانات غير متزامنة`;
+        syncIndicator.style.display='inline';
+    }else{
+        syncIndicator.style.display='none';
+    }
+}
+
 let currentUser=null,customers=[],filteredCustomers=[],currentCustomerIndex=-1,managerData={},supervisorData={},lastSavedIndex=-1;
 
-function loadFromLocalStorage(){
+// ===== SMART STORAGE: IndexedDB + Delta Sync =====
+const DB_NAME='ZoomAppDB';
+const DB_VERSION=1;
+let db=null;
+let pendingSync=new Set(); // Track which rows need sync
+let autoSaveInterval=null;
+
+async function initDB(){
+    return new Promise((resolve,reject)=>{
+        const request=indexedDB.open(DB_NAME,DB_VERSION);
+        request.onerror=()=>reject(request.error);
+        request.onsuccess=()=>{db=request.result;resolve(db);};
+        request.onupgradeneeded=(e)=>{
+            const db=e.target.result;
+            if(!db.objectStoreNames.contains('managerData')){
+                db.createObjectStore('managerData',{keyPath:'rowIndex'});
+            }
+            if(!db.objectStoreNames.contains('supervisorData')){
+                db.createObjectStore('supervisorData',{keyPath:'rowIndex'});
+            }
+            if(!db.objectStoreNames.contains('syncQueue')){
+                db.createObjectStore('syncQueue',{keyPath:'rowIndex'});
+            }
+        };
+    });
+}
+
+async function saveToIndexedDB(storeName,data){
+    if(!db) await initDB();
+    return new Promise((resolve,reject)=>{
+        const tx=db.transaction(storeName,'readwrite');
+        const store=tx.objectStore(storeName);
+        Object.entries(data).forEach(([rowIndex,rowData])=>{
+            store.put({rowIndex:parseInt(rowIndex),data:rowData});
+        });
+        tx.oncomplete=resolve;
+        tx.onerror=()=>reject(tx.error);
+    });
+}
+
+async function loadFromIndexedDB(storeName){
+    if(!db) await initDB();
+    return new Promise((resolve,reject)=>{
+        const tx=db.transaction(storeName,'readonly');
+        const store=tx.objectStore(storeName);
+        const request=store.getAll();
+        request.onsuccess=()=>{
+            const result={};
+            request.result.forEach(item=>{result[item.rowIndex]=item.data;});
+            resolve(result);
+        };
+        request.onerror=()=>reject(request.error);
+    });
+}
+
+async function addToSyncQueue(rowIndex){
+    if(!db) await initDB();
+    return new Promise((resolve,reject)=>{
+        const tx=db.transaction('syncQueue','readwrite');
+        const store=tx.objectStore('syncQueue');
+        store.put({rowIndex:rowIndex,timestamp:Date.now()});
+        tx.oncomplete=resolve;
+        tx.onerror=()=>reject(tx.error);
+    });
+}
+
+async function getSyncQueue(){
+    if(!db) await initDB();
+    return new Promise((resolve,reject)=>{
+        const tx=db.transaction('syncQueue','readonly');
+        const store=tx.objectStore('syncQueue');
+        const request=store.getAll();
+        request.onsuccess=()=>resolve(request.result);
+        request.onerror=()=>reject(request.error);
+    });
+}
+
+async function removeFromSyncQueue(rowIndex){
+    if(!db) await initDB();
+    return new Promise((resolve,reject)=>{
+        const tx=db.transaction('syncQueue','readwrite');
+        const store=tx.objectStore('syncQueue');
+        store.delete(rowIndex);
+        tx.oncomplete=resolve;
+        tx.onerror=()=>reject(tx.error);
+    });
+}
+
+async function clearSyncQueue(){
+    if(!db) await initDB();
+    return new Promise((resolve,reject)=>{
+        const tx=db.transaction('syncQueue','readwrite');
+        const store=tx.objectStore('syncQueue');
+        store.clear();
+        tx.oncomplete=resolve;
+        tx.onerror=()=>reject(tx.error);
+    });
+}
+
+// Legacy localStorage support for migration
+async function loadFromLocalStorage(){
     try{
-        const savedManager=localStorage.getItem('zoom_managerData');
-        const savedSupervisor=localStorage.getItem('zoom_supervisorData');
-        if(savedManager) managerData=JSON.parse(savedManager);
-        if(savedSupervisor) supervisorData=JSON.parse(savedSupervisor);
+        // Try IndexedDB first
+        const dbManager=await loadFromIndexedDB('managerData');
+        const dbSupervisor=await loadFromIndexedDB('supervisorData');
+
+        if(Object.keys(dbManager).length>0||Object.keys(dbSupervisor).length>0){
+            managerData=dbManager;
+            supervisorData=dbSupervisor;
+            console.log('✅ Loaded from IndexedDB');
+        }else{
+            // Fallback to localStorage (migration)
+            const savedManager=localStorage.getItem('zoom_managerData');
+            const savedSupervisor=localStorage.getItem('zoom_supervisorData');
+            if(savedManager){
+                managerData=JSON.parse(savedManager);
+                await saveToIndexedDB('managerData',managerData);
+            }
+            if(savedSupervisor){
+                supervisorData=JSON.parse(savedSupervisor);
+                await saveToIndexedDB('supervisorData',supervisorData);
+            }
+            console.log('✅ Migrated from localStorage to IndexedDB');
+        }
+
         const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
         const importBtn=document.getElementById('importBtn');
         if(importBtn) importBtn.style.display=localCount>0?'flex':'none';
-    }catch(e){console.error('Error loading from localStorage:',e)}
+    }catch(e){console.error('Error loading storage:',e)}
+}
+
+async function saveToLocalStorage(){
+    try{
+        // Save to IndexedDB (primary)
+        await saveToIndexedDB('managerData',managerData);
+        await saveToIndexedDB('supervisorData',supervisorData);
+
+        // Also save to localStorage as backup
+        localStorage.setItem('zoom_managerData',JSON.stringify(managerData));
+        localStorage.setItem('zoom_supervisorData',JSON.stringify(supervisorData));
+
+        const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
+        const importBtn=document.getElementById('importBtn');
+        if(importBtn&&localCount>0) importBtn.style.display='flex';
+    }catch(e){console.error('Error saving storage:',e)}
+}
+
+function startAutoSave(){
+    if(autoSaveInterval) clearInterval(autoSaveInterval);
+    autoSaveInterval=setInterval(async()=>{
+        const mCount=Object.keys(managerData).length;
+        const sCount=Object.keys(supervisorData).length;
+        if(mCount>0||sCount>0){
+            await saveToLocalStorage();
+            console.log('💾 Auto-saved to IndexedDB');
+        }
+    },30000); // Auto-save every 30 seconds
+}
+
+function stopAutoSave(){
+    if(autoSaveInterval){
+        clearInterval(autoSaveInterval);
+        autoSaveInterval=null;
+    }
 }
 
 function importLocalData(){
@@ -520,17 +715,21 @@ function saveToLocalStorage(){
     }catch(e){console.error('Error saving to localStorage:',e)}
 }
 
-function login(role){
+async function login(role){
     currentUser=role;
     document.getElementById('loginSection').style.display='none';
     document.getElementById('mainContent').classList.add('active');
     document.getElementById('userTitle').textContent=role==='manager'?'👷 مدير خط السير':'👨‍💼 المشرف';
     document.getElementById('installationStatusFilterGroup').style.display=role==='supervisor'?'block':'none';
-    loadFromLocalStorage();
+    await initDB();
+    await loadFromLocalStorage();
+    await updateSyncStatus();
+    startAutoSave();
     loadSheetData();
 }
 
 function logout(){
+    stopAutoSave();
     currentUser=null;
     customers=[];
     filteredCustomers=[];
@@ -600,6 +799,14 @@ async function loadSheetData(){
     document.getElementById('emptyState').style.display='none';
     const savedManager={...managerData};
     const savedSupervisor={...supervisorData};
+
+    if(!isOnline){
+        document.getElementById('loadingSection').style.display='none';
+        showAlert('📴 أنت غير متصل - البيانات المحلية فقط','error');
+        applyFilters();
+        return;
+    }
+
     try{
         const url=`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(CONFIG.SHEET_NAME)}?key=${CONFIG.API_KEY}`;
         const response=await fetch(url);
@@ -901,7 +1108,22 @@ function openManagerModal(index){
     document.getElementById('managerModal').classList.add('active');
 }
 
+function validateManagerData(){
+    const errors=[];
+    if(!document.getElementById('m_supervisor_name').value) errors.push('اسم المشرف');
+    if(!document.getElementById('m_transaction_type').value) errors.push('نوع المعاملة');
+    const total=parseFloat(document.getElementById('m_total').value)||0;
+    const paid=parseFloat(document.getElementById('m_paid').value)||0;
+    if(total>0&&paid>total) errors.push('المقدم لا يمكن أن يكون أكبر من الإجمالي');
+    return errors;
+}
+
 async function saveManagerData(){
+    const validationErrors=validateManagerData();
+    if(validationErrors.length>0){
+        showAlert('⚠️ يرجى ملء: '+validationErrors.join('، '),'error');
+        return;
+    }
     const data={
         supervisor_name:document.getElementById('m_supervisor_name').value,
         transaction_type:document.getElementById('m_transaction_type').value,
@@ -930,16 +1152,19 @@ async function saveManagerData(){
         location_link:document.getElementById('m_location_link').value
     };
     managerData[currentCustomerIndex]=data;
-    saveToLocalStorage();
+    await addToSyncQueue(currentCustomerIndex);
+    await saveToLocalStorage();
     showSaveIndicator(true);
     const result=await sendToSheet(currentCustomerIndex,data,null);
     showSaveIndicator(false);
     if(result.success){
+        await updateSyncStatus();
         closeModal('managerModal');
         renderCustomers();
         lastSavedIndex=currentCustomerIndex;
         showAlert('✅ تم الحفظ في الشيت والجهاز!','success');
     }else{
+        await updateSyncStatus();
         showAlert('⚠️ تم الحفظ محلياً لكن فشل الإرسال للشيت: '+result.error,'error');
         closeModal('managerModal');
         renderCustomers();
@@ -1025,7 +1250,20 @@ function openSupervisorModal(index){
     document.getElementById('supervisorModal').classList.add('active');
 }
 
+function validateSupervisorData(){
+    const errors=[];
+    if(!document.getElementById('s_supervisor_name').value) errors.push('اسم المشرف');
+    if(!document.getElementById('s_technician').value) errors.push('فني التركيب');
+    if(!document.getElementById('s_installation_status').value) errors.push('حالة التركيب');
+    return errors;
+}
+
 async function saveSupervisorData(){
+    const validationErrors=validateSupervisorData();
+    if(validationErrors.length>0){
+        showAlert('⚠️ يرجى ملء: '+validationErrors.join('، '),'error');
+        return;
+    }
     const data={
         supervisor_name:document.getElementById('s_supervisor_name').value,
         technician:document.getElementById('s_technician').value,
@@ -1077,11 +1315,13 @@ async function saveSupervisorData(){
         has_shelter:document.getElementById('s_has_shelter').value
     };
     supervisorData[currentCustomerIndex]=data;
-    saveToLocalStorage();
+    await addToSyncQueue(currentCustomerIndex);
+    await saveToLocalStorage();
     showSaveIndicator(true);
     const result=await sendToSheet(currentCustomerIndex,null,data);
     showSaveIndicator(false);
     if(result.success){
+        await updateSyncStatus();
         closeModal('supervisorModal');
         renderCustomers();
         lastSavedIndex=currentCustomerIndex;
@@ -1089,6 +1329,7 @@ async function saveSupervisorData(){
         const hasM=managerData[currentCustomerIndex]&&Object.keys(managerData[currentCustomerIndex]).length>0;
         if(hasM) setTimeout(()=>{document.getElementById('printSuccessModal').classList.add('active')},500);
     }else{
+        await updateSyncStatus();
         showAlert('⚠️ تم الحفظ محلياً لكن فشل الإرسال للشيت: '+result.error,'error');
         closeModal('supervisorModal');
         renderCustomers();
@@ -1097,7 +1338,7 @@ async function saveSupervisorData(){
 
 async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
     let lastError=null;
-    for(let attempt=1;attempt<=3;attempt++){
+    for(let attempt=1;attempt<=CONFIG.MAX_RETRIES;attempt++){
         try{
             const customer=customers.find(c=>c.rowIndex===rowIndex);
             const customerName=customer?customer.name:'';
@@ -1109,22 +1350,48 @@ async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
                 action:'saveData',
                 timestamp:new Date().toISOString()
             };
-            const response=await fetch(CONFIG.GAS_URL,{
-                method:'POST',
-                headers:{'Content-Type':'text/plain;charset=utf-8'},
-                body:JSON.stringify(payload)
-            });
+
+            // Try with normal mode first
+            let response;
+            try{
+                response=await fetch(CONFIG.GAS_URL,{
+                    method:'POST',
+                    headers:{'Content-Type':'text/plain;charset=utf-8'},
+                    body:JSON.stringify(payload)
+                });
+            }catch(fetchError){
+                // If CORS error, try no-cors mode (opaque response)
+                console.warn('CORS error, trying no-cors mode:',fetchError.message);
+                response=await fetch(CONFIG.GAS_URL,{
+                    method:'POST',
+                    mode:'no-cors',
+                    headers:{'Content-Type':'text/plain;charset=utf-8'},
+                    body:JSON.stringify(payload)
+                });
+                // no-cors returns opaque response, assume success if no error thrown
+                await removeFromSyncQueue(rowIndex);
+                return{success:true,mode:'no-cors'};
+            }
+
             let responseData;
             try{
                 const text=await response.text();
                 if(text) responseData=JSON.parse(text);
             }catch(parseError){}
-            if(responseData&&responseData.success) return{success:true,data:responseData};
-            if(response.status===200||response.status===0) return{success:true};
+
+            if(responseData&&responseData.success){
+                await removeFromSyncQueue(rowIndex);
+                return{success:true,data:responseData};
+            }
+            if(response.status===200||response.status===0){
+                await removeFromSyncQueue(rowIndex);
+                return{success:true};
+            }
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }catch(error){
             lastError=error;
-            if(attempt<3) await new Promise(resolve=>setTimeout(resolve,2000));
+            console.warn(`Attempt ${attempt} failed:`,error.message);
+            if(attempt<CONFIG.MAX_RETRIES) await new Promise(resolve=>setTimeout(resolve,CONFIG.RETRY_DELAY));
         }
     }
     return{success:false,error:lastError?lastError.message:'Unknown error'};
@@ -1133,19 +1400,35 @@ async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
 async function saveAllToSheet(){
     showSaveIndicator(true);
     showAlert('⏳ جاري الحفظ للشيت...','info');
-    let successCount=0,failCount=0;
+    let successCount=0,failCount=0,skipCount=0;
+    const toSave=[];
+
     for(let i=0;i<customers.length;i++){
         const idx=customers[i].rowIndex;
         const hasM=managerData[idx]&&Object.keys(managerData[idx]).length>0;
         const hasS=supervisorData[idx]&&Object.keys(supervisorData[idx]).length>0;
-        if(hasM||hasS){
-            const result=await sendToSheet(idx,managerData[idx]||null,supervisorData[idx]||null);
-            if(result.success) successCount++;else failCount++;
-        }
+        if(hasM||hasS) toSave.push({index:idx,hasM:hasM,hasS:hasS});
+        else skipCount++;
     }
+
+    if(toSave.length===0){
+        showSaveIndicator(false);
+        showAlert('ℹ️ لا توجد بيانات جديدة للحفظ','info');
+        return;
+    }
+
+    for(let i=0;i<toSave.length;i++){
+        const item=toSave[i];
+        showAlert(`⏳ جاري الحفظ... ${i+1} من ${toSave.length}`,'info');
+        const result=await sendToSheet(item.index,managerData[item.index]||null,supervisorData[item.index]||null);
+        if(result.success) successCount++;else failCount++;
+        // Small delay between requests to avoid rate limiting
+        if(i<toSave.length-1) await new Promise(r=>setTimeout(r,500));
+    }
+
     showSaveIndicator(false);
     if(failCount===0) showAlert(`✅ تم حفظ ${successCount} عميل في الشيت!`,'success');
-    else showAlert(`⚠️ نجح:${successCount} | فشل:${failCount}`,'error');
+    else showAlert(`⚠️ نجح:${successCount} | فشل:${failCount} | تم تخطي:${skipCount}`,'error');
 }
 
 function printFromSuccess(){
@@ -1434,6 +1717,24 @@ document.addEventListener('keydown',function(e){
         const viewModal=document.getElementById('viewModal');
         if(viewModal) viewModal.remove();
     }
+});
+
+// Warn before leaving if there are unsaved changes
+window.addEventListener('beforeunload',function(e){
+    const mCount=Object.keys(managerData).length;
+    const sCount=Object.keys(supervisorData).length;
+    if(mCount>0||sCount>0){
+        e.preventDefault();
+        e.returnValue='لديك بيانات غير محفوظة في الشيت. هل تريد المغادرة؟';
+        return e.returnValue;
+    }
+});
+
+// Periodic sync status check
+document.addEventListener('DOMContentLoaded',()=>{
+    setInterval(async()=>{
+        if(currentUser) await updateSyncStatus();
+    },10000); // Check every 10 seconds
 });
 </script>
 </body>
