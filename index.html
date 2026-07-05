@@ -554,17 +554,14 @@ async function loadSheetData(){
 
 function parseSheetDate(dateStr){
     if(!dateStr) return null;
-    const original = dateStr;
     dateStr = dateStr.toString().trim();
 
-    // Log for debugging
-    console.log('Parsing date:', original, '| trimmed:', dateStr);
-
-    // Try direct parse
-    let date = new Date(dateStr);
-    if(!isNaN(date.getTime())) {
-        console.log('  Direct parse result:', date.toDateString());
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    // Handle Google Sheets serial numbers (e.g., 45800)
+    if(!isNaN(dateStr) && dateStr > 40000){
+        // Google Sheets epoch starts at Dec 30, 1899
+        const epoch = new Date(1899, 11, 30);
+        const result = new Date(epoch.getTime() + parseInt(dateStr) * 86400000);
+        return new Date(result.getFullYear(), result.getMonth(), result.getDate());
     }
 
     const parts = dateStr.split(/[/-]/);
@@ -572,40 +569,45 @@ function parseSheetDate(dateStr){
         const p1 = parseInt(parts[0].trim());
         const p2 = parseInt(parts[1].trim());
         const p3 = parseInt(parts[2].trim());
-        console.log('  Parts:', p1, p2, p3);
 
-        // Try year-month-day (p1 > 1000)
+        // If p3 is year (>1000): could be day-month-year or month-day-year
+        if(p3 > 1000){
+            // If p1 > 12, it's definitely day-month-year (e.g., 13-5-2026)
+            if(p1 > 12){
+                return new Date(p3, p2 - 1, p1);
+            }
+            // If p2 > 12, it's definitely month-day-year (e.g., 5-13-2026)
+            if(p2 > 12){
+                return new Date(p3, p1 - 1, p2);
+            }
+            // Both <= 12: try day-month-year first (common in Arabic dates)
+            // 5-7-2026 should be July 5, not May 7
+            const dmy = new Date(p3, p2 - 1, p1);
+            if(!isNaN(dmy.getTime())) return dmy;
+            // Fallback to month-day-year
+            const mdy = new Date(p3, p1 - 1, p2);
+            if(!isNaN(mdy.getTime())) return mdy;
+        }
+
+        // If p1 is year: year-month-day
         if(p1 > 1000){
-            date = new Date(p1, p2 - 1, p3);
-            if(!isNaN(date.getTime())) {
-                console.log('  Parsed as Y-M-D:', date.toDateString());
-                return date;
-            }
-        }
-        // Try day-month-year (p3 > 1000, p1 <= 31, p2 <= 12)
-        if(p3 > 1000 && p1 <= 31 && p2 <= 12){
-            date = new Date(p3, p2 - 1, p1);
-            if(!isNaN(date.getTime())) {
-                console.log('  Parsed as D-M-Y:', date.toDateString());
-                return date;
-            }
-        }
-        // Try month-day-year (p3 > 1000, p2 <= 31, p1 <= 12)
-        if(p3 > 1000 && p2 <= 31 && p1 <= 12){
-            date = new Date(p3, p1 - 1, p2);
-            if(!isNaN(date.getTime())) {
-                console.log('  Parsed as M-D-Y:', date.toDateString());
-                return date;
-            }
+            return new Date(p1, p2 - 1, p3);
         }
     }
-    console.log('  FAILED to parse');
+
+    // Last resort: try direct parse
+    let date = new Date(dateStr);
+    if(!isNaN(date.getTime())){
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
     return null;
 }
 
 function isSameDate(d1,d2){
     if(!d1||!d2) return false;
-    return d1.getFullYear()===d2.getFullYear()&&d1.getMonth()===d2.getMonth()&&d1.getDate()===d2.getDate();
+    const nd1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
+    const nd2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+    return nd1.getTime() === nd2.getTime();
 }
 
 function isThisWeek(date){
@@ -639,7 +641,8 @@ function applyFilters(){
             else if(dateFilter==='tomorrow'){if(!isSameDate(c.parsedDate,tomorrow)) return false;}
             else if(dateFilter==='week'){if(!isThisWeek(c.parsedDate)) return false;}
             else if(dateFilter==='custom'&&customDateStr){
-                const customDate=new Date(customDateStr);customDate.setHours(0,0,0,0);
+                const cdParts = customDateStr.split('-');
+                const customDate = new Date(parseInt(cdParts[0]), parseInt(cdParts[1])-1, parseInt(cdParts[2]));
                 if(!isSameDate(c.parsedDate,customDate)) return false;
             }
         }
