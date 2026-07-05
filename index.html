@@ -425,18 +425,16 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>ضغط الدخول قيمة العداد</label><input type="number" id="s_inlet_pressure_value"></div>
 <div class="form-group"><label>هل راكب فاكيوم</label><select id="s_vacuum_installed"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
 <div class="form-group"><label>حالة الرزين</label><select id="s_resin_status"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>لون متغير</option></select></div>
-<div class="conditional-field" id="supervisorSoftenerFields">
-<div class="form-group"><label>قياس TDS قبل السوفتنر</label><input type="number" id="s_tds_before_softener"></div>
-<div class="form-group"><label>قياس TDS بعد السوفتنر</label><input type="number" id="s_tds_after_softener"></div>
-<div class="form-group"><label>قياس الكلس قبل السوفتنر</label><input type="number" id="s_limescale_before_softener"></div>
-<div class="form-group"><label>قياس الكلس بعد السوفتنر</label><input type="number" id="s_limescale_after_softener"></div>
-<div class="form-group"><label>التأكد من التسريبات</label><select id="s_leak_check"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
-<div class="form-group"><label>لون في الماء بعد السوفتنر</label><select id="s_color_after_softener"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
-<div class="form-group"><label>ضبط وقت الغسيل العكسي</label><input type="text" id="s_backwash_time" placeholder="اكتب الوقت..."></div>
-<div class="form-group"><label>ضبط الغسيل البطئ</label><input type="text" id="s_backwash_duration" placeholder="اكتب الوقت..."></div>
-<div class="form-group"><label>ضبط الغسيل السريع</label><input type="text" id="s_fast_rinse_time" placeholder="اكتب الوقت..."></div>
-<div class="form-group"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option>زائد عن الحد</option><option>مناسب</option><option>منخفض</option><option>جاف</option></select></div>
-</div>
+<div class="form-group conditional-field" id="soft_tds_before"><label>قياس TDS قبل السوفتنر</label><input type="number" id="s_tds_before_softener"></div>
+<div class="form-group conditional-field" id="soft_tds_after"><label>قياس TDS بعد السوفتنر</label><input type="number" id="s_tds_after_softener"></div>
+<div class="form-group conditional-field" id="soft_limescale_before"><label>قياس الكلس قبل السوفتنر</label><input type="number" id="s_limescale_before_softener"></div>
+<div class="form-group conditional-field" id="soft_limescale_after"><label>قياس الكلس بعد السوفتنر</label><input type="number" id="s_limescale_after_softener"></div>
+<div class="form-group conditional-field" id="soft_leak"><label>التأكد من التسريبات</label><select id="s_leak_check"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group conditional-field" id="soft_color"><label>لون في الماء بعد السوفتنر</label><select id="s_color_after_softener"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group conditional-field" id="soft_backwash"><label>ضبط وقت الغسيل العكسي</label><input type="text" id="s_backwash_time" placeholder="اكتب الوقت..."></div>
+<div class="form-group conditional-field" id="soft_backwash_dur"><label>ضبط الغسيل البطئ</label><input type="text" id="s_backwash_duration" placeholder="اكتب الوقت..."></div>
+<div class="form-group conditional-field" id="soft_fast_rinse"><label>ضبط الغسيل السريع</label><input type="text" id="s_fast_rinse_time" placeholder="اكتب الوقت..."></div>
+<div class="form-group conditional-field" id="soft_salt"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option>زائد عن الحد</option><option>مناسب</option><option>منخفض</option><option>جاف</option></select></div>
 <div class="form-group"><label>هل هناك مظلة</label><select id="s_has_shelter"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
 </div>
 </div>
@@ -803,10 +801,18 @@ function toggleSoftenerFields(){
 
 function toggleSupervisorSoftenerFields(){
     const v=document.getElementById('s_softener').value;
-    const group=document.getElementById('supervisorSoftenerFields');
-    if(v){group.classList.add('visible');}
-    else{
-        group.classList.remove('visible');
+    const fields=[
+        'soft_tds_before','soft_tds_after','soft_limescale_before','soft_limescale_after',
+        'soft_leak','soft_color','soft_backwash','soft_backwash_dur','soft_fast_rinse','soft_salt'
+    ];
+    fields.forEach(id=>{
+        const el=document.getElementById(id);
+        if(el){
+            if(v) el.classList.add('visible');
+            else el.classList.remove('visible');
+        }
+    });
+    if(!v){
         document.getElementById('s_tds_before_softener').value='';
         document.getElementById('s_tds_after_softener').value='';
         document.getElementById('s_limescale_before_softener').value='';
