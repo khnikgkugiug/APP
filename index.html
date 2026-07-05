@@ -271,7 +271,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 
 <!-- ===== MULTI-SELECT DROPDOWN FOR FILTER DETAILS ===== -->
 <div class="form-group" style="grid-column:1/-1">
-    <label>تفاصيل الفلتر <span style="color:#fdcb6e;font-size:.8rem">(اضغط Ctrl أو Cmd واختر أكثر من واحد)</span></label>
+    <label>تفاصيل الفلتر <span style="color:#fdcb6e;font-size:.8rem">(اضغط على كل اختيار لتفعيله/إلغائه)</span></label>
     <select id="m_filter_details" multiple size="6">
         <option value="ديجيتال">ديجيتال</option>
         <option value="100 اقتصادي">100 اقتصادي</option>
@@ -774,6 +774,25 @@ function toggleSoftenerFields(){
 }
 
 // ===== MULTI-SELECT DROPDOWN FUNCTIONS =====
+// Auto-attach click handler to make selection work without Ctrl/Cmd
+function initMultiSelect(selectId){
+    const select = document.getElementById(selectId);
+    if(!select || select.dataset.clickReady === 'true') return;
+    select.dataset.clickReady = 'true';
+    select.addEventListener('mousedown', function(e){
+        if(e.target.tagName === 'OPTION'){
+            e.preventDefault();
+            e.target.selected = !e.target.selected;
+            select.focus();
+        }
+    });
+    select.addEventListener('click', function(e){
+        if(e.target.tagName === 'OPTION'){
+            e.preventDefault();
+        }
+    });
+}
+
 function getMultiSelectValues(selectId){
     const select = document.getElementById(selectId);
     if(!select) return '';
@@ -813,8 +832,9 @@ function openManagerModal(index){
     document.getElementById('m_notes').value=ex.notes||'';
     document.getElementById('m_order_type').value=ex.order_type||'';
     document.getElementById('m_package_name').value=ex.package_name||'';
-    // ===== SET CHECKBOX TAGS =====
+    // ===== SET MULTI-SELECT VALUES =====
     setMultiSelectValues('m_filter_details', ex.filter_details || '');
+    initMultiSelect('m_filter_details');
     document.getElementById('m_other_product').value=ex.other_product||'';
     document.getElementById('m_total').value=ex.total||'';
     document.getElementById('m_paid').value=ex.paid||'';
