@@ -49,6 +49,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .status-pending{background:#fff3cd;color:#856404}
 .status-manager-done{background:#cce5ff;color:#004085}
 .status-completed{background:#d4edda;color:#155724}
+.status-delayed{background:#f8d7da;color:#721c24}
 .customer-actions{display:flex;gap:10px;margin-top:15px}
 .customer-actions .btn{flex:1;padding:10px;font-size:.9rem;justify-content:center}
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:1000;overflow-y:auto}
@@ -109,11 +110,18 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .date-badge.today{background:#d4edda;color:#155724}
 .date-badge.tomorrow{background:#cce5ff;color:#004085}
 .highlight{background:#fdcb6e;color:#1a1a2e;padding:2px 4px;border-radius:3px;font-weight:600}
-@media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}}
+
+/* ===== CHECKBOX TAGS FOR FILTER DETAILS ===== */
+.checkbox-tags{display:flex;flex-wrap:wrap;gap:8px;padding:5px 0}
+.checkbox-tags .tag{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:25px;padding:8px 16px;cursor:pointer;transition:all .25s;font-size:.9rem;user-select:none}
+.checkbox-tags .tag:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4)}
+.checkbox-tags .tag input[type="checkbox"]{width:16px;height:16px;accent-color:#fdcb6e;cursor:pointer;margin:0}
+.checkbox-tags .tag.checked{background:linear-gradient(135deg,#667eea,#764ba2);border-color:rgba(102,126,234,.6);box-shadow:0 2px 10px rgba(102,126,234,.3)}
+.checkbox-tags .tag.checked:hover{background:linear-gradient(135deg,#5a6fd6,#6a4190)}
+.checkbox-tags-label{color:rgba(255,255,255,.9);font-size:.9rem;margin-bottom:10px;font-weight:500;display:block}
+
+@media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}.checkbox-tags .tag{padding:6px 12px;font-size:.85rem}}
 </style>
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -209,7 +217,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="empty-state" id="emptyState" style="display:none">
 <div class="icon">📭</div>
 <h3>لا يوجد عملاء</h3>
-<p>تأكد من اسم الـ Sheet Tab أو جرب تغيير فلاتر البحث</p>
+<p id="emptyStateMsg">تأكد من اسم الـ Sheet Tab أو جرب تغيير فلاتر البحث</p>
 </div>
 </div>
 </div>
@@ -259,13 +267,68 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>💰 المالية</h3>
 <div class="form-grid">
-<div class="form-group"><label>نوع الطلب المنزلي</label><select id="m_order_type"><option value="">اختر...</option><option>باقة</option><option>فلتر منفرد</option></select></div>
+<div class="form-group"><label>نوع الطلب</label><select id="m_order_type"><option value="">اختر...</option><option>باقة</option><option>فلتر</option><option>منتج آخر</option></select></div>
 <div class="form-group"><label>اسم الباقة</label><input type="text" id="m_package_name"></div>
-<div class="form-group"><label>تفاصيل الفلتر</label><select id="m_filter_details"><option value="">اختر...</option>
-<option>ديجيتال</option><option>100 اقتصادي</option><option>100 بلازما</option><option>400 اقتصادي</option><option>400 بلازما</option>
-<option>جلاكسي</option><option>مبرد ابيض زووم</option><option>مبرد اسود</option><option>مبرد ذهبي</option>
-<option>فلتر خزان 2</option><option>فلتر خزان 3</option><option>قارورة عادية</option><option>قارورة مسطحة</option>
-</select></div>
+
+<!-- ===== CHECKBOX TAGS FOR FILTER DETAILS ===== -->
+<div class="form-group" style="grid-column:1/-1">
+    <label class="checkbox-tags-label">تفاصيل الفلتر <span style="color:#fdcb6e;font-size:.8rem">(اختر واحد أو أكثر)</span></label>
+    <div class="checkbox-tags" id="filterDetailsTags">
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="ديجيتال" hidden>
+            <span>ديجيتال</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="100 اقتصادي" hidden>
+            <span>100 اقتصادي</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="100 بلازما" hidden>
+            <span>100 بلازما</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="400 اقتصادي" hidden>
+            <span>400 اقتصادي</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="400 بلازما" hidden>
+            <span>400 بلازما</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="جلاكسي" hidden>
+            <span>جلاكسي</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="مبرد ابيض زووم" hidden>
+            <span>مبرد ابيض زووم</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="مبرد اسود" hidden>
+            <span>مبرد اسود</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="مبرد ذهبي" hidden>
+            <span>مبرد ذهبي</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="فلتر خزان 2" hidden>
+            <span>فلتر خزان 2</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="فلتر خزان 3" hidden>
+            <span>فلتر خزان 3</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="قارورة عادية" hidden>
+            <span>قارورة عادية</span>
+        </label>
+        <label class="tag" onclick="toggleTag(this)">
+            <input type="checkbox" value="قارورة مسطحة" hidden>
+            <span>قارورة مسطحة</span>
+        </label>
+    </div>
+</div>
+
 <div class="form-group"><label>منتج آخر</label><input type="text" id="m_other_product"></div>
 <div class="form-group"><label>الإجمالي</label><input type="number" id="m_total"></div>
 <div class="form-group"><label>مقدم</label><input type="number" id="m_paid"></div>
@@ -421,7 +484,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <p style="color:rgba(255,255,255,.7);margin-bottom:25px">تم حفظ جميع البيانات بنجاح. هل تريد طباعة التقرير الآن؟</p>
 <div style="display:flex;gap:15px;justify-content:center">
 <button class="btn btn-warning" onclick="printFromSuccess()">🖨️ طباعة التقرير</button>
-<button class="btn btn-secondary" onclick="closeModal('printSuccessModal')">لاحقاً</button>
+<button class="btn btn-secondary" onclick="closeModal('printSuccessModal')">لاحقاُ</button>
 </div>
 </div>
 </div>
@@ -448,7 +511,7 @@ const CONFIG = {
     API_KEY: 'AIzaSyCBaf2mbc1jzHUg2K34sGhinFHsrSWcQ-0',
     SHEET_ID: '1h2Bk-sWVzoSIoX8kUA_uM34cNj-xvPUXpJj7lcCGoJQ',
     SHEET_NAME: 'قاعدة البيانات',
-    GAS_URL: 'https://script.google.com/macros/s/AKfycbwXKfRZ2DQliKokbX1w7SDN2vsrbt8gIz1xU0juJseihqbGUkAPxW-L5gisP6YvPKw/exec',
+    GAS_URL: 'https://script.google.com/macros/s/AKfycbzLR9Oe_noaPVjOcdINRKhQ3rO6ofgobSq1UjLTpnxFPMYSryxmM75jp9u__UjXWFz3ng/exec',
     MAX_RETRIES: 3,
     RETRY_DELAY: 2000
 };
@@ -505,6 +568,59 @@ function logout(){
     if(importBtn) importBtn.style.display='none';
 }
 
+function parseSheetDate(dateStr){
+    if(!dateStr) return null;
+    const original = dateStr;
+    dateStr = dateStr.toString().trim();
+
+    if(/^\d+(\.\d+)?$/.test(dateStr)){
+        const serial = parseFloat(dateStr);
+        const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const date = new Date(excelEpoch.getTime() + serial * msPerDay);
+        if(!isNaN(date.getTime())) return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    const ddmmyyyy = dateStr.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+    if(ddmmyyyy){
+        const day = parseInt(ddmmyyyy[1]);
+        const month = parseInt(ddmmyyyy[2]) - 1;
+        const year = parseInt(ddmmyyyy[3]);
+        const date = new Date(year, month, day);
+        if(!isNaN(date.getTime()) && date.getFullYear() === year) return date;
+    }
+
+    const yyyymmdd = dateStr.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+    if(yyyymmdd){
+        const year = parseInt(yyyymmdd[1]);
+        const month = parseInt(yyyymmdd[2]) - 1;
+        const day = parseInt(yyyymmdd[3]);
+        const date = new Date(year, month, day);
+        if(!isNaN(date.getTime()) && date.getFullYear() === year) return date;
+    }
+
+    const date = new Date(dateStr);
+    if(!isNaN(date.getTime()) && date.getFullYear() > 2000) return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    return null;
+}
+
+function isSameDate(d1,d2){
+    if(!d1||!d2) return false;
+    return d1.getFullYear()===d2.getFullYear()&&d1.getMonth()===d2.getMonth()&&d1.getDate()===d2.getDate();
+}
+
+function isThisWeek(date){
+    if(!date) return false;
+    const now=new Date();
+    const startOfWeek=new Date(now);
+    startOfWeek.setDate(now.getDate()-now.getDay());
+    startOfWeek.setHours(0,0,0,0);
+    const endOfWeek=new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate()+7);
+    return date>=startOfWeek&&date<endOfWeek;
+}
+
 async function loadSheetData(){
     document.getElementById('loadingSection').style.display='block';
     document.getElementById('customersGrid').innerHTML='';
@@ -530,8 +646,8 @@ async function loadSheetData(){
             name:row[4]||'',
             phone:row[5]||'',
             state:row[6]||'',
-            transactionType:row[7]||'',
-            supervisorName:row[30]||'',
+            transactionType:row[8]||'',
+            supervisorName:row[9]||'',
             rowIndex:index+2,
             rawData:row
         })).filter(c=>c.name);
@@ -540,7 +656,6 @@ async function loadSheetData(){
         supervisorData=savedSupervisor;
         applyFilters();
         document.getElementById('loadingSection').style.display='none';
-        showAlert('📅 تم عرض عملاء اليوم فقط - استخدم الفلاتر لعرض الكل','info');
         const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
         if(localCount>0) showAlert(`📦 ${localCount} بيانات محلية محفوظة - استخدم "استيراد البيانات" لو محتاج ترجّعها`,'info');
     }catch(error){
@@ -551,81 +666,13 @@ async function loadSheetData(){
     }
 }
 
-function parseSheetDate(dateStr){
-    if(!dateStr) return null;
-    dateStr = dateStr.toString().trim();
-
-    // Handle Google Sheets serial numbers (e.g., 45800)
-    if(!isNaN(dateStr) && dateStr > 40000){
-        // Google Sheets epoch starts at Dec 30, 1899
-        const epoch = new Date(1899, 11, 30);
-        const result = new Date(epoch.getTime() + parseInt(dateStr) * 86400000);
-        return new Date(result.getFullYear(), result.getMonth(), result.getDate());
-    }
-
-    const parts = dateStr.split(/[/-]/);
-    if(parts.length === 3){
-        const p1 = parseInt(parts[0].trim());
-        const p2 = parseInt(parts[1].trim());
-        const p3 = parseInt(parts[2].trim());
-
-        // If p3 is year (>1000): could be day-month-year or month-day-year
-        if(p3 > 1000){
-            // If p1 > 12, it's definitely day-month-year (e.g., 13-5-2026)
-            if(p1 > 12){
-                return new Date(p3, p2 - 1, p1);
-            }
-            // If p2 > 12, it's definitely month-day-year (e.g., 5-13-2026)
-            if(p2 > 12){
-                return new Date(p3, p1 - 1, p2);
-            }
-            // Both <= 12: try day-month-year first (common in Arabic dates)
-            // 5-7-2026 should be July 5, not May 7
-            const dmy = new Date(p3, p2 - 1, p1);
-            if(!isNaN(dmy.getTime())) return dmy;
-            // Fallback to month-day-year
-            const mdy = new Date(p3, p1 - 1, p2);
-            if(!isNaN(mdy.getTime())) return mdy;
-        }
-
-        // If p1 is year: year-month-day
-        if(p1 > 1000){
-            return new Date(p1, p2 - 1, p3);
-        }
-    }
-
-    // Last resort: try direct parse
-    let date = new Date(dateStr);
-    if(!isNaN(date.getTime())){
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    }
-    return null;
-}
-
-function isSameDate(d1,d2){
-    if(!d1||!d2) return false;
-    const nd1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
-    const nd2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
-    return nd1.getTime() === nd2.getTime();
-}
-
-function isThisWeek(date){
-    if(!date) return false;
-    const now=new Date();
-    const startOfWeek=new Date(now);
-    startOfWeek.setDate(now.getDate()-now.getDay());
-    startOfWeek.setHours(0,0,0,0);
-    const endOfWeek=new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate()+7);
-    return date>=startOfWeek&&date<endOfWeek;
-}
-
 function applyFilters(){
     const searchTerm=document.getElementById('searchInput').value.trim().toLowerCase();
     const dateFilter=document.getElementById('dateFilter').value;
     const statusFilter=document.getElementById('statusFilter').value;
     const transactionFilter=document.getElementById('transactionFilter').value;
     const customDateStr=document.getElementById('customDate').value;
+    const supervisorFilter=document.getElementById('supervisorFilter').value;
     document.getElementById('customDateGroup').style.display=dateFilter==='custom'?'block':'none';
     const today=new Date();today.setHours(0,0,0,0);
     const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
@@ -640,8 +687,7 @@ function applyFilters(){
             else if(dateFilter==='tomorrow'){if(!isSameDate(c.parsedDate,tomorrow)) return false;}
             else if(dateFilter==='week'){if(!isThisWeek(c.parsedDate)) return false;}
             else if(dateFilter==='custom'&&customDateStr){
-                const cdParts = customDateStr.split('-');
-                const customDate = new Date(parseInt(cdParts[0]), parseInt(cdParts[1])-1, parseInt(cdParts[2]));
+                const customDate=new Date(customDateStr);customDate.setHours(0,0,0,0);
                 if(!isSameDate(c.parsedDate,customDate)) return false;
             }
         }
@@ -657,17 +703,15 @@ function applyFilters(){
             const transactionType=mData.transaction_type||c.transactionType||'';
             if(transactionType!==transactionFilter) return false;
         }
-        const supervisorFilter=document.getElementById('supervisorFilter').value;
         if(supervisorFilter!=='all'){
             const mData=managerData[c.rowIndex]||{};
             const supervisorName=mData.supervisor_name||c.supervisorName||'';
             if(supervisorName!==supervisorFilter) return false;
         }
-        // Hide "تأجيل" customers for supervisors
         if(currentUser==='supervisor'){
-            const mData=managerData[c.rowIndex]||{};
-            const transactionType=mData.transaction_type||c.transactionType||'';
-            if(transactionType==='تأجيل') return false;
+            const sData=supervisorData[c.rowIndex]||{};
+            const installationStatus=sData.installation_status||'';
+            if(installationStatus==='تأجيل') return false;
         }
         return true;
     });
@@ -718,15 +762,15 @@ function renderCustomers(){
         const hasM=managerData[index]&&Object.keys(managerData[index]).length>0;
         const hasS=supervisorData[index]&&Object.keys(supervisorData[index]).length>0;
         let statusText='قيد الانتظار',statusClass='status-pending';
-        const mDataForStatus=managerData[index]||{};
-        const transactionTypeForStatus=mDataForStatus.transaction_type||customer.transactionType||'';
-        if(transactionTypeForStatus==='تأجيل'){statusText='مؤجل';statusClass='status-pending';}
+        const sDataForStatus=supervisorData[index]||{};
+        const installationStatus=sDataForStatus.installation_status||'';
+        if(installationStatus==='تأجيل'){statusText='مؤجل';statusClass='status-delayed';}
         else if(hasM&&!hasS){statusText='بانتظار المشرف';statusClass='status-manager-done';}
         else if(hasS){statusText='مكتمل';statusClass='status-completed';}
         const card=document.createElement('div');
         card.className='customer-card';
         let printBtn='';
-        if(hasM&&hasS){
+        if(hasM&&hasS&&installationStatus!=='تأجيل'){
             printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">✅ تم إكمال جميع البيانات</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير هذا العميل</button></div>`;
         }else if(hasM&&currentUser==='manager'){
             printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">📋 بيانات مدير خط السير</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير</button></div>`;
@@ -769,6 +813,38 @@ function toggleSoftenerFields(){
     }
 }
 
+// ===== CHECKBOX TAGS FUNCTIONS =====
+function toggleTag(labelEl){
+    const checkbox = labelEl.querySelector('input[type="checkbox"]');
+    checkbox.checked = !checkbox.checked;
+    labelEl.classList.toggle('checked', checkbox.checked);
+}
+
+function getCheckedTags(containerId){
+    const container = document.getElementById(containerId);
+    if(!container) return '';
+    const checked = container.querySelectorAll('input[type="checkbox"]:checked');
+    return Array.from(checked).map(cb => cb.value).join(' + ');
+}
+
+function setCheckedTags(containerId, valueStr){
+    const container = document.getElementById(containerId);
+    if(!container) return;
+    // Uncheck all first
+    container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+        cb.closest('.tag').classList.remove('checked');
+    });
+    if(!valueStr) return;
+    const values = valueStr.split(' + ').map(v => v.trim());
+    container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        if(values.includes(cb.value)){
+            cb.checked = true;
+            cb.closest('.tag').classList.add('checked');
+        }
+    });
+}
+
 function openManagerModal(index){
     currentCustomerIndex=index;
     const c=customers.find(cust=>cust.rowIndex===index)||customers[index];
@@ -791,7 +867,8 @@ function openManagerModal(index){
     document.getElementById('m_notes').value=ex.notes||'';
     document.getElementById('m_order_type').value=ex.order_type||'';
     document.getElementById('m_package_name').value=ex.package_name||'';
-    document.getElementById('m_filter_details').value=ex.filter_details||'';
+    // ===== SET CHECKBOX TAGS =====
+    setCheckedTags('filterDetailsTags', ex.filter_details || '');
     document.getElementById('m_other_product').value=ex.other_product||'';
     document.getElementById('m_total').value=ex.total||'';
     document.getElementById('m_paid').value=ex.paid||'';
@@ -821,7 +898,8 @@ async function saveManagerData(){
         notes:document.getElementById('m_notes').value,
         order_type:document.getElementById('m_order_type').value,
         package_name:document.getElementById('m_package_name').value,
-        filter_details:document.getElementById('m_filter_details').value,
+        // ===== GET CHECKBOX TAGS =====
+        filter_details:getCheckedTags('filterDetailsTags'),
         other_product:document.getElementById('m_other_product').value,
         total:document.getElementById('m_total').value,
         paid:document.getElementById('m_paid').value,
@@ -854,7 +932,6 @@ function openSupervisorModal(index){
     document.getElementById('s_name').value=c.name;
     document.getElementById('s_phone').value=c.phone;
 
-    // Show location link if manager filled it
     const mData=managerData[index]||{};
     const locationLink=mData.location_link||'';
     const locationGroup=document.getElementById('s_location_link_group');
@@ -864,7 +941,6 @@ function openSupervisorModal(index){
     if(locationLink){
         locationGroup.style.display='block';
         locationDisplay.value=locationLink;
-        // Build Google Maps URL
         const mapsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(locationLink);
         locationBtn.href=mapsUrl;
     }else{
@@ -905,7 +981,6 @@ function openSupervisorModal(index){
     document.getElementById('s_check_leak').value=ex.check_leak||'';
     document.getElementById('s_taste_check').value=ex.taste_check||'';
     document.getElementById('s_color_check').value=ex.color_check||'';
-    // FIX: use supervisor_softener key
     document.getElementById('s_softener').value=ex.supervisor_softener||'';
     document.getElementById('s_water_type').value=ex.water_type||'';
     document.getElementById('s_connections_rating').value=ex.connections_rating||'';
@@ -959,7 +1034,6 @@ async function saveSupervisorData(){
         check_leak:document.getElementById('s_check_leak').value,
         taste_check:document.getElementById('s_taste_check').value,
         color_check:document.getElementById('s_color_check').value,
-        // FIX: use supervisor_softener key
         supervisor_softener:document.getElementById('s_softener').value,
         water_type:document.getElementById('s_water_type').value,
         connections_rating:document.getElementById('s_connections_rating').value,
@@ -1102,7 +1176,9 @@ function buildPrintRows(mData,sData){
         html+=addRow('فني التركيب',sData.technician);
         html+=addRow('السيارة',sData.car);
         html+=addRow('حالة التركيب',sData.installation_status);
-        html+=addRowFull('سبب التأجيل',sData.delay_reason);
+        if(sData.installation_status==='تأجيل'){
+            html+=addRowFull('سبب التأجيل',sData.delay_reason);
+        }
         html+=addRowFull('الأغراض',sData.items);
         html+=addRowFull('الأغراض المسترجعة',sData.returned_items);
         html+=addRow('بداية العمل',sData.start_time);
@@ -1126,7 +1202,6 @@ function buildPrintRows(mData,sData){
         html+=addRow('التسريب',sData.check_leak);
         html+=addRow('طعم الماء',sData.taste_check);
         html+=addRow('لون الماء',sData.color_check);
-        // FIX: use supervisor_softener key
         html+=addRow('سوفتنر',sData.supervisor_softener);
         html+=addRow('نوع الماء',sData.water_type);
         html+=addRow('تقييم الوصلات',sData.connections_rating);
@@ -1262,7 +1337,9 @@ function viewDetails(index){
         html+=detailRow('فني التركيب',sData.technician);
         html+=detailRow('السيارة',sData.car);
         html+=detailRow('حالة التركيب',sData.installation_status);
-        html+=detailRow('سبب التأجيل',sData.delay_reason);
+        if(sData.installation_status==='تأجيل'){
+            html+=detailRow('سبب التأجيل',sData.delay_reason);
+        }
         html+=detailRow('الأغراض',sData.items);
         html+=detailRow('الأغراض المسترجعة',sData.returned_items);
         html+=detailRow('بداية العمل',sData.start_time);
@@ -1286,7 +1363,6 @@ function viewDetails(index){
         html+=detailRow('التسريب',sData.check_leak);
         html+=detailRow('طعم الماء',sData.taste_check);
         html+=detailRow('لون الماء',sData.color_check);
-        // FIX: use supervisor_softener key
         html+=detailRow('سوفتنر',sData.supervisor_softener);
         html+=detailRow('نوع الماء',sData.water_type);
         html+=detailRow('تقييم الوصلات',sData.connections_rating);
