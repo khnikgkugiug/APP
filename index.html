@@ -111,17 +111,16 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .date-badge.tomorrow{background:#cce5ff;color:#004085}
 .highlight{background:#fdcb6e;color:#1a1a2e;padding:2px 4px;border-radius:3px;font-weight:600}
 
-/* ===== CHECKBOX TAGS FOR FILTER DETAILS ===== */
-.checkbox-tags{display:flex;flex-wrap:wrap;gap:8px;padding:5px 0}
-.checkbox-tags .tag{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:25px;padding:8px 16px;cursor:pointer;transition:all .25s;font-size:.9rem;user-select:none}
-.checkbox-tags .tag:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4)}
-.checkbox-tags .tag input[type="checkbox"]{width:16px;height:16px;accent-color:#fdcb6e;cursor:pointer;margin:0}
-.checkbox-tags .tag.checked{background:linear-gradient(135deg,#667eea,#764ba2);border-color:rgba(102,126,234,.6);box-shadow:0 2px 10px rgba(102,126,234,.3)}
-.checkbox-tags .tag.checked:hover{background:linear-gradient(135deg,#5a6fd6,#6a4190)}
-.checkbox-tags-label{color:rgba(255,255,255,.9);font-size:.9rem;margin-bottom:10px;font-weight:500;display:block}
+/* ===== MULTI-SELECT DROPDOWN FOR FILTER DETAILS ===== */
+.form-group select[multiple]{min-height:140px;padding:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;font-size:.95rem;transition:all .3s;width:100%}
+.form-group select[multiple]:focus{outline:none;border-color:#fdcb6e;box-shadow:0 0 10px rgba(253,203,110,.2);background:rgba(255,255,255,.18)}
+.form-group select[multiple] option{padding:10px 15px;margin:3px 0;border-radius:8px;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.form-group select[multiple] option:hover{background:rgba(255,255,255,.2)}
+.form-group select[multiple] option:checked{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-color:rgba(102,126,234,.6);box-shadow:0 2px 8px rgba(102,126,234,.3)}
 
-@media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}.checkbox-tags .tag{padding:6px 12px;font-size:.85rem}}
+@media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}.form-group select[multiple]{min-height:120px;font-size:.9rem}}
 </style>
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -270,63 +269,24 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>نوع الطلب</label><select id="m_order_type"><option value="">اختر...</option><option>باقة</option><option>فلتر</option><option>منتج آخر</option></select></div>
 <div class="form-group"><label>اسم الباقة</label><input type="text" id="m_package_name"></div>
 
-<!-- ===== CHECKBOX TAGS FOR FILTER DETAILS ===== -->
+<!-- ===== MULTI-SELECT DROPDOWN FOR FILTER DETAILS ===== -->
 <div class="form-group" style="grid-column:1/-1">
-    <label class="checkbox-tags-label">تفاصيل الفلتر <span style="color:#fdcb6e;font-size:.8rem">(اختر واحد أو أكثر)</span></label>
-    <div class="checkbox-tags" id="filterDetailsTags">
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="ديجيتال" hidden>
-            <span>ديجيتال</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="100 اقتصادي" hidden>
-            <span>100 اقتصادي</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="100 بلازما" hidden>
-            <span>100 بلازما</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="400 اقتصادي" hidden>
-            <span>400 اقتصادي</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="400 بلازما" hidden>
-            <span>400 بلازما</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="جلاكسي" hidden>
-            <span>جلاكسي</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="مبرد ابيض زووم" hidden>
-            <span>مبرد ابيض زووم</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="مبرد اسود" hidden>
-            <span>مبرد اسود</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="مبرد ذهبي" hidden>
-            <span>مبرد ذهبي</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="فلتر خزان 2" hidden>
-            <span>فلتر خزان 2</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="فلتر خزان 3" hidden>
-            <span>فلتر خزان 3</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="قارورة عادية" hidden>
-            <span>قارورة عادية</span>
-        </label>
-        <label class="tag" onclick="toggleTag(this)">
-            <input type="checkbox" value="قارورة مسطحة" hidden>
-            <span>قارورة مسطحة</span>
-        </label>
-    </div>
+    <label>تفاصيل الفلتر <span style="color:#fdcb6e;font-size:.8rem">(اضغط Ctrl أو Cmd واختر أكثر من واحد)</span></label>
+    <select id="m_filter_details" multiple size="6">
+        <option value="ديجيتال">ديجيتال</option>
+        <option value="100 اقتصادي">100 اقتصادي</option>
+        <option value="100 بلازما">100 بلازما</option>
+        <option value="400 اقتصادي">400 اقتصادي</option>
+        <option value="400 بلازما">400 بلازما</option>
+        <option value="جلاكسي">جلاكسي</option>
+        <option value="مبرد ابيض زووم">مبرد ابيض زووم</option>
+        <option value="مبرد اسود">مبرد اسود</option>
+        <option value="مبرد ذهبي">مبرد ذهبي</option>
+        <option value="فلتر خزان 2">فلتر خزان 2</option>
+        <option value="فلتر خزان 3">فلتر خزان 3</option>
+        <option value="قارورة عادية">قارورة عادية</option>
+        <option value="قارورة مسطحة">قارورة مسطحة</option>
+    </select>
 </div>
 
 <div class="form-group"><label>منتج آخر</label><input type="text" id="m_other_product"></div>
@@ -813,34 +773,22 @@ function toggleSoftenerFields(){
     }
 }
 
-// ===== CHECKBOX TAGS FUNCTIONS =====
-function toggleTag(labelEl){
-    const checkbox = labelEl.querySelector('input[type="checkbox"]');
-    checkbox.checked = !checkbox.checked;
-    labelEl.classList.toggle('checked', checkbox.checked);
+// ===== MULTI-SELECT DROPDOWN FUNCTIONS =====
+function getMultiSelectValues(selectId){
+    const select = document.getElementById(selectId);
+    if(!select) return '';
+    const selected = Array.from(select.selectedOptions).map(opt => opt.value);
+    return selected.join(', ');
 }
 
-function getCheckedTags(containerId){
-    const container = document.getElementById(containerId);
-    if(!container) return '';
-    const checked = container.querySelectorAll('input[type="checkbox"]:checked');
-    return Array.from(checked).map(cb => cb.value).join(', ');  // ← comma + space
-}
-
-function setCheckedTags(containerId, valueStr){
-    const container = document.getElementById(containerId);
-    if(!container) return;
-    container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-        cb.checked = false;
-        cb.closest('.tag').classList.remove('checked');
-    });
+function setMultiSelectValues(selectId, valueStr){
+    const select = document.getElementById(selectId);
+    if(!select) return;
+    Array.from(select.options).forEach(opt => opt.selected = false);
     if(!valueStr) return;
-    const values = valueStr.split(', ').map(v => v.trim()).filter(v => v);  // ← comma + space
-    container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-        if(values.includes(cb.value)){
-            cb.checked = true;
-            cb.closest('.tag').classList.add('checked');
-        }
+    const values = valueStr.split(', ').map(v => v.trim()).filter(v => v);
+    Array.from(select.options).forEach(opt => {
+        if(values.includes(opt.value)) opt.selected = true;
     });
 }
 function openManagerModal(index){
@@ -866,7 +814,7 @@ function openManagerModal(index){
     document.getElementById('m_order_type').value=ex.order_type||'';
     document.getElementById('m_package_name').value=ex.package_name||'';
     // ===== SET CHECKBOX TAGS =====
-    setCheckedTags('filterDetailsTags', ex.filter_details || '');
+    setMultiSelectValues('m_filter_details', ex.filter_details || '');
     document.getElementById('m_other_product').value=ex.other_product||'';
     document.getElementById('m_total').value=ex.total||'';
     document.getElementById('m_paid').value=ex.paid||'';
@@ -897,7 +845,7 @@ async function saveManagerData(){
         order_type:document.getElementById('m_order_type').value,
         package_name:document.getElementById('m_package_name').value,
         // ===== GET CHECKBOX TAGS =====
-        filter_details:getCheckedTags('filterDetailsTags'),
+        filter_details:getMultiSelectValues('m_filter_details'),
         other_product:document.getElementById('m_other_product').value,
         total:document.getElementById('m_total').value,
         paid:document.getElementById('m_paid').value,
