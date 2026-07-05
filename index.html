@@ -824,7 +824,7 @@ function getCheckedTags(containerId){
     const container = document.getElementById(containerId);
     if(!container) return '';
     const checked = container.querySelectorAll('input[type="checkbox"]:checked');
-    return Array.from(checked).map(cb => cb.value).join(' ');  // ← مسافة
+    return Array.from(checked).map(cb => cb.value).join(', ');  // ← comma + space
 }
 
 function setCheckedTags(containerId, valueStr){
@@ -835,7 +835,7 @@ function setCheckedTags(containerId, valueStr){
         cb.closest('.tag').classList.remove('checked');
     });
     if(!valueStr) return;
-    const values = valueStr.split(' ').map(v => v.trim()).filter(v => v);
+    const values = valueStr.split(', ').map(v => v.trim()).filter(v => v);  // ← comma + space
     container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         if(values.includes(cb.value)){
             cb.checked = true;
@@ -843,7 +843,6 @@ function setCheckedTags(containerId, valueStr){
         }
     });
 }
-
 function openManagerModal(index){
     currentCustomerIndex=index;
     const c=customers.find(cust=>cust.rowIndex===index)||customers[index];
