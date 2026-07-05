@@ -202,6 +202,16 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <option>عمر</option>
 </select>
 </div>
+<div class="filter-group" id="installationStatusFilterGroup" style="display:none">
+<label>حالة التركيب</label>
+<select id="installationStatusFilter" onchange="applyFilters()">
+<option value="all">كل الحالات</option>
+<option value="تركيب جزئي">تركيب جزئي</option>
+<option value="تركيب بدون تشغيل">تركيب بدون تشغيل</option>
+<option value="تأجيل">تأجيل</option>
+<option value="تركيب وتشغيل">تركيب وتشغيل</option>
+</select>
+</div>
 </div>
 <div class="filter-actions">
 <button class="btn btn-secondary" onclick="clearFilters()">🗑️ مسح الفلاتر</button>
@@ -290,9 +300,9 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 </div>
 
 <div class="form-group"><label>منتج آخر</label><input type="text" id="m_other_product"></div>
-<div class="form-group"><label>الإجمالي</label><input type="number" id="m_total"></div>
-<div class="form-group"><label>مقدم</label><input type="number" id="m_paid"></div>
-<div class="form-group"><label>متبقي</label><input type="number" id="m_remaining"></div>
+<div class="form-group"><label>الإجمالي</label><input type="number" id="m_total" oninput="calculateManagerRemaining()"></div>
+<div class="form-group"><label>مقدم</label><input type="number" id="m_paid" oninput="calculateManagerRemaining()"></div>
+<div class="form-group"><label>متبقي</label><input type="number" id="m_remaining" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed"></div>
 </div>
 </div>
 <div class="form-section">
@@ -375,8 +385,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-grid">
 <div class="form-group"><label>المبلغ المدفوع</label><input type="number" id="s_amount_paid"></div>
 <div class="form-group"><label>في حساب</label><input type="text" id="s_in_account"></div>
-<div class="form-group"><label>باقي</label><input type="number" id="s_balance"></div>
-<div class="form-group"><label>الميعاد المتوقع للدفع</label><input type="text" id="s_payment_date" placeholder="اكتب الميعاد..."></div>
+<div class="form-group"><label>باقي</label><input type="number" id="s_balance" oninput="togglePaymentDateField()"></div>
+<div class="form-group conditional-field" id="paymentDateGroup"><label>الميعاد المتوقع للدفع</label><input type="text" id="s_payment_date" placeholder="اكتب الميعاد..."></div>
 <div class="form-group"><label>ملاحظات</label><textarea id="s_notes"></textarea></div>
 </div>
 </div>
@@ -406,7 +416,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>🔧 بيانات إضافية</h3>
 <div class="form-grid">
-<div class="form-group"><label>سوفتنر</label><select id="s_softener"><option value="">اختر...</option><option>10</option><option>13</option><option>16</option><option>دبل</option><option>منفرد</option></select></div>
+<div class="form-group"><label>سوفتنر</label><select id="s_softener" onchange="toggleSupervisorSoftenerFields()"><option value="">اختر...</option><option>10</option><option>13</option><option>16</option><option>دبل</option><option>منفرد</option></select></div>
 <div class="form-group"><label>نوع الماء</label><select id="s_water_type"><option value="">اختر...</option><option>حكومي</option><option>بئر</option></select></div>
 <div class="form-group"><label>التأكد من الوصلات</label><select id="s_connections_rating"><option value="">اختر...</option><option>ممتازة</option><option>جيدة</option><option>سيئة</option></select></div>
 <div class="form-group"><label>التأكد من مصدر الكهرباء</label><select id="s_electricity_rating"><option value="">اختر...</option><option>يعمل</option><option>لا يعمل</option></select></div>
@@ -414,6 +424,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>ضغط الدخول قيمة العداد</label><input type="number" id="s_inlet_pressure_value"></div>
 <div class="form-group"><label>هل راكب فاكيوم</label><select id="s_vacuum_installed"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
 <div class="form-group"><label>حالة الرزين</label><select id="s_resin_status"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>لون متغير</option></select></div>
+<div class="conditional-field" id="supervisorSoftenerFields">
 <div class="form-group"><label>قياس TDS قبل السوفتنر</label><input type="number" id="s_tds_before_softener"></div>
 <div class="form-group"><label>قياس TDS بعد السوفتنر</label><input type="number" id="s_tds_after_softener"></div>
 <div class="form-group"><label>قياس الكلس قبل السوفتنر</label><input type="number" id="s_limescale_before_softener"></div>
@@ -424,6 +435,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>ضبط الغسيل البطئ</label><input type="text" id="s_backwash_duration" placeholder="اكتب الوقت..."></div>
 <div class="form-group"><label>ضبط الغسيل السريع</label><input type="text" id="s_fast_rinse_time" placeholder="اكتب الوقت..."></div>
 <div class="form-group"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option>زائد عن الحد</option><option>مناسب</option><option>منخفض</option><option>جاف</option></select></div>
+</div>
 <div class="form-group"><label>هل هناك مظلة</label><select id="s_has_shelter"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
 </div>
 </div>
@@ -513,6 +525,7 @@ function login(role){
     document.getElementById('loginSection').style.display='none';
     document.getElementById('mainContent').classList.add('active');
     document.getElementById('userTitle').textContent=role==='manager'?'👷 مدير خط السير':'👨‍💼 المشرف';
+    document.getElementById('installationStatusFilterGroup').style.display=role==='supervisor'?'block':'none';
     loadFromLocalStorage();
     loadSheetData();
 }
@@ -633,6 +646,7 @@ function applyFilters(){
     const transactionFilter=document.getElementById('transactionFilter').value;
     const customDateStr=document.getElementById('customDate').value;
     const supervisorFilter=document.getElementById('supervisorFilter').value;
+    const installationStatusFilter=document.getElementById('installationStatusFilter').value;
     document.getElementById('customDateGroup').style.display=dateFilter==='custom'?'block':'none';
     const today=new Date();today.setHours(0,0,0,0);
     const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
@@ -673,6 +687,11 @@ function applyFilters(){
             const installationStatus=sData.installation_status||'';
             if(installationStatus==='تأجيل') return false;
         }
+        if(installationStatusFilter!=='all'){
+            const sData=supervisorData[c.rowIndex]||{};
+            const installationStatus=sData.installation_status||'';
+            if(installationStatus!==installationStatusFilter) return false;
+        }
         return true;
     });
     renderCustomers();
@@ -686,6 +705,7 @@ function clearFilters(){
     document.getElementById('statusFilter').value='all';
     document.getElementById('transactionFilter').value='all';
     document.getElementById('supervisorFilter').value='all';
+    document.getElementById('installationStatusFilter').value='all';
     document.getElementById('customDate').value='';
     document.getElementById('customDateGroup').style.display='none';
     applyFilters();
@@ -754,6 +774,13 @@ function toggleDelayFields(){
     else{g.classList.remove('visible');document.getElementById('s_delay_reason').value='';}
 }
 
+function togglePaymentDateField(){
+    const v=parseFloat(document.getElementById('s_balance').value)||0;
+    const g=document.getElementById('paymentDateGroup');
+    if(v>0) g.classList.add('visible');
+    else{g.classList.remove('visible');document.getElementById('s_payment_date').value='';}
+}
+
 function toggleSpareFields(){
     const v=document.getElementById('s_spare_needed').value;
     const g=document.getElementById('spare_details_group');
@@ -771,6 +798,33 @@ function toggleSoftenerFields(){
         document.getElementById('m_softener_size').value='';
         document.getElementById('m_softener_type').value='';
     }
+}
+
+function toggleSupervisorSoftenerFields(){
+    const v=document.getElementById('s_softener').value;
+    const group=document.getElementById('supervisorSoftenerFields');
+    if(v){group.classList.add('visible');}
+    else{
+        group.classList.remove('visible');
+        document.getElementById('s_tds_before_softener').value='';
+        document.getElementById('s_tds_after_softener').value='';
+        document.getElementById('s_limescale_before_softener').value='';
+        document.getElementById('s_limescale_after_softener').value='';
+        document.getElementById('s_leak_check').value='';
+        document.getElementById('s_color_after_softener').value='';
+        document.getElementById('s_backwash_time').value='';
+        document.getElementById('s_backwash_duration').value='';
+        document.getElementById('s_fast_rinse_time').value='';
+        document.getElementById('s_salt_level').value='';
+    }
+}
+
+// ===== MANAGER FINANCIAL AUTO-CALCULATE =====
+function calculateManagerRemaining(){
+    const total=parseFloat(document.getElementById('m_total').value)||0;
+    const paid=parseFloat(document.getElementById('m_paid').value)||0;
+    const remaining=total-paid;
+    document.getElementById('m_remaining').value=remaining>=0?remaining:0;
 }
 
 // ===== MULTI-SELECT DROPDOWN FUNCTIONS =====
@@ -838,7 +892,7 @@ function openManagerModal(index){
     document.getElementById('m_other_product').value=ex.other_product||'';
     document.getElementById('m_total').value=ex.total||'';
     document.getElementById('m_paid').value=ex.paid||'';
-    document.getElementById('m_remaining').value=ex.remaining||'';
+    calculateManagerRemaining();
     document.getElementById('m_appointment_time').value=ex.appointment_time||'';
     document.getElementById('m_appointment_date').value=ex.appointment_date||'';
     document.getElementById('m_print').value=ex.print||'';
@@ -932,6 +986,7 @@ function openSupervisorModal(index){
     document.getElementById('s_amount_paid').value=ex.amount_paid||'';
     document.getElementById('s_in_account').value=ex.in_account||'';
     document.getElementById('s_balance').value=ex.balance||'';
+    togglePaymentDateField();
     document.getElementById('s_payment_date').value=ex.payment_date||'';
     document.getElementById('s_notes').value=ex.notes||'';
     document.getElementById('s_tds_before').value=ex.tds_before||'';
@@ -948,6 +1003,7 @@ function openSupervisorModal(index){
     document.getElementById('s_taste_check').value=ex.taste_check||'';
     document.getElementById('s_color_check').value=ex.color_check||'';
     document.getElementById('s_softener').value=ex.supervisor_softener||'';
+    toggleSupervisorSoftenerFields();
     document.getElementById('s_water_type').value=ex.water_type||'';
     document.getElementById('s_connections_rating').value=ex.connections_rating||'';
     document.getElementById('s_electricity_rating').value=ex.electricity_rating||'';
