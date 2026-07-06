@@ -417,27 +417,25 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>🔧 بيانات إضافية</h3>
 <div class="form-grid">
-<div class="form-group"><label>سوفتنر</label><select id="s_softener"><option value="">اختر...</option><option>10</option><option>13</option><option>16</option><option>دبل</option><option>منفرد</option></select></div>
-<div class="form-group"><label>نوع الماء</label><select id="s_water_type"><option value="">اختر...</option><option>حكومي</option><option>بئر</option></select></div>
-<div class="form-group"><label>التأكد من الوصلات</label><select id="s_connections_rating"><option value="">اختر...</option><option>ممتازة</option><option>جيدة</option><option>سيئة</option></select></div>
-<div class="form-group"><label>التأكد من مصدر الكهرباء</label><select id="s_electricity_rating"><option value="">اختر...</option><option>يعمل</option><option>لا يعمل</option></select></div>
-<div class="form-group"><label>نوع الوصلات</label><select id="s_connection_type"><option value="">اختر...</option><option>هاي بريشر</option><option>تكنو</option></select></div>
+<div class="form-group"><label>سوفتنر</label><select id="s_softener"><option value="">اختر...</option><option value="10">10</option><option value="13">13</option><option value="16">16</option><option value="دبل">دبل</option><option value="منفرد">منفرد</option></select></div>
+<div class="form-group"><label>نوع الماء</label><select id="s_water_type"><option value="">اختر...</option><option value="حكومي">حكومي</option><option value="بئر">بئر</option></select></div>
+<div class="form-group"><label>التأكد من الوصلات </label><select id="s_connections_rating"><option value="">اختر...</option><option value="ممتازة">ممتازة</option><option value="جيدة">جيدة</option><option value="سيئة">سيئة</option></select></div>
+<div class="form-group"><label>التأكد من مصدر الكهرباء </label><select id="s_electricity_rating"><option value="">اختر...</option><option value="يعمل">يعمل</option><option value="لا يعمل">لا يعمل</option></select></div>
+<div class="form-group"><label>نوع الوصلات</label><select id="s_connection_type"><option value="">اختر...</option><option value="هاي بريشر">هاي بريشر</option><option value="تكنو">تكنو</option></select></div>
 <div class="form-group"><label>ضغط الدخول قيمة العداد</label><input type="number" id="s_inlet_pressure_value"></div>
-<div class="form-group"><label>هل راكب فاكيوم</label><select id="s_vacuum_installed"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
-<div class="form-group"><label>حالة الرزين</label><select id="s_resin_status"><option value="">اختر...</option><option>ممتاز</option><option>جيد</option><option>لون متغير</option></select></div>
-<div class="conditional-field" id="supervisorSoftenerFields">
+<div class="form-group"><label>هل راكب فاكيوم</label><select id="s_vacuum_installed"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
+<div class="form-group"><label>حالة الرزين</label><select id="s_resin_status"><option value="">اختر...</option><option value="ممتاز">ممتاز</option><option value="جيد">جيد</option><option value="لون متغير">لون متغير</option></select></div>
 <div class="form-group"><label>قياس TDS قبل السوفتنر</label><input type="number" id="s_tds_before_softener"></div>
 <div class="form-group"><label>قياس TDS بعد السوفتنر</label><input type="number" id="s_tds_after_softener"></div>
 <div class="form-group"><label>قياس الكلس قبل السوفتنر</label><input type="number" id="s_limescale_before_softener"></div>
 <div class="form-group"><label>قياس الكلس بعد السوفتنر</label><input type="number" id="s_limescale_after_softener"></div>
-<div class="form-group"><label>التأكد من التسريبات</label><select id="s_leak_check"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
-<div class="form-group"><label>لون في الماء بعد السوفتنر</label><select id="s_color_after_softener"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>التأكد من التسريبات</label><select id="s_leak_check"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
+<div class="form-group"><label>لون في الماء بعد السوفتنر</label><select id="s_color_after_softener"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
 <div class="form-group"><label>ضبط وقت الغسيل العكسي</label><input type="text" id="s_backwash_time" placeholder="اكتب الوقت..."></div>
 <div class="form-group"><label>ضبط الغسيل البطئ</label><input type="text" id="s_backwash_duration" placeholder="اكتب الوقت..."></div>
 <div class="form-group"><label>ضبط الغسيل السريع</label><input type="text" id="s_fast_rinse_time" placeholder="اكتب الوقت..."></div>
-<div class="form-group"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option>زائد عن الحد</option><option>مناسب</option><option>منخفض</option><option>جاف</option></select></div>
-</div>
-<div class="form-group"><label>هل هناك مظلة</label><select id="s_has_shelter"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option value="زائد عن الحد">زائد عن الحد</option><option value="مناسب">مناسب</option><option value="منخفض">منخفض</option><option value="جاف">جاف</option></select></div>
+<div class="form-group"><label>هل هناك مظلة</label><select id="s_has_shelter"><option value="">اختر...</option><option value="يوجد">يوجد</option><option value="لا يوجد">لا يوجد</option></select></div>
 </div>
 </div>
 </div>
