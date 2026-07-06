@@ -2,11 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Zoom</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;color:#fff}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;color:#fff;overflow-x:hidden}
 .container{max-width:1400px;margin:0 auto;padding:20px}
 .header{text-align:center;padding:40px 0 20px;margin-bottom:30px}
 .header .logo-icon{font-size:4rem;margin-bottom:15px;display:block}
@@ -23,7 +23,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;flex-wrap:wrap;gap:15px;background:rgba(255,255,255,.08);padding:15px 25px;border-radius:15px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15)}
 .toolbar h2{color:#fff;font-size:1.3rem;text-shadow:0 0 10px rgba(255,255,255,.2)}
 .toolbar-buttons{display:flex;gap:10px;flex-wrap:wrap}
-.btn{padding:12px 25px;border:none;border-radius:10px;cursor:pointer;font-size:1rem;font-weight:600;transition:all .3s;display:flex;align-items:center;gap:8px}
+.btn{padding:12px 25px;border:none;border-radius:10px;cursor:pointer;font-size:1rem;font-weight:600;transition:all .3s;display:flex;align-items:center;gap:8px;touch-action:manipulation}
 .btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:1px solid rgba(255,255,255,.3)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(102,126,234,.4)}
 .btn-secondary{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3)}
@@ -52,25 +52,27 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .status-delayed{background:#f8d7da;color:#721c24}
 .customer-actions{display:flex;gap:10px;margin-top:15px}
 .customer-actions .btn{flex:1;padding:10px;font-size:.9rem;justify-content:center}
-.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:1000;overflow-y:auto}
+
+/* ===== FIXED MODAL STYLES ===== */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:1000;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-overlay.active{display:flex;justify-content:center;align-items:flex-start;padding:30px 20px}
-.modal-content{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,.2);border-radius:20px;width:100%;max-width:1100px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-content{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,.2);border-radius:20px;width:100%;max-width:1100px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.5);-webkit-overflow-scrolling:touch}
 .modal-header{padding:25px 30px;border-bottom:1px solid rgba(255,255,255,.15);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:inherit;z-index:10}
 .modal-header h2{color:#fff;font-size:1.4rem;text-shadow:0 0 10px rgba(255,255,255,.2)}
-.modal-close{background:none;border:none;color:rgba(255,255,255,.8);font-size:1.5rem;cursor:pointer}
-.modal-close:hover{color:#fff}
+.modal-close{background:none;border:none;color:rgba(255,255,255,.8);font-size:1.5rem;cursor:pointer;padding:5px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .2s}
+.modal-close:hover{color:#fff;background:rgba(255,255,255,.1)}
 .modal-body{padding:25px 30px}
 .form-section{margin-bottom:30px}
 .form-section h3{color:#fdcb6e;font-size:1.1rem;margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.2)}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:15px}
 .form-group{margin-bottom:10px}
 .form-group label{display:block;color:rgba(255,255,255,.9);font-size:.9rem;margin-bottom:8px;font-weight:500}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 15px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;font-size:.95rem;transition:all .3s}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 15px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;font-size:.95rem;transition:all .3s;-webkit-appearance:none;appearance:none}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#fdcb6e;box-shadow:0 0 10px rgba(253,203,110,.2);background:rgba(255,255,255,.18)}
 .form-group textarea{min-height:80px;resize:vertical}
 .form-group select option{background:#1a1a2e;color:#fff}
 .modal-footer{padding:20px 30px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:inherit}
-.alert{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:15px 30px;border-radius:10px;color:#fff;font-weight:600;z-index:2000;display:none;animation:slideDown .3s ease}
+.alert{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:15px 30px;border-radius:10px;color:#fff;font-weight:600;z-index:2000;display:none;animation:slideDown .3s ease;white-space:nowrap}
 .alert.show{display:block}
 .alert-success{background:linear-gradient(135deg,#00b894,#00a885)}
 .alert-error{background:linear-gradient(135deg,#e74c3c,#c0392b)}
@@ -100,7 +102,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .filter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px;align-items:end}
 .filter-group{margin-bottom:0}
 .filter-group label{display:block;color:rgba(255,255,255,.9);font-size:.9rem;margin-bottom:8px;font-weight:500}
-.filter-group input,.filter-group select{width:100%;padding:10px 15px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;font-size:.95rem}
+.filter-group input,.filter-group select{width:100%;padding:10px 15px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;font-size:.95rem;-webkit-appearance:none;appearance:none}
 .filter-group input:focus,.filter-group select:focus{outline:none;border-color:#fdcb6e;background:rgba(255,255,255,.18)}
 .filter-group input::placeholder{color:rgba(255,255,255,.5)}
 .filter-group select option{background:#1a1a2e;color:#fff}
@@ -118,9 +120,36 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .form-group select[multiple] option:hover{background:rgba(255,255,255,.2)}
 .form-group select[multiple] option:checked{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-color:rgba(102,126,234,.6);box-shadow:0 2px 8px rgba(102,126,234,.3)}
 
-@media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}.form-group select[multiple]{min-height:120px;font-size:.9rem}}
+/* ===== MOBILE FIXES ===== */
+@media(max-width:768px){
+    .header h1{font-size:2rem}
+    .customers-grid{grid-template-columns:1fr}
+    .form-grid{grid-template-columns:1fr}
+    .toolbar{flex-direction:column;align-items:stretch}
+    .login-card{padding:30px 40px;min-width:auto;width:100%}
+    .filter-grid{grid-template-columns:1fr}
+    .form-group select[multiple]{min-height:120px;font-size:.9rem}
+    .modal-overlay{padding:10px}
+    .modal-content{border-radius:15px;max-height:95vh}
+    .modal-body{padding:15px}
+    .modal-header{padding:15px 20px}
+    .modal-footer{padding:15px 20px;flex-direction:column}
+    .modal-footer .btn{width:100%;justify-content:center}
+    .btn{padding:14px 20px;font-size:1rem}
+    .customer-actions .btn{padding:12px;font-size:.85rem}
+}
+
+@media(max-width:480px){
+    .container{padding:10px}
+    .header{padding:20px 0 10px}
+    .header h1{font-size:1.6rem}
+    .modal-overlay{padding:5px}
+    .modal-content{border-radius:12px;max-height:98vh}
+    .modal-body{padding:12px}
+    .form-grid{gap:10px}
+    .form-group input,.form-group select,.form-group textarea{padding:14px 12px;font-size:1rem}
+}
 </style>
-<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -280,7 +309,6 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>نوع الطلب</label><select id="m_order_type"><option value="">اختر...</option><option>باقة</option><option>فلتر</option><option>منتج آخر</option></select></div>
 <div class="form-group"><label>اسم الباقة</label><input type="text" id="m_package_name"></div>
 
-<!-- ===== MULTI-SELECT DROPDOWN FOR FILTER DETAILS ===== -->
 <div class="form-group" style="grid-column:1/-1">
     <label>تفاصيل الفلتر <span style="color:#fdcb6e;font-size:.8rem">(اضغط على كل اختيار لتفعيله/إلغائه)</span></label>
     <select id="m_filter_details" multiple size="6">
@@ -439,7 +467,6 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 </div>
 </div>
 </div>
-</div>
 <div class="modal-footer">
 <button class="btn btn-secondary" onclick="closeModal('supervisorModal')">إلغاء</button>
 <button class="btn btn-success" onclick="saveSupervisorData()">💾 حفظ وإرسال</button>
@@ -547,7 +574,7 @@ function debouncedApplyFilters(){
     filterTimeout=setTimeout(()=>{
         applyFilters();
         filterTimeout=null;
-    },300); // Wait 300ms after user stops typing
+    },300);
 }
 
 function parseSheetDate(dateStr){
@@ -604,7 +631,6 @@ function isThisWeek(date){
 }
 
 async function loadSheetData(forceRefresh=false){
-    // Use cache if available and less than 5 minutes old
     if(!forceRefresh && sheetCache && (Date.now()-sheetCacheTime)<300000){
         customers=sheetCache;
         applyFilters();
@@ -643,7 +669,7 @@ async function loadSheetData(forceRefresh=false){
         customers.forEach(c=>{c.parsedDate=parseSheetDate(c.date);});
         managerData=savedManager;
         supervisorData=savedSupervisor;
-        sheetCache=customers; // Cache for next time
+        sheetCache=customers;
         sheetCacheTime=Date.now();
         applyFilters();
         document.getElementById('loadingSection').style.display='none';
@@ -666,9 +692,8 @@ function applyFilters(){
     const supervisorFilter=document.getElementById('supervisorFilter').value;
     const installationStatusFilter=document.getElementById('installationStatusFilter').value;
 
-    // Create hash of filter state to avoid redundant re-renders
     const filterHash=searchTerm+dateFilter+statusFilter+transactionFilter+customDateStr+supervisorFilter+installationStatusFilter;
-    if(filterHash===lastFilterHash && filteredCustomers.length>0) return; // Skip if nothing changed
+    if(filterHash===lastFilterHash && filteredCustomers.length>0) return;
     lastFilterHash=filterHash;
 
     document.getElementById('customDateGroup').style.display=dateFilter==='custom'?'block':'none';
@@ -760,7 +785,6 @@ function renderCustomers(){
     grid.innerHTML='';
     if(filteredCustomers.length===0){document.getElementById('emptyState').style.display='block';return;}
 
-    // Virtual scrolling: render only first 50, then load more on scroll
     const RENDER_BATCH=50;
     let renderedCount=0;
     document.getElementById('emptyState').style.display='none';
@@ -829,7 +853,6 @@ function toggleSoftenerFields(){
     }
 }
 
-// ===== MANAGER FINANCIAL AUTO-CALCULATE =====
 function calculateManagerRemaining(){
     const total=parseFloat(document.getElementById('m_total').value)||0;
     const paid=parseFloat(document.getElementById('m_paid').value)||0;
@@ -837,8 +860,6 @@ function calculateManagerRemaining(){
     document.getElementById('m_remaining').value=remaining>=0?remaining:0;
 }
 
-// ===== MULTI-SELECT DROPDOWN FUNCTIONS =====
-// Auto-attach click handler to make selection work without Ctrl/Cmd
 function initMultiSelect(selectId){
     const select = document.getElementById(selectId);
     if(!select || select.dataset.clickReady === 'true') return;
@@ -874,6 +895,7 @@ function setMultiSelectValues(selectId, valueStr){
         if(values.includes(opt.value)) opt.selected = true;
     });
 }
+
 function openManagerModal(index){
     currentCustomerIndex=index;
     const c=customers.find(cust=>cust.rowIndex===index)||customers[index];
@@ -896,7 +918,6 @@ function openManagerModal(index){
     document.getElementById('m_notes').value=ex.notes||'';
     document.getElementById('m_order_type').value=ex.order_type||'';
     document.getElementById('m_package_name').value=ex.package_name||'';
-    // ===== SET MULTI-SELECT VALUES =====
     setMultiSelectValues('m_filter_details', ex.filter_details || '');
     initMultiSelect('m_filter_details');
     document.getElementById('m_other_product').value=ex.other_product||'';
@@ -928,7 +949,6 @@ async function saveManagerData(){
         notes:document.getElementById('m_notes').value,
         order_type:document.getElementById('m_order_type').value,
         package_name:document.getElementById('m_package_name').value,
-        // ===== GET CHECKBOX TAGS =====
         filter_details:getMultiSelectValues('m_filter_details'),
         other_product:document.getElementById('m_other_product').value,
         total:document.getElementById('m_total').value,
@@ -1147,13 +1167,11 @@ async function saveAllToSheet(){
     let successCount=0,failCount=0,skipCount=0;
     const toSave=[];
 
-    // Only sync customers that have data AND haven't been synced before
     for(let i=0;i<customers.length;i++){
         const idx=customers[i].rowIndex;
         const hasM=managerData[idx]&&Object.keys(managerData[idx]).length>0;
         const hasS=supervisorData[idx]&&Object.keys(supervisorData[idx]).length>0;
         if(hasM||hasS){
-            // Check if data was already sent successfully (has _synced flag)
             const mSynced=managerData[idx]&&managerData[idx]._synced;
             const sSynced=supervisorData[idx]&&supervisorData[idx]._synced;
             if(!mSynced || !sSynced){
@@ -1175,14 +1193,12 @@ async function saveAllToSheet(){
         showAlert(`⏳ جاري الحفظ... ${i+1} من ${toSave.length}`,'info');
         const result=await sendToSheet(item.index,managerData[item.index]||null,supervisorData[item.index]||null);
         if(result.success){
-            // Mark as synced
             if(managerData[item.index]) managerData[item.index]._synced=true;
             if(supervisorData[item.index]) supervisorData[item.index]._synced=true;
             successCount++;
         }else{
             failCount++;
         }
-        // Delay between requests to avoid rate limiting
         if(i<toSave.length-1) await new Promise(r=>setTimeout(r,300));
     }
 
