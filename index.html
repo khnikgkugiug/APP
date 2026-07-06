@@ -275,6 +275,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>اسم العميل</label><input type="text" id="m_name" readonly></div>
 <div class="form-group"><label>رقم الهاتف</label><input type="text" id="m_phone" readonly style="direction:ltr;text-align:right"></div>
 <div class="form-group"><label>الولاية</label><input type="text" id="m_state" readonly></div>
+<div class="form-group"><label>📅 تاريخ العميل <span style="color:#fdcb6e;font-size:.8rem">(من الشييت)</span></label><input type="text" id="m_sheet_date" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed"></div>
+<div class="form-group"><label>📅 تاريخ التركيب <span style="color:#fdcb6e;font-size:.8rem">(لو مفيش في الشييت)</span></label><input type="date" id="m_installation_date"></div>
 <div class="form-group"><label>اسم المشرف</label><select id="m_supervisor_name"><option value="">اختر...</option><option>عبداللطيف</option><option>معاذ</option><option>هادي</option><option>عمر</option></select></div>
 </div>
 </div>
@@ -902,7 +904,9 @@ function openManagerModal(index){
     document.getElementById('m_name').value=c.name;
     document.getElementById('m_phone').value=c.phone;
     document.getElementById('m_state').value=c.state;
+    document.getElementById('m_sheet_date').value=c.date||'-';
     const ex=managerData[index]||{};
+    document.getElementById('m_installation_date').value=ex.installation_date||'';
     document.getElementById('m_supervisor_name').value=ex.supervisor_name||c.supervisorName||'';
     document.getElementById('m_transaction_type').value=ex.transaction_type||c.transactionType||'';
     document.getElementById('m_location_attached').value=ex.location_attached||'';
@@ -957,7 +961,8 @@ async function saveManagerData(){
         appointment_time:document.getElementById('m_appointment_time').value,
         appointment_date:document.getElementById('m_appointment_date').value,
         print:document.getElementById('m_print').value,
-        location_link:document.getElementById('m_location_link').value
+        location_link:document.getElementById('m_location_link').value,
+        installation_date:document.getElementById('m_installation_date').value
     };
     managerData[currentCustomerIndex]=data;
     saveToLocalStorage();
@@ -1138,7 +1143,9 @@ async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
                 managerData:managerDataArg||{},
                 supervisorData:supervisorDataArg||{},
                 action:'saveData',
-                timestamp:new Date().toISOString()
+                timestamp:new Date().toISOString(),
+                dateColumn:2,
+                dateValue:(managerDataArg&&managerDataArg.installation_date)?managerDataArg.installation_date:''
             };
             const response=await fetch(CONFIG.GAS_URL,{
                 method:'POST',
@@ -1248,6 +1255,7 @@ function buildPrintRows(mData,sData){
         html+=addRow('تاريخ الموعد',mData.appointment_date?new Date(mData.appointment_date).toLocaleString('ar-SA'):'');
         html+=addRow('طباعة',mData.print);
         html+=addRowFull('لوكيشن',mData.location_link);
+        html+=addRow('تاريخ التركيب',mData.installation_date);
         html+=addRowFull('ملاحظات',mData.notes);
         html+=`</table>`;
     }
@@ -1409,6 +1417,7 @@ function viewDetails(index){
         html+=detailRow('تاريخ الموعد',mData.appointment_date);
         html+=detailRow('طباعة',mData.print);
         html+=detailRow('لوكيشن',mData.location_link);
+        html+=detailRow('تاريخ التركيب',mData.installation_date);
         html+=detailRow('ملاحظات',mData.notes);
         html+=`</div>`;
     }
