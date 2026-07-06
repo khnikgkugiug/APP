@@ -275,7 +275,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>اسم العميل</label><input type="text" id="m_name" readonly></div>
 <div class="form-group"><label>رقم الهاتف</label><input type="text" id="m_phone" readonly style="direction:ltr;text-align:right"></div>
 <div class="form-group"><label>الولاية</label><input type="text" id="m_state" readonly></div>
-<div class="form-group"><label>📅 تاريخ العميل</label><input type="date" id="m_date" onchange="markDateEdited()"></div>
+<div class="form-group"><label>📅 تاريخ العميل</label><input type="date" id="m_date"></div>
 <div class="form-group"><label>اسم المشرف</label><select id="m_supervisor_name"><option value="">اختر...</option><option>عبداللطيف</option><option>معاذ</option><option>هادي</option><option>عمر</option></select></div>
 </div>
 </div>
@@ -511,7 +511,7 @@ const CONFIG = {
     API_KEY: 'AIzaSyCBaf2mbc1jzHUg2K34sGhinFHsrSWcQ-0',
     SHEET_ID: '1h2Bk-sWVzoSIoX8kUA_uM34cNj-xvPUXpJj7lcCGoJQ',
     SHEET_NAME: 'قاعدة البيانات',
-    GAS_URL: 'https://script.google.com/macros/s/AKfycbznvxsl8B54lpuxUOKVvEfpYJhPua0gU6FVS1ef2K0Cl--zESZzWdSM6bdIDW1mf5Qeuw/exec',
+    GAS_URL: 'https://script.google.com/macros/s/AKfycbyEUz6Q9MS2jru5TQlP30habFwgyL046X6oBZKIKzzZDLr8D4aO0Y_eMEstPtGuB7nE/exec',
     MAX_RETRIES: 3,
     RETRY_DELAY: 2000
 };
@@ -520,10 +520,16 @@ let currentUser=null,customers=[],filteredCustomers=[],currentCustomerIndex=-1,m
 let filterTimeout=null,lastFilterHash='',sheetCache=null,sheetCacheTime=0;
 
 
-function markDateEdited(){
-    // Just mark that user interacted with the field
-    const dateField = document.getElementById('m_date');
-    dateField.dataset.userEdited = 'true';
+
+// Helper: Convert any date format to YYYY-MM-DD for input[type="date"]
+function formatDateForInput(dateStr){
+    if(!dateStr) return '';
+    const d = parseSheetDate(dateStr);
+    if(!d) return '';
+    const year = d.getFullYear();
+    const month = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${year}-${month}-${day}`;
 }
 
 function loadFromLocalStorage(){
@@ -911,10 +917,24 @@ function openManagerModal(index){
     document.getElementById('m_phone').value=c.phone;
     document.getElementById('m_state').value=c.state;
     const ex=managerData[index]||{};
-    // Show date from sheet if exists, otherwise let manager fill it
+    // Handle date field: show from sheet if exists, otherwise allow manager to fill
     const dateField = document.getElementById('m_date');
-    dateField.value = c.date || ex.installation_date || '';
-    dateField.dataset.userEdited = 'false';
+    const sheetDate = c.date ? formatDateForInput(c.date) : '';
+    if (sheetDate) {
+        // Date exists in sheet - show it readonly
+        dateField.value = sheetDate;
+        dateField.readOnly = true;
+        dateField.style.background = 'rgba(255,255,255,.06)';
+        dateField.style.cursor = 'not-allowed';
+        dateField.title = 'التاريخ من الشييت - غير قابل للتعديل';
+    } else {
+        // No date in sheet - allow manager to fill
+        dateField.value = ex.installation_date ? formatDateForInput(ex.installation_date) : '';
+        dateField.readOnly = false;
+        dateField.style.background = '';
+        dateField.style.cursor = '';
+        dateField.title = 'اكتب تاريخ التركيب';
+    }
     document.getElementById('m_supervisor_name').value=ex.supervisor_name||c.supervisorName||'';
     document.getElementById('m_transaction_type').value=ex.transaction_type||c.transactionType||'';
     document.getElementById('m_location_attached').value=ex.location_attached||'';
