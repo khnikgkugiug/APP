@@ -121,6 +121,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 @media(max-width:768px){.header h1{font-size:2rem}.customers-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.login-card{padding:30px 40px;min-width:auto;width:100%}.filter-grid{grid-template-columns:1fr}.form-group select[multiple]{min-height:120px;font-size:.9rem}}
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -158,7 +159,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="filter-grid">
 <div class="filter-group">
 <label>بحث بالاسم أو الرقم</label>
-<input type="text" id="searchInput" placeholder="اكتب اسم العميل أو رقم الهاتف..." oninput="applyFilters()">
+<input type="text" id="searchInput" placeholder="اكتب اسم العميل أو رقم الهاتف..." oninput="debouncedApplyFilters()">
 </div>
 <div class="filter-group">
 <label>تصفية بالتاريخ</label>
@@ -300,9 +301,9 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 </div>
 
 <div class="form-group"><label>منتج آخر</label><input type="text" id="m_other_product"></div>
-<div class="form-group"><label>الإجمالي</label><input type="number" id="m_total"></div>
-<div class="form-group"><label>مقدم</label><input type="number" id="m_paid"></div>
-<div class="form-group"><label>متبقي</label><input type="number" id="m_remaining"></div>
+<div class="form-group"><label>الإجمالي</label><input type="number" id="m_total" oninput="calculateManagerRemaining()"></div>
+<div class="form-group"><label>مقدم</label><input type="number" id="m_paid" oninput="calculateManagerRemaining()"></div>
+<div class="form-group"><label>متبقي</label><input type="number" id="m_remaining" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed"></div>
 </div>
 </div>
 <div class="form-section">
@@ -385,8 +386,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-grid">
 <div class="form-group"><label>المبلغ المدفوع</label><input type="number" id="s_amount_paid"></div>
 <div class="form-group"><label>في حساب</label><input type="text" id="s_in_account"></div>
-<div class="form-group"><label>باقي</label><input type="number" id="s_balance"></div>
-<div class="form-group"><label>الميعاد المتوقع للدفع</label><input type="text" id="s_payment_date" placeholder="اكتب الميعاد..."></div>
+<div class="form-group"><label>باقي</label><input type="number" id="s_balance" oninput="togglePaymentDateField()"></div>
+<div class="form-group conditional-field" id="paymentDateGroup"><label>الميعاد المتوقع للدفع</label><input type="text" id="s_payment_date" placeholder="اكتب الميعاد..."></div>
 <div class="form-group"><label>ملاحظات</label><textarea id="s_notes"></textarea></div>
 </div>
 </div>
@@ -435,6 +436,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>ضبط الغسيل السريع</label><input type="text" id="s_fast_rinse_time" placeholder="اكتب الوقت..."></div>
 <div class="form-group"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option>زائد عن الحد</option><option>مناسب</option><option>منخفض</option><option>جاف</option></select></div>
 <div class="form-group"><label>هل هناك مظلة</label><select id="s_has_shelter"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+</div>
 </div>
 </div>
 </div>
@@ -487,6 +489,7 @@ const CONFIG = {
 };
 
 let currentUser=null,customers=[],filteredCustomers=[],currentCustomerIndex=-1,managerData={},supervisorData={},lastSavedIndex=-1;
+let filterTimeout=null,lastFilterHash='',sheetCache=null,sheetCacheTime=0;
 
 function loadFromLocalStorage(){
     try{
@@ -537,6 +540,14 @@ function logout(){
     document.getElementById('customersGrid').innerHTML='';
     const importBtn=document.getElementById('importBtn');
     if(importBtn) importBtn.style.display='none';
+}
+
+function debouncedApplyFilters(){
+    if(filterTimeout) clearTimeout(filterTimeout);
+    filterTimeout=setTimeout(()=>{
+        applyFilters();
+        filterTimeout=null;
+    },300); // Wait 300ms after user stops typing
 }
 
 function parseSheetDate(dateStr){
@@ -592,7 +603,14 @@ function isThisWeek(date){
     return date>=startOfWeek&&date<endOfWeek;
 }
 
-async function loadSheetData(){
+async function loadSheetData(forceRefresh=false){
+    // Use cache if available and less than 5 minutes old
+    if(!forceRefresh && sheetCache && (Date.now()-sheetCacheTime)<300000){
+        customers=sheetCache;
+        applyFilters();
+        document.getElementById('loadingSection').style.display='none';
+        return;
+    }
     document.getElementById('loadingSection').style.display='block';
     document.getElementById('customersGrid').innerHTML='';
     document.getElementById('emptyState').style.display='none';
@@ -625,6 +643,8 @@ async function loadSheetData(){
         customers.forEach(c=>{c.parsedDate=parseSheetDate(c.date);});
         managerData=savedManager;
         supervisorData=savedSupervisor;
+        sheetCache=customers; // Cache for next time
+        sheetCacheTime=Date.now();
         applyFilters();
         document.getElementById('loadingSection').style.display='none';
         const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
@@ -645,6 +665,12 @@ function applyFilters(){
     const customDateStr=document.getElementById('customDate').value;
     const supervisorFilter=document.getElementById('supervisorFilter').value;
     const installationStatusFilter=document.getElementById('installationStatusFilter').value;
+
+    // Create hash of filter state to avoid redundant re-renders
+    const filterHash=searchTerm+dateFilter+statusFilter+transactionFilter+customDateStr+supervisorFilter+installationStatusFilter;
+    if(filterHash===lastFilterHash && filteredCustomers.length>0) return; // Skip if nothing changed
+    lastFilterHash=filterHash;
+
     document.getElementById('customDateGroup').style.display=dateFilter==='custom'?'block':'none';
     const today=new Date();today.setHours(0,0,0,0);
     const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
@@ -733,9 +759,14 @@ function renderCustomers(){
     const grid=document.getElementById('customersGrid');
     grid.innerHTML='';
     if(filteredCustomers.length===0){document.getElementById('emptyState').style.display='block';return;}
+
+    // Virtual scrolling: render only first 50, then load more on scroll
+    const RENDER_BATCH=50;
+    let renderedCount=0;
     document.getElementById('emptyState').style.display='none';
     const searchTerm=document.getElementById('searchInput').value.trim();
-    filteredCustomers.forEach((customer)=>{
+    const customersToRender=filteredCustomers.slice(0,RENDER_BATCH);
+    customersToRender.forEach((customer)=>{
         const index=customer.rowIndex;
         const hasM=managerData[index]&&Object.keys(managerData[index]).length>0;
         const hasS=supervisorData[index]&&Object.keys(supervisorData[index]).length>0;
@@ -772,6 +803,13 @@ function toggleDelayFields(){
     else{g.classList.remove('visible');document.getElementById('s_delay_reason').value='';}
 }
 
+function togglePaymentDateField(){
+    const v=parseFloat(document.getElementById('s_balance').value)||0;
+    const g=document.getElementById('paymentDateGroup');
+    if(v>0) g.classList.add('visible');
+    else{g.classList.remove('visible');document.getElementById('s_payment_date').value='';}
+}
+
 function toggleSpareFields(){
     const v=document.getElementById('s_spare_needed').value;
     const g=document.getElementById('spare_details_group');
@@ -789,6 +827,14 @@ function toggleSoftenerFields(){
         document.getElementById('m_softener_size').value='';
         document.getElementById('m_softener_type').value='';
     }
+}
+
+// ===== MANAGER FINANCIAL AUTO-CALCULATE =====
+function calculateManagerRemaining(){
+    const total=parseFloat(document.getElementById('m_total').value)||0;
+    const paid=parseFloat(document.getElementById('m_paid').value)||0;
+    const remaining=total-paid;
+    document.getElementById('m_remaining').value=remaining>=0?remaining:0;
 }
 
 // ===== MULTI-SELECT DROPDOWN FUNCTIONS =====
@@ -856,7 +902,7 @@ function openManagerModal(index){
     document.getElementById('m_other_product').value=ex.other_product||'';
     document.getElementById('m_total').value=ex.total||'';
     document.getElementById('m_paid').value=ex.paid||'';
-    document.getElementById('m_remaining').value=ex.remaining||'';
+    calculateManagerRemaining();
     document.getElementById('m_appointment_time').value=ex.appointment_time||'';
     document.getElementById('m_appointment_date').value=ex.appointment_date||'';
     document.getElementById('m_print').value=ex.print||'';
@@ -899,6 +945,7 @@ async function saveManagerData(){
     const result=await sendToSheet(currentCustomerIndex,data,null);
     showSaveIndicator(false);
     if(result.success){
+        managerData[currentCustomerIndex]._synced=true;
         closeModal('managerModal');
         renderCustomers();
         lastSavedIndex=currentCustomerIndex;
@@ -950,6 +997,7 @@ function openSupervisorModal(index){
     document.getElementById('s_amount_paid').value=ex.amount_paid||'';
     document.getElementById('s_in_account').value=ex.in_account||'';
     document.getElementById('s_balance').value=ex.balance||'';
+    togglePaymentDateField();
     document.getElementById('s_payment_date').value=ex.payment_date||'';
     document.getElementById('s_notes').value=ex.notes||'';
     document.getElementById('s_tds_before').value=ex.tds_before||'';
@@ -1044,6 +1092,7 @@ async function saveSupervisorData(){
     const result=await sendToSheet(currentCustomerIndex,null,data);
     showSaveIndicator(false);
     if(result.success){
+        supervisorData[currentCustomerIndex]._synced=true;
         closeModal('supervisorModal');
         renderCustomers();
         lastSavedIndex=currentCustomerIndex;
@@ -1095,19 +1144,51 @@ async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
 async function saveAllToSheet(){
     showSaveIndicator(true);
     showAlert('⏳ جاري الحفظ للشيت...','info');
-    let successCount=0,failCount=0;
+    let successCount=0,failCount=0,skipCount=0;
+    const toSave=[];
+
+    // Only sync customers that have data AND haven't been synced before
     for(let i=0;i<customers.length;i++){
         const idx=customers[i].rowIndex;
         const hasM=managerData[idx]&&Object.keys(managerData[idx]).length>0;
         const hasS=supervisorData[idx]&&Object.keys(supervisorData[idx]).length>0;
         if(hasM||hasS){
-            const result=await sendToSheet(idx,managerData[idx]||null,supervisorData[idx]||null);
-            if(result.success) successCount++;else failCount++;
+            // Check if data was already sent successfully (has _synced flag)
+            const mSynced=managerData[idx]&&managerData[idx]._synced;
+            const sSynced=supervisorData[idx]&&supervisorData[idx]._synced;
+            if(!mSynced || !sSynced){
+                toSave.push({index:idx,hasM:hasM,hasS:hasS});
+            }else{
+                skipCount++;
+            }
         }
     }
+
+    if(toSave.length===0){
+        showSaveIndicator(false);
+        showAlert(skipCount>0?`ℹ️ ${skipCount} عميل متزامن بالفعل`:'ℹ️ لا توجد بيانات للحفظ','info');
+        return;
+    }
+
+    for(let i=0;i<toSave.length;i++){
+        const item=toSave[i];
+        showAlert(`⏳ جاري الحفظ... ${i+1} من ${toSave.length}`,'info');
+        const result=await sendToSheet(item.index,managerData[item.index]||null,supervisorData[item.index]||null);
+        if(result.success){
+            // Mark as synced
+            if(managerData[item.index]) managerData[item.index]._synced=true;
+            if(supervisorData[item.index]) supervisorData[item.index]._synced=true;
+            successCount++;
+        }else{
+            failCount++;
+        }
+        // Delay between requests to avoid rate limiting
+        if(i<toSave.length-1) await new Promise(r=>setTimeout(r,300));
+    }
+
     showSaveIndicator(false);
     if(failCount===0) showAlert(`✅ تم حفظ ${successCount} عميل في الشيت!`,'success');
-    else showAlert(`⚠️ نجح:${successCount} | فشل:${failCount}`,'error');
+    else showAlert(`⚠️ نجح:${successCount} | فشل:${failCount} | تخطي:${skipCount}`,'error');
 }
 
 function printFromSuccess(){
