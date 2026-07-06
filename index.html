@@ -275,8 +275,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>اسم العميل</label><input type="text" id="m_name" readonly></div>
 <div class="form-group"><label>رقم الهاتف</label><input type="text" id="m_phone" readonly style="direction:ltr;text-align:right"></div>
 <div class="form-group"><label>الولاية</label><input type="text" id="m_state" readonly></div>
-<div class="form-group"><label>📅 تاريخ العميل <span style="color:#fdcb6e;font-size:.8rem">(من الشييت)</span></label><input type="text" id="m_sheet_date" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed"></div>
-<div class="form-group"><label>📅 تاريخ التركيب <span style="color:#fdcb6e;font-size:.8rem">(لو مفيش في الشييت)</span></label><input type="date" id="m_installation_date"></div>
+<div class="form-group"><label>📅 تاريخ العميل</label><input type="date" id="m_date" onchange="markDateEdited()"></div>
 <div class="form-group"><label>اسم المشرف</label><select id="m_supervisor_name"><option value="">اختر...</option><option>عبداللطيف</option><option>معاذ</option><option>هادي</option><option>عمر</option></select></div>
 </div>
 </div>
@@ -519,6 +518,13 @@ const CONFIG = {
 
 let currentUser=null,customers=[],filteredCustomers=[],currentCustomerIndex=-1,managerData={},supervisorData={},lastSavedIndex=-1;
 let filterTimeout=null,lastFilterHash='',sheetCache=null,sheetCacheTime=0;
+
+
+function markDateEdited(){
+    // Just mark that user interacted with the field
+    const dateField = document.getElementById('m_date');
+    dateField.dataset.userEdited = 'true';
+}
 
 function loadFromLocalStorage(){
     try{
@@ -904,9 +910,11 @@ function openManagerModal(index){
     document.getElementById('m_name').value=c.name;
     document.getElementById('m_phone').value=c.phone;
     document.getElementById('m_state').value=c.state;
-    document.getElementById('m_sheet_date').value=c.date||'-';
     const ex=managerData[index]||{};
-    document.getElementById('m_installation_date').value=ex.installation_date||'';
+    // Show date from sheet if exists, otherwise let manager fill it
+    const dateField = document.getElementById('m_date');
+    dateField.value = c.date || ex.installation_date || '';
+    dateField.dataset.userEdited = 'false';
     document.getElementById('m_supervisor_name').value=ex.supervisor_name||c.supervisorName||'';
     document.getElementById('m_transaction_type').value=ex.transaction_type||c.transactionType||'';
     document.getElementById('m_location_attached').value=ex.location_attached||'';
@@ -962,7 +970,7 @@ async function saveManagerData(){
         appointment_date:document.getElementById('m_appointment_date').value,
         print:document.getElementById('m_print').value,
         location_link:document.getElementById('m_location_link').value,
-        installation_date:document.getElementById('m_installation_date').value
+        installation_date:document.getElementById('m_date').value
     };
     managerData[currentCustomerIndex]=data;
     saveToLocalStorage();
