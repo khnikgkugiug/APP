@@ -467,6 +467,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>ضبط الغسيل السريع</label><input type="text" id="s_fast_rinse_time" placeholder="اكتب الوقت..."></div>
 <div class="form-group"><label>منسوب الماء في صندوق الملح</label><select id="s_salt_level"><option value="">اختر...</option><option>زائد عن الحد</option><option>مناسب</option><option>منخفض</option><option>جاف</option></select></div>
 <div class="form-group"><label>هل هناك مظلة</label><select id="s_has_shelter"><option value="">اختر...</option><option>يوجد</option><option>لا يوجد</option></select></div>
+<div class="form-group"><label>وقت الغسيل</label><input type="text" id="s_wash_time" placeholder="اكتب وقت الغسيل..."></div>
+<div class="form-group"><label>كمية الملح</label><select id="s_salt_amount"><option value="">اختر...</option><option>5</option><option>10</option><option>15</option><option>20</option><option>25</option></select></div>
 </div>
 </div>
 </div>
@@ -1036,7 +1038,12 @@ function openSupervisorModal(index){
     }
 
     const ex=supervisorData[index]||{};
-    document.getElementById('s_supervisor_name').value=ex.supervisor_name||c.supervisorName||'';
+    // Get supervisor name - filter out invalid values like 'نعم' or 'لا'
+    let supervisorName = ex.supervisor_name || c.supervisorName || '';
+    if(supervisorName === 'نعم' || supervisorName === 'لا' || supervisorName === 'true' || supervisorName === 'false'){
+        supervisorName = '';
+    }
+    document.getElementById('s_supervisor_name').value = supervisorName;
     document.getElementById('s_technician').value=ex.technician||'';
     document.getElementById('s_car').value=ex.car||'';
     document.getElementById('s_installation_status').value=ex.installation_status||'';
@@ -1092,6 +1099,8 @@ function openSupervisorModal(index){
     document.getElementById('s_fast_rinse_time').value=ex.fast_rinse_time||'';
     document.getElementById('s_salt_level').value=ex.salt_level||'';
     document.getElementById('s_has_shelter').value=ex.has_shelter||'';
+    document.getElementById('s_wash_time').value=ex.wash_time||'';
+    document.getElementById('s_salt_amount').value=ex.salt_amount||'';
     document.getElementById('supervisorModal').classList.add('active');
 }
 
@@ -1144,7 +1153,9 @@ async function saveSupervisorData(){
         backwash_duration:document.getElementById('s_backwash_duration').value,
         fast_rinse_time:document.getElementById('s_fast_rinse_time').value,
         salt_level:document.getElementById('s_salt_level').value,
-        has_shelter:document.getElementById('s_has_shelter').value
+        has_shelter:document.getElementById('s_has_shelter').value,
+        wash_time:document.getElementById('s_wash_time').value,
+        salt_amount:document.getElementById('s_salt_amount').value
     };
     supervisorData[currentCustomerIndex]=data;
     saveToLocalStorage();
@@ -1345,6 +1356,10 @@ function buildPrintRows(mData,sData){
         html+=addRow('وقت الغسيل السريع',sData.fast_rinse_time);
         html+=addRow('منسوب الملح',sData.salt_level);
         html+=addRow('مظلة',sData.has_shelter);
+        html+=addRow('وقت الغسيل',sData.wash_time);
+        html+=addRow('كمية الملح',sData.salt_amount);
+        html+=addRow('وقت الغسيل',sData.wash_time);
+        html+=addRow('كمية الملح',sData.salt_amount);
         html+=addRowFull('ملاحظات المشرف',sData.notes);
         html+=`</table>`;
     }
@@ -1425,7 +1440,7 @@ function viewDetails(index){
         <div class="detail-row"><span class="detail-label">الهاتف:</span><span class="detail-value" style="direction:ltr">${c.phone}</span></div>
         <div class="detail-row"><span class="detail-label">الولاية:</span><span class="detail-value">${c.state}</span></div>
         <div class="detail-row"><span class="detail-label">المحافظة:</span><span class="detail-value">${c.governorate}</span></div>
-        <div class="detail-row"><span class="detail-label">المشرف:</span><span class="detail-value">${mData.supervisor_name||c.supervisorName||'-'}</span></div></div>`;
+        <div class="detail-row"><span class="detail-label">المشرف:</span><span class="detail-value">${(()=>{let sn=mData.supervisor_name||c.supervisorName||'-'; if(sn==='نعم'||sn==='لا'||sn==='true'||sn==='false')return '-'; return sn;})()}</span></div></div>`;
     if(Object.keys(mData).length>0){
         html+=`<div style="margin-bottom:25px"><h3 style="color:#fdcb6e;margin-bottom:15px;border-bottom:1px solid rgba(253,203,110,.3);padding-bottom:10px">👷 بيانات مدير خط السير</h3>`;
         html+=detailRow('نوع المعاملة',mData.transaction_type);
