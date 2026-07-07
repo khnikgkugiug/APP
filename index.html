@@ -206,7 +206,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <input type="date" id="customDate" onchange="applyFilters()">
 </div>
 <div class="filter-group">
-<label>حالة التركيب</label>
+<label>نوع المعاملة</label>
 <select id="transactionFilter" onchange="applyFilters()">
 <option value="all">الكل</option>
 <option value="تركيب">تركيب</option>
@@ -1444,64 +1444,8 @@ function viewDetails(index){
         html+=detailRow('متبقي',mData.remaining);
         html+=detailRow('توقيت الموعد',mData.appointment_time);
         html+=detailRow('تاريخ الموعد',mData.appointment_date);
-        html+=detailRow('طباعة',mData.print);
-        html+=detailRow('لوكيشن',mData.location_link);
         html+=detailRow('تاريخ التركيب',mData.installation_date);
         html+=detailRow('ملاحظات',mData.notes);
-        html+=`</div>`;
-    }
-    if(Object.keys(sData).length>0){
-        html+=`<div style="margin-bottom:25px"><h3 style="color:#00b894;margin-bottom:15px;border-bottom:1px solid rgba(0,184,148,.3);padding-bottom:10px">👨‍💼 بيانات المشرف</h3>`;
-        html+=detailRow('اسم المشرف',sData.supervisor_name);
-        html+=detailRow('فني التركيب',sData.technician);
-        html+=detailRow('السيارة',sData.car);
-        html+=detailRow('حالة التركيب',sData.installation_status);
-        if(sData.installation_status==='تأجيل'){
-            html+=detailRow('سبب التأجيل',sData.delay_reason);
-        }
-        html+=detailRow('الأغراض',sData.items);
-        html+=detailRow('الأغراض المسترجعة',sData.returned_items);
-        html+=detailRow('بداية العمل',sData.start_time);
-        html+=detailRow('انتهاء العمل',sData.end_time);
-        html+=detailRow('قطع غيار',sData.spare_needed);
-        html+=detailRow('تفاصيل قطع الغيار',sData.spare_details);
-        html+=detailRow('المبلغ المدفوع',sData.amount_paid);
-        html+=detailRow('في حساب',sData.in_account);
-        html+=detailRow('باقي',sData.balance);
-        html+=detailRow('ميعاد الدفع',sData.payment_date);
-        html+=detailRow('TDS قبل الفلتر',sData.tds_before);
-        html+=detailRow('TDS بعد الفلتر',sData.tds_after);
-        html+=detailRow('مكان الجهاز',sData.device_location);
-        html+=detailRow('التأكد من الوصلات',sData.check_connections);
-        html+=detailRow('التأكد من الكهرباء',sData.check_electricity);
-        html+=detailRow('التأكد من الصرف',sData.check_drain);
-        html+=detailRow('ضغط الدخول',sData.check_inlet_pressure);
-        html+=detailRow('ضغط الموتور',sData.check_motor_pressure);
-        html+=detailRow('كمية الإنتاج',sData.check_production);
-        html+=detailRow('ضغط الخزان',sData.check_tank_pressure);
-        html+=detailRow('التسريب',sData.check_leak);
-        html+=detailRow('طعم الماء',sData.taste_check);
-        html+=detailRow('لون الماء',sData.color_check);
-        html+=detailRow('سوفتنر',sData.supervisor_softener);
-        html+=detailRow('نوع الماء',sData.water_type);
-        html+=detailRow('تقييم الوصلات',sData.connections_rating);
-        html+=detailRow('تقييم الكهرباء',sData.electricity_rating);
-        html+=detailRow('نوع الوصلات',sData.connection_type);
-        html+=detailRow('ضغط الدخول قيمة',sData.inlet_pressure_value);
-        html+=detailRow('فاكيوم',sData.vacuum_installed);
-        html+=detailRow('حالة الرزين',sData.resin_status);
-        html+=detailRow('TDS قبل السوفتنر',sData.tds_before_softener);
-        html+=detailRow('TDS بعد السوفتنر',sData.tds_after_softener);
-        html+=detailRow('الكلس قبل السوفتنر',sData.limescale_before_softener);
-        html+=detailRow('الكلس بعد السوفتنر',sData.limescale_after_softener);
-        html+=detailRow('تسريبات',sData.leak_check);
-        html+=detailRow('لون بعد السوفتنر',sData.color_after_softener);
-        html+=detailRow('وقت الغسيل العكسي',sData.backwash_time);
-        html+=detailRow('مدة الغسيل البطئ',sData.backwash_duration);
-        html+=detailRow('وقت الغسيل السريع',sData.fast_rinse_time);
-        html+=detailRow('منسوب الملح',sData.salt_level);
-        html+=detailRow('مظلة',sData.has_shelter);
-        html+=detailRow('ملاحظات المشرف',sData.notes);
         html+=`</div>`;
     }
     html+=`<div style="text-align:center;margin-top:20px"><button class="btn btn-secondary" onclick="closeModal('viewModal')">إغلاق</button></div></div>`;
