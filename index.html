@@ -369,8 +369,11 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 </div>
 <div class="form-section">
 <h3>👤 معلومات المشرف</h3>
-<div class="form-grid">
-<div class="form-group"><label>اسم المشرف</label><select id="s_supervisor_name"><option value="">اختر...</option><option>عبداللطيف</option><option>معاذ</option><option>هاني</option><option>عمر</option></select></div>
+<div class="form-grid"><div class="form-group">
+    <label>اسم المشرف</label>
+    <input type="text" id="s_supervisor_name_display" readonly style="direction:rtl;text-align:right;background:rgba(255,255,255,.06);cursor:not-allowed">
+    <input type="hidden" id="s_supervisor_name">
+</div>
 <div class="form-group" id="s_location_link_group" style="display:none">
 <label>📍 لوكيشن العميل</label>
 <div style="display:flex;gap:10px;align-items:center">
@@ -1418,8 +1421,9 @@ function viewDetails(index){
         <div class="detail-row"><span class="detail-label">الهاتف:</span><span class="detail-value" style="direction:ltr">${c.phone}</span></div>
         <div class="detail-row"><span class="detail-label">الولاية:</span><span class="detail-value">${c.state}</span></div>
         <div class="detail-row"><span class="detail-label">المحافظة:</span><span class="detail-value">${c.governorate}</span></div>
-        <div class="detail-row"><span class="detail-label">المشرف:</span><span class="detail-value">${mData.supervisor_name||c.supervisorName||'-'}</span></div></div>`;
-    if(currentUser==='manager'&&Object.keys(mData).length>0){
+        const supervisorDisplay = (mData.supervisor_name||c.supervisorName||'').trim();
+html+=`<div class="detail-row"><span class="detail-label">المشرف:</span><span class="detail-value">${supervisorDisplay && supervisorDisplay !== 'نعم' ? supervisorDisplay : '-'}</span></div></div>`;
+    if(Object.keys(mData).length>0){
         html+=`<div style="margin-bottom:25px"><h3 style="color:#fdcb6e;margin-bottom:15px;border-bottom:1px solid rgba(253,203,110,.3);padding-bottom:10px">👷 بيانات مدير خط السير</h3>`;
         html+=detailRow('نوع المعاملة',mData.transaction_type);
         html+=detailRow('تم إرفاق الموقع',mData.location_attached);
