@@ -370,11 +370,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>👤 معلومات المشرف</h3>
 <div class="form-grid">
-<div class="form-group">
-    <label>اسم المشرف</label>
-    <input type="text" id="s_supervisor_name_display" readonly style="direction:rtl;text-align:right;background:rgba(255,255,255,.06);cursor:not-allowed">
-    <input type="hidden" id="s_supervisor_name">
-</div>
+<div class="form-group"><label>اسم المشرف</label><select id="s_supervisor_name"><option value="">اختر...</option><option>عبداللطيف</option><option>معاذ</option><option>هاني</option><option>عمر</option></select></div>
 <div class="form-group" id="s_location_link_group" style="display:none">
 <label>📍 لوكيشن العميل</label>
 <div style="display:flex;gap:10px;align-items:center">
@@ -1038,9 +1034,7 @@ function openSupervisorModal(index){
     }
 
     const ex=supervisorData[index]||{};
-    const supervisorNameVal = ex.supervisor_name||c.supervisorName||'';
-    document.getElementById('s_supervisor_name').value = supervisorNameVal;
-    document.getElementById('s_supervisor_name_display').value = supervisorNameVal;
+    document.getElementById('s_supervisor_name').value=ex.supervisor_name||c.supervisorName||'';
     document.getElementById('s_technician').value=ex.technician||'';
     document.getElementById('s_car').value=ex.car||'';
     document.getElementById('s_installation_status').value=ex.installation_status||'';
@@ -1424,9 +1418,8 @@ function viewDetails(index){
         <div class="detail-row"><span class="detail-label">الهاتف:</span><span class="detail-value" style="direction:ltr">${c.phone}</span></div>
         <div class="detail-row"><span class="detail-label">الولاية:</span><span class="detail-value">${c.state}</span></div>
         <div class="detail-row"><span class="detail-label">المحافظة:</span><span class="detail-value">${c.governorate}</span></div>
-        const supervisorDisplay = (mData.supervisor_name||c.supervisorName||'').trim();
-        html+=`<div class="detail-row"><span class="detail-label">المشرف:</span><span class="detail-value">${supervisorDisplay && supervisorDisplay !== 'نعم' ? supervisorDisplay : '-'}</span></div></div>`;
-    if(Object.keys(mData).length>0){
+        <div class="detail-row"><span class="detail-label">المشرف:</span><span class="detail-value">${mData.supervisor_name||c.supervisorName||'-'}</span></div></div>`;
+    if(currentUser==='manager'&&Object.keys(mData).length>0){
         html+=`<div style="margin-bottom:25px"><h3 style="color:#fdcb6e;margin-bottom:15px;border-bottom:1px solid rgba(253,203,110,.3);padding-bottom:10px">👷 بيانات مدير خط السير</h3>`;
         html+=detailRow('نوع المعاملة',mData.transaction_type);
         html+=detailRow('تم إرفاق الموقع',mData.location_attached);
@@ -1454,6 +1447,60 @@ function viewDetails(index){
         html+=detailRow('لوكيشن',mData.location_link);
         html+=detailRow('تاريخ التركيب',mData.installation_date);
         html+=detailRow('ملاحظات',mData.notes);
+        html+=`</div>`;
+    }
+    if(Object.keys(sData).length>0){
+        html+=`<div style="margin-bottom:25px"><h3 style="color:#00b894;margin-bottom:15px;border-bottom:1px solid rgba(0,184,148,.3);padding-bottom:10px">👨‍💼 بيانات المشرف</h3>`;
+        html+=detailRow('اسم المشرف',sData.supervisor_name);
+        html+=detailRow('فني التركيب',sData.technician);
+        html+=detailRow('السيارة',sData.car);
+        html+=detailRow('حالة التركيب',sData.installation_status);
+        if(sData.installation_status==='تأجيل'){
+            html+=detailRow('سبب التأجيل',sData.delay_reason);
+        }
+        html+=detailRow('الأغراض',sData.items);
+        html+=detailRow('الأغراض المسترجعة',sData.returned_items);
+        html+=detailRow('بداية العمل',sData.start_time);
+        html+=detailRow('انتهاء العمل',sData.end_time);
+        html+=detailRow('قطع غيار',sData.spare_needed);
+        html+=detailRow('تفاصيل قطع الغيار',sData.spare_details);
+        html+=detailRow('المبلغ المدفوع',sData.amount_paid);
+        html+=detailRow('في حساب',sData.in_account);
+        html+=detailRow('باقي',sData.balance);
+        html+=detailRow('ميعاد الدفع',sData.payment_date);
+        html+=detailRow('TDS قبل الفلتر',sData.tds_before);
+        html+=detailRow('TDS بعد الفلتر',sData.tds_after);
+        html+=detailRow('مكان الجهاز',sData.device_location);
+        html+=detailRow('التأكد من الوصلات',sData.check_connections);
+        html+=detailRow('التأكد من الكهرباء',sData.check_electricity);
+        html+=detailRow('التأكد من الصرف',sData.check_drain);
+        html+=detailRow('ضغط الدخول',sData.check_inlet_pressure);
+        html+=detailRow('ضغط الموتور',sData.check_motor_pressure);
+        html+=detailRow('كمية الإنتاج',sData.check_production);
+        html+=detailRow('ضغط الخزان',sData.check_tank_pressure);
+        html+=detailRow('التسريب',sData.check_leak);
+        html+=detailRow('طعم الماء',sData.taste_check);
+        html+=detailRow('لون الماء',sData.color_check);
+        html+=detailRow('سوفتنر',sData.supervisor_softener);
+        html+=detailRow('نوع الماء',sData.water_type);
+        html+=detailRow('تقييم الوصلات',sData.connections_rating);
+        html+=detailRow('تقييم الكهرباء',sData.electricity_rating);
+        html+=detailRow('نوع الوصلات',sData.connection_type);
+        html+=detailRow('ضغط الدخول قيمة',sData.inlet_pressure_value);
+        html+=detailRow('فاكيوم',sData.vacuum_installed);
+        html+=detailRow('حالة الرزين',sData.resin_status);
+        html+=detailRow('TDS قبل السوفتنر',sData.tds_before_softener);
+        html+=detailRow('TDS بعد السوفتنر',sData.tds_after_softener);
+        html+=detailRow('الكلس قبل السوفتنر',sData.limescale_before_softener);
+        html+=detailRow('الكلس بعد السوفتنر',sData.limescale_after_softener);
+        html+=detailRow('تسريبات',sData.leak_check);
+        html+=detailRow('لون بعد السوفتنر',sData.color_after_softener);
+        html+=detailRow('وقت الغسيل العكسي',sData.backwash_time);
+        html+=detailRow('مدة الغسيل البطئ',sData.backwash_duration);
+        html+=detailRow('وقت الغسيل السريع',sData.fast_rinse_time);
+        html+=detailRow('منسوب الملح',sData.salt_level);
+        html+=detailRow('مظلة',sData.has_shelter);
+        html+=detailRow('ملاحظات المشرف',sData.notes);
         html+=`</div>`;
     }
     html+=`<div style="text-align:center;margin-top:20px"><button class="btn btn-secondary" onclick="closeModal('viewModal')">إغلاق</button></div></div>`;
