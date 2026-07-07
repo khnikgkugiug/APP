@@ -414,6 +414,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>💰 المالية</h3>
 <div class="form-grid">
+<div class="form-group"><label>الإجمالي (من مدير خط السير)</label><input type="number" id="s_manager_total" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed"></div>
 <div class="form-group"><label>المبلغ المدفوع</label><input type="number" id="s_amount_paid"></div>
 <div class="form-group"><label>في حساب</label><input type="text" id="s_in_account"></div>
 <div class="form-group"><label>باقي</label><input type="number" id="s_balance" oninput="togglePaymentDateField()"></div>
@@ -1048,9 +1049,14 @@ function openSupervisorModal(index){
     document.getElementById('s_spare_needed').value=ex.spare_needed||'';
     document.getElementById('s_spare_details').value=ex.spare_details||'';
     toggleSpareFields();
-    document.getElementById('s_amount_paid').value=ex.amount_paid||'';
+    // Show manager's paid amount as default if supervisor hasn't entered one
+    const mPaid = mData.paid || '';
+    document.getElementById('s_manager_total').value = mData.total || '';
+    document.getElementById('s_amount_paid').value = ex.amount_paid || mPaid;
     document.getElementById('s_in_account').value=ex.in_account||'';
-    document.getElementById('s_balance').value=ex.balance||'';
+    // Show manager's remaining amount as default if supervisor hasn't entered one
+    const mRemaining = mData.remaining || '';
+    document.getElementById('s_balance').value = ex.balance || mRemaining;
     togglePaymentDateField();
     document.getElementById('s_payment_date').value=ex.payment_date||'';
     document.getElementById('s_notes').value=ex.notes||'';
