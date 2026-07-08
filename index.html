@@ -550,6 +550,13 @@ function loadFromLocalStorage(){
     }catch(e){console.error('Error loading from localStorage:',e)}
 }
 
+// Clear old cached supervisor data to fix column offset issue
+function clearOldSupervisorCache(){
+    localStorage.removeItem('zoom_supervisorData');
+    supervisorData={};
+    console.log('Cleared old supervisor cache');
+}
+
 function importLocalData(){
     loadFromLocalStorage();
     applyFilters();
@@ -576,6 +583,7 @@ function login(role){
     document.getElementById('mainContent').classList.add('active');
     document.getElementById('userTitle').textContent=role==='manager'?'👷 مدير خط السير':'👨‍💼 المشرف';
     document.getElementById('installationStatusFilterGroup').style.display=role==='supervisor'?'block':'none';
+    clearOldSupervisorCache(); // Clear old cache to fix column offset
     loadFromLocalStorage();
     loadSheetData(true);
     if(autoRefreshInterval) clearInterval(autoRefreshInterval);
