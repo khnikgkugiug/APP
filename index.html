@@ -45,6 +45,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .customer-info .phone{color:#333;font-size:.9rem;direction:ltr;text-align:right;font-weight:500}
 .customer-info .state{color:#764ba2;font-size:.85rem;margin-top:5px;font-weight:600}
 .customer-info .date{color:#00b894;font-size:.85rem;margin-top:3px;font-weight:600}
+.customer-info .supervisor-name{color:#667eea;font-size:.85rem;margin-top:3px;font-weight:600}
 .customer-status{padding:5px 12px;border-radius:20px;font-size:.75rem;font-weight:700}
 .status-pending{background:#fff3cd;color:#856404}
 .status-manager-done{background:#cce5ff;color:#004085}
@@ -206,7 +207,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <input type="date" id="customDate" onchange="applyFilters()">
 </div>
 <div class="filter-group">
-<label>نوع المعاملة</label>
+<label>حالة التركيب</label>
 <select id="transactionFilter" onchange="applyFilters()">
 <option value="all">الكل</option>
 <option value="تركيب">تركيب</option>
@@ -679,11 +680,123 @@ async function loadSheetData(forceRefresh=false){
             name:row[4]||'',
             phone:row[5]||'',
             state:row[6]||'',
-            transactionType:row[8]||'',
-            supervisorName:row[9]||'',
+            transactionType:row[7]||'',
+            supervisorName:row[8]||'',
             rowIndex:index+2,
             rawData:row
         })).filter(c=>c.name);
+
+        // Read manager data from sheet columns (H-AE = indices 7-30)
+        customers.forEach(c=>{
+            const row = c.rawData;
+            const idx = c.rowIndex;
+
+            // Only populate if there's actual data in manager columns
+            const hasManagerData = row[7] || row[8] || row[9] || row[10] || row[11] || 
+                                   row[12] || row[13] || row[14] || row[15] || row[16] || 
+                                   row[17] || row[18] || row[19] || row[20] || row[21] || 
+                                   row[22] || row[23] || row[24] || row[25] || row[26] || 
+                                   row[27] || row[28] || row[29] || row[30];
+
+            if (hasManagerData) {
+                managerData[idx] = {
+                    transaction_type: row[7] || '',
+                    location_attached: row[8] || '',
+                    photo_attached: row[9] || '',
+                    water_source: row[10] || '',
+                    softener: row[11] || '',
+                    softener_size: row[12] || '',
+                    softener_type: row[13] || '',
+                    electricity: row[14] || '',
+                    water_pressure: row[15] || '',
+                    pipes_type: row[16] || '',
+                    pipes_size: row[17] || '',
+                    notes: row[18] || '',
+                    order_type: row[19] || '',
+                    package_name: row[20] || '',
+                    filter_details: row[21] || '',
+                    other_product: row[22] || '',
+                    total: row[23] || '',
+                    paid: row[24] || '',
+                    remaining: row[25] || '',
+                    appointment_time: row[26] || '',
+                    appointment_date: row[27] || '',
+                    print: row[28] || '',
+                    location_link: row[29] || '',
+                    supervisor_name: row[30] || '',
+                    installation_date: row[1] || '',
+                    _synced: true
+                };
+            }
+
+            // Read supervisor data from sheet columns (AF-BZ = indices 31-77)
+            const hasSupervisorData = row[31] || row[32] || row[33] || row[34] || row[35] || 
+                                      row[36] || row[37] || row[38] || row[39] || row[40] || 
+                                      row[41] || row[42] || row[43] || row[44] || row[45] || 
+                                      row[46] || row[47] || row[48] || row[49] || row[50] || 
+                                      row[51] || row[52] || row[53] || row[54] || row[55] || 
+                                      row[56] || row[57] || row[58] || row[59] || row[60] || 
+                                      row[61] || row[62] || row[63] || row[64] || row[65] || 
+                                      row[66] || row[67] || row[68] || row[69] || row[70] || 
+                                      row[71] || row[72] || row[73] || row[74] || row[75] || 
+                                      row[76] || row[77];
+
+            if (hasSupervisorData) {
+                supervisorData[idx] = {
+                    supervisor_name: row[31] || '',
+                    technician: row[32] || '',
+                    car: row[33] || '',
+                    installation_status: row[34] || '',
+                    delay_reason: row[35] || '',
+                    items: row[36] || '',
+                    returned_items: row[37] || '',
+                    start_time: row[38] || '',
+                    end_time: row[39] || '',
+                    spare_needed: row[40] || '',
+                    spare_details: row[41] || '',
+                    amount_paid: row[42] || '',
+                    in_account: row[43] || '',
+                    balance: row[44] || '',
+                    payment_date: row[45] || '',
+                    supervisor_notes: row[46] || '',
+                    check_connections: row[47] || '',
+                    check_electricity: row[48] || '',
+                    check_drain: row[49] || '',
+                    check_inlet_pressure: row[50] || '',
+                    check_motor_pressure: row[51] || '',
+                    check_production: row[52] || '',
+                    check_tank_pressure: row[53] || '',
+                    tds_before: row[54] || '',
+                    tds_after: row[55] || '',
+                    check_leak: row[56] || '',
+                    taste_check: row[57] || '',
+                    color_check: row[58] || '',
+                    device_location: row[59] || '',
+                    supervisor_softener: row[60] || '',
+                    water_type: row[61] || '',
+                    connections_rating: row[62] || '',
+                    electricity_rating: row[63] || '',
+                    connection_type: row[64] || '',
+                    inlet_pressure_value: row[65] || '',
+                    vacuum_installed: row[66] || '',
+                    resin_status: row[67] || '',
+                    tds_before_softener: row[68] || '',
+                    tds_after_softener: row[69] || '',
+                    limescale_before_softener: row[70] || '',
+                    limescale_after_softener: row[71] || '',
+                    leak_check: row[72] || '',
+                    color_after_softener: row[73] || '',
+                    backwash_time: row[74] || '',
+                    backwash_duration: row[75] || '',
+                    fast_rinse_time: row[76] || '',
+                    salt_level: row[77] || '',
+                    has_shelter: row[78] || '',
+                    wash_time: row[79] || '',
+                    salt_amount: row[80] || '',
+                    _synced: true
+                };
+            }
+        });
         customers.forEach(c=>{c.parsedDate=parseSheetDate(c.date);});
         managerData=savedManager;
         supervisorData=savedSupervisor;
@@ -833,7 +946,7 @@ function renderCustomers(){
         }
         const dateBadgeClass=getDateBadgeClass(customer.parsedDate);
         const dateBadgeText=getDateBadgeText(customer.parsedDate);
-        card.innerHTML=`<div class="customer-header"><div class="customer-info"><h3>${displayName}</h3><div class="phone">📞 ${customer.phone}</div><div class="state">📍 ${customer.state} - ${customer.governorate}</div>${customer.parsedDate?`<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>`:''}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
+        card.innerHTML=`<div class="customer-header"><div class="customer-info"><h3>${displayName}</h3><div class="phone">📞 ${customer.phone}</div><div class="state">📍 ${customer.state} - ${customer.governorate}</div>${customer.supervisorName?`<div class="supervisor-name">👤 ${customer.supervisorName}</div>`:''}${customer.parsedDate?`<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>`:''}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
         grid.appendChild(card);
     });
 }
