@@ -815,8 +815,8 @@ async function loadSheetData(forceRefresh=false){
                     fast_rinse_time: row[75] || '',
                     salt_level: row[76] || '',
                     has_shelter: row[77] || '',
-                    wash_time: row[79] || '',  // CB - وقت الغسيل
-                    salt_amount: row[80] || '',  // CC - كمية الملح
+                    wash_time: row[79] || '',  // CA (col 79 in GAS) - وقت الغسيل
+                    salt_amount: row[80] || '',  // CB (col 80 in GAS) - كمية الملح
                     _synced: true
                 };
             }
