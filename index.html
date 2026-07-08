@@ -567,6 +567,8 @@ function saveToLocalStorage(){
     }catch(e){console.error('Error saving to localStorage:',e)}
 }
 
+let autoRefreshInterval=null;
+
 function login(role){
     currentUser=role;
     document.getElementById('loginSection').style.display='none';
@@ -574,7 +576,13 @@ function login(role){
     document.getElementById('userTitle').textContent=role==='manager'?'👷 مدير خط السير':'👨‍💼 المشرف';
     document.getElementById('installationStatusFilterGroup').style.display=role==='supervisor'?'block':'none';
     loadFromLocalStorage();
-    loadSheetData();
+    loadSheetData(true);
+    if(autoRefreshInterval) clearInterval(autoRefreshInterval);
+    // Keep this device in sync automatically with the Sheet (and therefore with any other device)
+    autoRefreshInterval=setInterval(()=>{
+        const anyModalOpen=['managerModal','supervisorModal'].some(id=>document.getElementById(id).classList.contains('active'));
+        if(!anyModalOpen) loadSheetData(true);
+    },60000);
 }
 
 function logout(){
@@ -586,6 +594,7 @@ function logout(){
     document.getElementById('customersGrid').innerHTML='';
     const importBtn=document.getElementById('importBtn');
     if(importBtn) importBtn.style.display='none';
+    if(autoRefreshInterval){clearInterval(autoRefreshInterval);autoRefreshInterval=null;}
 }
 
 function debouncedApplyFilters(){
@@ -650,7 +659,7 @@ function isThisWeek(date){
 }
 
 async function loadSheetData(forceRefresh=false){
-    if(!forceRefresh && sheetCache && (Date.now()-sheetCacheTime)<300000){
+    if(!forceRefresh && sheetCache && (Date.now()-sheetCacheTime)<30000){
         customers=sheetCache;
         applyFilters();
         document.getElementById('loadingSection').style.display='none';
@@ -659,8 +668,12 @@ async function loadSheetData(forceRefresh=false){
     document.getElementById('loadingSection').style.display='block';
     document.getElementById('customersGrid').innerHTML='';
     document.getElementById('emptyState').style.display='none';
+    // Snapshot of whatever is currently in memory (may include not-yet-synced local drafts)
     const savedManager={...managerData};
     const savedSupervisor={...supervisorData};
+    // Fresh containers - will be filled ONLY from the Sheet in this load
+    const sheetManagerData={};
+    const sheetSupervisorData={};
     try{
         const url=`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(CONFIG.SHEET_NAME)}?key=${CONFIG.API_KEY}`;
         const response=await fetch(url);
@@ -699,7 +712,7 @@ async function loadSheetData(forceRefresh=false){
                                    row[27] || row[28] || row[29] || row[30];
 
             if (hasManagerData) {
-                managerData[idx] = {
+                sheetManagerData[idx] = {
                     transaction_type: row[7] || '',
                     location_attached: row[8] || '',
                     photo_attached: row[9] || '',
@@ -742,7 +755,7 @@ async function loadSheetData(forceRefresh=false){
                                       row[76] || row[77];
 
             if (hasSupervisorData) {
-                supervisorData[idx] = {
+                sheetSupervisorData[idx] = {
                     supervisor_name: row[31] || '',
                     technician: row[32] || '',
                     car: row[33] || '',
@@ -798,14 +811,36 @@ async function loadSheetData(forceRefresh=false){
             }
         });
         customers.forEach(c=>{c.parsedDate=parseSheetDate(c.date);});
-        managerData=savedManager;
-        supervisorData=savedSupervisor;
+
+        // === THE FIX ===
+        // The Sheet is always the source of truth. Start from what's actually in the Sheet.
+        // Only keep a local draft on top of it if that draft was never successfully sent to
+        // the Sheet yet (_synced !== true) - i.e. genuine unsaved work on this device.
+        // This is what makes edits made on the Sheet, or on any other device/phone, show up
+        // everywhere instead of being silently overwritten by an old local cache.
+        const mergedManagerData={...sheetManagerData};
+        const mergedSupervisorData={...sheetSupervisorData};
+        Object.keys(savedManager).forEach(idx=>{
+            if(savedManager[idx] && savedManager[idx]._synced!==true){
+                mergedManagerData[idx]=savedManager[idx];
+            }
+        });
+        Object.keys(savedSupervisor).forEach(idx=>{
+            if(savedSupervisor[idx] && savedSupervisor[idx]._synced!==true){
+                mergedSupervisorData[idx]=savedSupervisor[idx];
+            }
+        });
+        managerData=mergedManagerData;
+        supervisorData=mergedSupervisorData;
+        saveToLocalStorage();
+
         sheetCache=customers;
         sheetCacheTime=Date.now();
         applyFilters();
         document.getElementById('loadingSection').style.display='none';
-        const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
-        if(localCount>0) showAlert(`📦 ${localCount} بيانات محلية محفوظة - استخدم "استيراد البيانات" لو محتاج ترجّعها`,'info');
+        const pendingCount=Object.values(managerData).filter(d=>d&&d._synced!==true).length
+                          +Object.values(supervisorData).filter(d=>d&&d._synced!==true).length;
+        if(pendingCount>0) showAlert(`📦 ${pendingCount} بيانات لم تُرسل للشيت بعد - جرب "حفظ الكل"`,'info');
     }catch(error){
         console.error('Error:',error);
         showAlert('❌ خطأ: '+error.message,'error');
@@ -891,7 +926,7 @@ function clearFilters(){
     applyFilters();
 }
 
-function refreshData(){loadSheetData();showAlert('🔄 تم التحديث','success')}
+function refreshData(){loadSheetData(true);showAlert('🔄 تم التحديث','success')}
 
 function getDateBadgeClass(date){
     if(!date) return '';
