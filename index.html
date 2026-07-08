@@ -815,29 +815,34 @@ async function loadSheetData(forceRefresh=false){
         customers.forEach(c=>{c.parsedDate=parseSheetDate(c.date);});
 
         // === THE FIX ===
-        // The Sheet is always the source of truth. Start from what's actually in the Sheet.
-        // Only keep a local draft on top of it if that draft was never successfully sent to
-        // the Sheet yet (_synced !== true) - i.e. genuine unsaved work on this device.
-        // This is what makes edits made on the Sheet, or on any other device/phone, show up
-        // everywhere instead of being silently overwritten by an old local cache.
+        // The Sheet is ALWAYS the source of truth. Period.
+        // Whatever is in the Sheet right now is what the user sees.
+        // localStorage is only for drafts that haven't been sent to the Sheet yet.
         const mergedManagerData={...sheetManagerData};
         const mergedSupervisorData={...sheetSupervisorData};
+
         Object.keys(savedManager).forEach(idx=>{
             const draft=savedManager[idx];
-            // Only treat as a genuine pending draft if the Sheet has NOTHING for this row at all.
-            // If the Sheet already has data here, it already made it there - trust the Sheet.
+            // Only use local draft if:
+            // 1. It was NEVER synced to the Sheet (_synced !== true)
+            // 2. AND the Sheet has NO data for this row
             if(draft && draft._synced!==true && !sheetManagerData[idx]){
                 mergedManagerData[idx]=draft;
             }
         });
+
         Object.keys(savedSupervisor).forEach(idx=>{
             const draft=savedSupervisor[idx];
+            // Same logic: only use local draft if never synced AND sheet has no data
             if(draft && draft._synced!==true && !sheetSupervisorData[idx]){
                 mergedSupervisorData[idx]=draft;
             }
         });
+
         managerData=mergedManagerData;
         supervisorData=mergedSupervisorData;
+
+        // Update localStorage to match the Sheet (source of truth)
         saveToLocalStorage();
 
         sheetCache=customers;
