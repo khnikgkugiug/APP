@@ -153,6 +153,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -1157,6 +1158,7 @@ async function saveManagerData(){
     showSaveIndicator(false);
     if(result.success){
         managerData[currentCustomerIndex]._synced=true;
+        saveToLocalStorage();
         closeModal('managerModal');
         renderCustomers();
         lastSavedIndex=currentCustomerIndex;
@@ -1320,6 +1322,7 @@ async function saveSupervisorData(){
     showSaveIndicator(false);
     if(result.success){
         supervisorData[currentCustomerIndex]._synced=true;
+        saveToLocalStorage();
         closeModal('supervisorModal');
         renderCustomers();
         lastSavedIndex=currentCustomerIndex;
