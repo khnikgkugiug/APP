@@ -661,6 +661,7 @@ function isThisWeek(date){
 async function loadSheetData(forceRefresh=false){
     if(!forceRefresh && sheetCache && (Date.now()-sheetCacheTime)<30000){
         customers=sheetCache;
+        lastFilterHash=''; // force re-render even if filter selections didn't change
         applyFilters();
         document.getElementById('loadingSection').style.display='none';
         return;
@@ -840,6 +841,7 @@ async function loadSheetData(forceRefresh=false){
 
         sheetCache=customers;
         sheetCacheTime=Date.now();
+        lastFilterHash=''; // force re-render even if filter selections didn't change
         applyFilters();
         document.getElementById('loadingSection').style.display='none';
         const pendingCount=Object.values(managerData).filter(d=>d&&d._synced!==true).length
@@ -1190,8 +1192,10 @@ function openSupervisorModal(index){
     }
 
     const ex=supervisorData[index]||{};
-    // Get supervisor name - filter out invalid values like 'نعم' or 'لا'
-    let supervisorName = ex.supervisor_name || c.supervisorName || '';
+    // Get supervisor name - prefer the supervisor's own saved value, then fall back to
+    // the name the manager already picked (mData), then whatever's in the base Sheet columns.
+    // Filter out invalid values like 'نعم' or 'لا'.
+    let supervisorName = ex.supervisor_name || mData.supervisor_name || c.supervisorName || '';
     if(supervisorName === 'نعم' || supervisorName === 'لا' || supervisorName === 'true' || supervisorName === 'false'){
         supervisorName = '';
     }
