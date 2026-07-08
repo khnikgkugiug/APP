@@ -993,7 +993,14 @@ function renderCustomers(){
         }
         const dateBadgeClass=getDateBadgeClass(customer.parsedDate);
         const dateBadgeText=getDateBadgeText(customer.parsedDate);
-        card.innerHTML=`<div class="customer-header"><div class="customer-info"><h3>${displayName}</h3><div class="phone">📞 ${customer.phone}</div><div class="state">📍 ${customer.state} - ${customer.governorate}</div>${customer.supervisorName?`<div class="supervisor-name">👤 ${customer.supervisorName}</div>`:''}${customer.parsedDate?`<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>`:''}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
+        card.innerHTML=`<div class="customer-header"><div class="customer-info"><h3>${displayName}</h3><div class="phone">📞 ${customer.phone}</div><div class="state">📍 ${customer.state} - ${customer.governorate}</div>${(() => {
+                        const mData = managerData[customer.rowIndex] || {};
+                        const supName = mData.supervisor_name || customer.supervisorName || '';
+                        if (supName && supName !== 'نعم' && supName !== 'لا' && supName !== 'true' && supName !== 'false') {
+                            return `<div class="supervisor-name">👤 ${supName}</div>`;
+                        }
+                        return '';
+                    })()}${customer.parsedDate?`<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>`:''}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
         grid.appendChild(card);
     });
 }
