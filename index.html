@@ -913,11 +913,7 @@ function applyFilters(){
             const supervisorName=mData.supervisor_name||c.supervisorName||'';
             if(supervisorName!==supervisorFilter) return false;
         }
-        if(currentUser==='supervisor'){
-            const sData=supervisorData[c.rowIndex]||{};
-            const installationStatus=sData.installation_status||'';
-            if(installationStatus==='تأجيل') return false;
-        }
+        // Note: All customers are visible to supervisor, including delayed ones
         if(installationStatusFilter!=='all'){
             const sData=supervisorData[c.rowIndex]||{};
             const installationStatus=sData.installation_status||'';
