@@ -821,13 +821,17 @@ async function loadSheetData(forceRefresh=false){
         const mergedManagerData={...sheetManagerData};
         const mergedSupervisorData={...sheetSupervisorData};
         Object.keys(savedManager).forEach(idx=>{
-            if(savedManager[idx] && savedManager[idx]._synced!==true){
-                mergedManagerData[idx]=savedManager[idx];
+            const draft=savedManager[idx];
+            // Only treat as a genuine pending draft if the Sheet has NOTHING for this row at all.
+            // If the Sheet already has data here, it already made it there - trust the Sheet.
+            if(draft && draft._synced!==true && !sheetManagerData[idx]){
+                mergedManagerData[idx]=draft;
             }
         });
         Object.keys(savedSupervisor).forEach(idx=>{
-            if(savedSupervisor[idx] && savedSupervisor[idx]._synced!==true){
-                mergedSupervisorData[idx]=savedSupervisor[idx];
+            const draft=savedSupervisor[idx];
+            if(draft && draft._synced!==true && !sheetSupervisorData[idx]){
+                mergedSupervisorData[idx]=draft;
             }
         });
         managerData=mergedManagerData;
