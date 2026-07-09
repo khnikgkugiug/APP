@@ -54,6 +54,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .status-delayed{background:#f8d7da;color:#721c24}
 .customer-actions{display:flex;gap:10px;margin-top:15px}
 .customer-actions .btn{flex:1;padding:10px;font-size:.9rem;justify-content:center}
+.sync-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700;margin-top:5px;background:#f8d7da;color:#721c24;border:1px solid rgba(114,28,36,.15)}
 
 /* ===== FIXED MODAL STYLES ===== */
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:1000;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -184,7 +185,6 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <button class="btn btn-secondary" onclick="logout()">🚪 خروج</button>
 <button class="btn btn-primary" onclick="refreshData()">🔄 تحديث</button>
 <button class="btn btn-success" onclick="saveAllToSheet()">💾 حفظ الكل</button>
-<button class="btn btn-warning" onclick="importLocalData()" id="importBtn" style="display:none">📥 استيراد البيانات</button>
 </div>
 </div>
 <div class="filter-section" id="filterSection">
@@ -545,9 +545,6 @@ function loadFromLocalStorage(){
         const savedSupervisor=localStorage.getItem('zoom_supervisorData');
         if(savedManager) managerData=JSON.parse(savedManager);
         if(savedSupervisor) supervisorData=JSON.parse(savedSupervisor);
-        const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
-        const importBtn=document.getElementById('importBtn');
-        if(importBtn) importBtn.style.display=localCount>0?'flex':'none';
     }catch(e){console.error('Error loading from localStorage:',e)}
 }
 
@@ -558,21 +555,10 @@ function clearOldSupervisorCache(){
     console.log('Cleared old supervisor cache');
 }
 
-function importLocalData(){
-    loadFromLocalStorage();
-    applyFilters();
-    const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
-    showAlert(`✅ تم استيراد ${localCount} بيانات محلية بنجاح!`,'success');
-    document.getElementById('importBtn').style.display='none';
-}
-
 function saveToLocalStorage(){
     try{
         localStorage.setItem('zoom_managerData',JSON.stringify(managerData));
         localStorage.setItem('zoom_supervisorData',JSON.stringify(supervisorData));
-        const localCount=Object.keys(managerData).length+Object.keys(supervisorData).length;
-        const importBtn=document.getElementById('importBtn');
-        if(importBtn&&localCount>0) importBtn.style.display='flex';
     }catch(e){console.error('Error saving to localStorage:',e)}
 }
 
@@ -602,8 +588,6 @@ function logout(){
     document.getElementById('loginSection').style.display='flex';
     document.getElementById('mainContent').classList.remove('active');
     document.getElementById('customersGrid').innerHTML='';
-    const importBtn=document.getElementById('importBtn');
-    if(importBtn) importBtn.style.display='none';
     if(autoRefreshInterval){clearInterval(autoRefreshInterval);autoRefreshInterval=null;}
 }
 
@@ -994,6 +978,11 @@ function renderCustomers(){
         }
         const dateBadgeClass=getDateBadgeClass(customer.parsedDate);
         const dateBadgeText=getDateBadgeText(customer.parsedDate);
+        const mDataForSync=managerData[index]||{};
+        const sDataForSync=supervisorData[index]||{};
+        const hasUnsyncedManager=hasM && mDataForSync._synced!==true;
+        const hasUnsyncedSupervisor=hasS && sDataForSync._synced!==true;
+        const unsyncedBadge=(hasUnsyncedManager||hasUnsyncedSupervisor)?`<div class="sync-badge">⚠️ غير متزامن مع الشيت (محفوظ على هذا الجهاز فقط)</div>`:'';
         card.innerHTML=`<div class="customer-header"><div class="customer-info"><h3>${displayName}</h3><div class="phone">📞 ${customer.phone}</div><div class="state">📍 ${customer.state} - ${customer.governorate}</div>${(() => {
                         const mData = managerData[customer.rowIndex] || {};
                         const supName = mData.supervisor_name || customer.supervisorName || '';
@@ -1001,7 +990,7 @@ function renderCustomers(){
                             return `<div class="supervisor-name">👤 ${supName}</div>`;
                         }
                         return '';
-                    })()}${customer.parsedDate ? `<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>` : ''}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
+                    })()}${customer.parsedDate ? `<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>` : ''}${unsyncedBadge}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
         grid.appendChild(card);
     });
 }
