@@ -156,6 +156,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -315,7 +316,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-group"><label>اسم الباقة</label><input type="text" id="m_package_name"></div>
 
 <div class="form-group" style="grid-column:1/-1">
-    <label>تفاصيل الفلتر <span style="color:#fdcb6e;font-size:.8rem">(اضغط على كل اختيار لتفعيله/إلغائه)</span></label>
+    <label>تفاصيل الفلتر</label>
     <select id="m_filter_details" multiple size="6">
         <option value="ديجيتال">ديجيتال</option>
         <option value="100 اقتصادي">100 اقتصادي</option>
@@ -342,9 +343,14 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>📅 الموعد</h3>
 <div class="form-grid">
-<div class="form-group"><label>توقيت الموعد</label><select id="m_appointment_time"><option value="">اختر...</option><option>صباحا</option><option>مساءا</option><option>وقت محدد</option></select></div>
-<div class="form-group"><label>تاريخ/وقت الموعد</label><input type="datetime-local" id="m_appointment_date"></div>
-<div class="form-group"><label>طباعة</label><select id="m_print"><option value="">اختر...</option><option>طباعة</option><option>انتهاء</option></select></div>
+<div class="form-group"><label>توقيت الموعد</label><select id="m_appointment_time"><option value="">اختر...</option><option>صباحا</option><option>مساءا</option></select></div>
+<div class="form-group">
+    <label>وقت محدد</label>
+    <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="m_appointment_time_custom" placeholder="مثال: 3:30 عصراً أو بعد الظهر" style="flex:1">
+        <input type="time" id="m_appointment_time_picker" style="width:55px;padding:12px 8px;cursor:pointer" title="اختر من الساعة" onchange="document.getElementById('m_appointment_time_custom').value=this.value">
+    </div>
+</div>
 <div class="form-group"><label>لوكيشن</label><input type="text" id="m_location_link"></div>
 </div>
 </div>
@@ -1118,8 +1124,8 @@ function openManagerModal(index){
     document.getElementById('m_paid').value=ex.paid||'';
     calculateManagerRemaining();
     document.getElementById('m_appointment_time').value=ex.appointment_time||'';
-    document.getElementById('m_appointment_date').value=ex.appointment_date||'';
-    document.getElementById('m_print').value=ex.print||'';
+    document.getElementById('m_appointment_time_custom').value=ex.appointment_time_custom||ex.appointment_time_picker||'';
+    document.getElementById('m_appointment_time_picker').value=ex.appointment_time_picker||'';
     document.getElementById('m_location_link').value=ex.location_link||'';
     toggleSoftenerFields();
     document.getElementById('managerModal').classList.add('active');
@@ -1148,8 +1154,8 @@ async function saveManagerData(){
         paid:document.getElementById('m_paid').value,
         remaining:document.getElementById('m_remaining').value,
         appointment_time:document.getElementById('m_appointment_time').value,
-        appointment_date:document.getElementById('m_appointment_date').value,
-        print:document.getElementById('m_print').value,
+        appointment_time_custom:document.getElementById('m_appointment_time_custom').value,
+        appointment_time_picker:document.getElementById('m_appointment_time_picker').value,
         location_link:document.getElementById('m_location_link').value,
         installation_date:document.getElementById('m_date').value
     };
@@ -1459,8 +1465,7 @@ function buildPrintRows(mData,sData){
         html+=addRow('مقدم',mData.paid);
         html+=addRow('متبقي',mData.remaining);
         html+=addRow('توقيت الموعد',mData.appointment_time);
-        html+=addRow('تاريخ الموعد',mData.appointment_date?new Date(mData.appointment_date).toLocaleString('ar-SA'):'');
-        html+=addRow('طباعة',mData.print);
+        html+=addRow('وقت محدد',mData.appointment_time_custom||mData.appointment_time_picker);
         html+=addRowFull('لوكيشن',mData.location_link);
         html+=addRow('تاريخ التركيب',mData.installation_date);
         html+=addRowFull('ملاحظات',mData.notes);
@@ -1625,7 +1630,7 @@ function viewDetails(index){
         html+=detailRow('مقدم',mData.paid);
         html+=detailRow('متبقي',mData.remaining);
         html+=detailRow('توقيت الموعد',mData.appointment_time);
-        html+=detailRow('تاريخ الموعد',mData.appointment_date);
+        html+=detailRow('وقت محدد',mData.appointment_time_custom||mData.appointment_time_picker);
         html+=detailRow('تاريخ التركيب',mData.installation_date);
         html+=detailRow('ملاحظات',mData.notes);
         html+=`</div>`;
