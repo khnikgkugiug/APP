@@ -156,6 +156,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -403,8 +404,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>⏰ توقيت العمل</h3>
 <div class="form-grid">
-<div class="form-group"><label>بداية العمل</label><input type="text" id="s_start_time" placeholder="اكتب وقت البداية..."></div>
-<div class="form-group"><label>انتهاء العمل</label><input type="text" id="s_end_time" placeholder="اكتب وقت النهاية..."></div>
+<div class="form-group"><label>بداية العمل</label><input type="time" id="s_start_time"></div>
+<div class="form-group"><label>انتهاء العمل</label><input type="time" id="s_end_time"></div>
 </div>
 </div>
 <div class="form-section">
@@ -1078,24 +1079,18 @@ function openManagerModal(index){
     document.getElementById('m_phone').value=c.phone;
     document.getElementById('m_state').value=c.state;
     const ex=managerData[index]||{};
-    // Handle date field: show from sheet if exists, otherwise allow manager to fill
+    // Manager can always edit the date (even if exists in sheet)
     const dateField = document.getElementById('m_date');
     const sheetDate = c.date ? formatDateForInput(c.date) : '';
     if (sheetDate) {
-        // Date exists in sheet - show it readonly
         dateField.value = sheetDate;
-        dateField.readOnly = true;
-        dateField.style.background = 'rgba(255,255,255,.06)';
-        dateField.style.cursor = 'not-allowed';
-        dateField.title = 'التاريخ من الشييت - غير قابل للتعديل';
     } else {
-        // No date in sheet - allow manager to fill
         dateField.value = ex.installation_date ? formatDateForInput(ex.installation_date) : '';
-        dateField.readOnly = false;
-        dateField.style.background = '';
-        dateField.style.cursor = '';
-        dateField.title = 'اكتب تاريخ التركيب';
     }
+    dateField.readOnly = false;
+    dateField.style.background = '';
+    dateField.style.cursor = '';
+    dateField.title = 'اكتب أو عدل تاريخ التركيب';
     document.getElementById('m_supervisor_name').value=ex.supervisor_name||c.supervisorName||'';
     document.getElementById('m_transaction_type').value=ex.transaction_type||c.transactionType||'';
     document.getElementById('m_location_attached').value=ex.location_attached||'';
