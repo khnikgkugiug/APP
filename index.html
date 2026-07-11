@@ -317,7 +317,33 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
     }
     body{background:#fff !important;color:#000 !important}
 }
+
+/* Time input styling */
+input[type="time"] {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px 15px;
+    font-size: .95rem;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+input[type="time"]:focus {
+    outline: none;
+    border-color: #fdcb6e;
+    box-shadow: 0 0 10px rgba(253,203,110,.2);
+    background: rgba(255,255,255,.18);
+}
+/* For mobile */
+@media(max-width:480px){
+    input[type="time"] {
+        padding: 14px 12px;
+        font-size: 1rem;
+    }
+}
 </style>
+<base target="_blank">
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
@@ -484,7 +510,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <option>أبوزيد</option>
 <option>رضا</option>
 <option>صبري</option>
-<option>سامي</option>
+<option>سباعي</option>
 <option>مصطفى</option>
 <option>عبدالرحمن</option>
 <option>مجدي</option>
@@ -645,7 +671,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>👷 فني التركيب</h3>
 <div class="form-grid">
-<div class="form-group"><label>فني التركيب</label><select id="s_technician"><option value="">اختر...</option><option>رمضان</option><option>أبوزيد</option><option>رضا</option><option>صبري</option><option>سامي</option><option>مصطفى</option><option>عبدالرحمن</option><option>مجدي</option></select></div>
+<div class="form-group"><label>فني التركيب</label><select id="s_technician"><option value="">اختر...</option><option>رمضان</option><option>أبوزيد</option><option>رضا</option><option>صبري</option><option>سباعي</option><option>مصطفى</option><option>عبدالرحمن</option><option>مجدي</option></select></div>
 <div class="form-group"><label>السيارة</label><select id="s_car"><option value="">اختر...</option><option>باجيرو</option><option>شانجان</option><option>MG</option><option>رينو724</option><option>رينو772</option></select></div>
 <div class="form-group"><label>حالة التركيب</label><select id="s_installation_status" onchange="toggleDelayFields()"><option value="">اختر...</option><option>تركيب جزئي</option><option>تركيب بدون تشغيل</option><option>تأجيل</option><option>تركيب وتشغيل</option></select></div>
 <div class="form-group conditional-field" id="delay_reason_group"><label>سبب التأجيل</label><textarea id="s_delay_reason"></textarea></div>
@@ -661,8 +687,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <div class="form-section">
 <h3>⏰ توقيت العمل</h3>
 <div class="form-grid">
-<div class="form-group"><label>بداية العمل</label><input type="text" id="s_start_time" placeholder="اكتب وقت البداية..."></div>
-<div class="form-group"><label>انتهاء العمل</label><input type="text" id="s_end_time" placeholder="اكتب وقت النهاية..."></div>
+<div class="form-group"><label>بداية العمل</label><input type="time" id="s_start_time"></div>
+<div class="form-group"><label>انتهاء العمل</label><input type="time" id="s_end_time"></div>
 </div>
 </div>
 <div class="form-section">
@@ -676,9 +702,9 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 <h3>💰 المالية</h3>
 <div class="form-grid">
 <div class="form-group"><label>الإجمالي (من مدير خط السير)</label><input type="number" id="s_manager_total" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed"></div>
-<div class="form-group"><label>المبلغ المدفوع</label><input type="number" id="s_amount_paid"></div>
+<div class="form-group"><label>المبلغ المدفوع</label><input type="number" id="s_amount_paid" oninput="calculateSupervisorBalance()"></div>
 <div class="form-group"><label>في حساب</label><input type="text" id="s_in_account"></div>
-<div class="form-group"><label>باقي</label><input type="number" id="s_balance" oninput="togglePaymentDateField()"></div>
+<div class="form-group"><label>باقي</label><input type="number" id="s_balance" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed" oninput="togglePaymentDateField()"></div>
 <div class="form-group conditional-field" id="paymentDateGroup"><label>الميعاد المتوقع للدفع</label><input type="text" id="s_payment_date" placeholder="اكتب الميعاد..."></div>
 <div class="form-group"><label>ملاحظات</label><textarea id="s_notes"></textarea></div>
 </div>
@@ -780,6 +806,26 @@ const CONFIG = {
     MAX_RETRIES: 3,
     RETRY_DELAY: 2000
 };
+
+// ═══════════════════════════════════════════════════════════
+// APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
+// ═══════════════════════════════════════════════════════════
+const APP_VERSION = 2;
+
+// Check version IMMEDIATELY on page load (before anything runs)
+(function checkVersion(){
+    const savedVersion = localStorage.getItem('zoom_appVersion');
+    if (savedVersion && parseInt(savedVersion) !== APP_VERSION) {
+        // New version detected! Force reload with cache bust
+        localStorage.setItem('zoom_appVersion', APP_VERSION);
+        const url = new URL(window.location.href);
+        url.searchParams.set('v', APP_VERSION);
+        url.searchParams.set('t', Date.now());
+        window.location.replace(url.toString());
+        return; // Stop everything - page will reload
+    }
+    localStorage.setItem('zoom_appVersion', APP_VERSION);
+})();
 
 let currentUser=null,customers=[],filteredCustomers=[],currentCustomerIndex=-1,managerData={},supervisorData={},lastSavedIndex=-1;
 let filterTimeout=null,lastFilterHash='',sheetCache=null,sheetCacheTime=0;
@@ -1303,6 +1349,14 @@ function toggleSoftenerFields(){
     }
 }
 
+function calculateSupervisorBalance(){
+    const total = parseFloat(document.getElementById('s_manager_total').value) || 0;
+    const paid = parseFloat(document.getElementById('s_amount_paid').value) || 0;
+    const remaining = total - paid;
+    document.getElementById('s_balance').value = remaining >= 0 ? remaining : 0;
+    togglePaymentDateField();
+}
+
 function calculateManagerRemaining(){
     const total=parseFloat(document.getElementById('m_total').value)||0;
     const paid=parseFloat(document.getElementById('m_paid').value)||0;
@@ -1495,6 +1549,7 @@ function openSupervisorModal(index){
     const mPaid = mData.paid || '';
     document.getElementById('s_manager_total').value = mData.total || '';
     document.getElementById('s_amount_paid').value = ex.amount_paid || mPaid;
+    calculateSupervisorBalance();
     document.getElementById('s_in_account').value=ex.in_account||'';
     // Show manager's remaining amount as default if supervisor hasn't entered one
     const mRemaining = mData.remaining || '';
@@ -1882,7 +1937,32 @@ function printReport(){
         th,td{border:1px solid #333;padding:10px;text-align:right}
         th{background:#f0f0f0;width:25%}
         @media print{body{background:#fff}.no-print{display:none}}
-    </style></head><body>${content}</body></html>`);
+    
+/* Time input styling */
+input[type="time"] {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px 15px;
+    font-size: .95rem;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+input[type="time"]:focus {
+    outline: none;
+    border-color: #fdcb6e;
+    box-shadow: 0 0 10px rgba(253,203,110,.2);
+    background: rgba(255,255,255,.18);
+}
+/* For mobile */
+@media(max-width:480px){
+    input[type="time"] {
+        padding: 14px 12px;
+        font-size: 1rem;
+    }
+}
+</style></head><body>${content}</body></html>`);
     printWindow.document.close();
     printWindow.print();
 }
@@ -2362,7 +2442,32 @@ function printReportContent(){
             h2,h3{color:#667eea}
             .report-card{border:1px solid #ccc;padding:15px;margin-bottom:10px;page-break-inside:avoid}
             .report-card-header{border-bottom:2px solid #667eea;padding-bottom:10px;margin-bottom:10px}
-        </style></head><body>${results}</body></html>`);
+        
+/* Time input styling */
+input[type="time"] {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px 15px;
+    font-size: .95rem;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+input[type="time"]:focus {
+    outline: none;
+    border-color: #fdcb6e;
+    box-shadow: 0 0 10px rgba(253,203,110,.2);
+    background: rgba(255,255,255,.18);
+}
+/* For mobile */
+@media(max-width:480px){
+    input[type="time"] {
+        padding: 14px 12px;
+        font-size: 1rem;
+    }
+}
+</style></head><body>${results}</body></html>`);
         printWindow.document.close();
         printWindow.print();
         return;
@@ -2377,7 +2482,32 @@ function printReportContent(){
         th{background:#667eea;color:#fff}
         h2{color:#667eea;text-align:center}
         p{text-align:center;color:#666}
-    </style></head><body>${printArea.innerHTML}</body></html>`);
+    
+/* Time input styling */
+input[type="time"] {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px 15px;
+    font-size: .95rem;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+input[type="time"]:focus {
+    outline: none;
+    border-color: #fdcb6e;
+    box-shadow: 0 0 10px rgba(253,203,110,.2);
+    background: rgba(255,255,255,.18);
+}
+/* For mobile */
+@media(max-width:480px){
+    input[type="time"] {
+        padding: 14px 12px;
+        font-size: 1rem;
+    }
+}
+</style></head><body>${printArea.innerHTML}</body></html>`);
     printWindow.document.close();
     printWindow.print();
 }
