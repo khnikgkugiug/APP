@@ -349,6 +349,7 @@ input[type="time"]:focus {
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -810,21 +811,36 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 2;
+const APP_VERSION = 3;
 
-// Check version IMMEDIATELY on page load (before anything runs)
+// Check version on page load - reload once if needed
 (function checkVersion(){
-    const savedVersion = localStorage.getItem('zoom_appVersion');
-    if (savedVersion && parseInt(savedVersion) !== APP_VERSION) {
-        // New version detected! Force reload with cache bust
+    try {
+        const savedVersion = localStorage.getItem('zoom_appVersion');
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlVersion = urlParams.get('v');
+
+        // Already reloaded with correct version
+        if (urlVersion && parseInt(urlVersion) === APP_VERSION) {
+            localStorage.setItem('zoom_appVersion', APP_VERSION);
+            return;
+        }
+
+        // Need to reload with new version
+        if (!savedVersion || parseInt(savedVersion) !== APP_VERSION) {
+            localStorage.setItem('zoom_appVersion', APP_VERSION);
+            const url = new URL(window.location.href);
+            url.searchParams.set('v', APP_VERSION);
+            url.searchParams.set('t', Date.now());
+            window.location.replace(url.toString());
+            return;
+        }
+
         localStorage.setItem('zoom_appVersion', APP_VERSION);
-        const url = new URL(window.location.href);
-        url.searchParams.set('v', APP_VERSION);
-        url.searchParams.set('t', Date.now());
-        window.location.replace(url.toString());
-        return; // Stop everything - page will reload
+    } catch(e) {
+        // localStorage not available, continue normally
+        console.log('Version check skipped:', e);
     }
-    localStorage.setItem('zoom_appVersion', APP_VERSION);
 })();
 
 let currentUser=null,customers=[],filteredCustomers=[],currentCustomerIndex=-1,managerData={},supervisorData={},lastSavedIndex=-1;
@@ -2125,6 +2141,33 @@ function generateReport(){
     }
 }
 
+function getDeviceType(mData){
+    let parts = [];
+    if(mData.filter_details && mData.filter_details !== ''){
+        parts.push('فلتر: ' + mData.filter_details);
+    }
+    if(mData.softener === 'نعم'){
+        let softenerParts = [];
+        if(mData.softener_size) softenerParts.push(mData.softener_size);
+        if(mData.softener_type) softenerParts.push(mData.softener_type);
+        if(softenerParts.length > 0){
+            parts.push('سوفتنر: ' + softenerParts.join(' '));
+        } else {
+            parts.push('سوفتنر');
+        }
+    }
+    if(parts.length === 0){
+        if(mData.package_name && mData.package_name !== ''){
+            parts.push(mData.package_name);
+        } else if(mData.order_type && mData.order_type !== ''){
+            parts.push(mData.order_type);
+        } else if(mData.other_product && mData.other_product !== ''){
+            parts.push(mData.other_product);
+        }
+    }
+    return parts.length > 0 ? parts.join(' + ') : '-';
+}
+
 // ===== REPORT 1: TECHNICIAN REPORT =====
 function generateTechnicianReport(){
     const fromDate = parseSheetDate(document.getElementById('reportDateFrom').value);
@@ -2218,16 +2261,7 @@ function showTechnicianDetails(tech, fromStr, toStr){
         html += `<div class="report-card-header"><h4>👤 ${c.name}</h4><span style="color:#667eea;font-weight:700">${c.parsedDate ? c.parsedDate.toLocaleDateString('ar-SA') : ''}</span></div>`;
         html += `<div class="report-card-body">`;
         // Determine device type from manager data
-        let deviceType = '-';
-        if(mData.filter_details && mData.filter_details !== ''){
-            deviceType = mData.filter_details;
-        } else if(mData.package_name && mData.package_name !== ''){
-            deviceType = mData.package_name;
-        } else if(mData.order_type && mData.order_type !== ''){
-            deviceType = mData.order_type;
-        } else if(mData.other_product && mData.other_product !== ''){
-            deviceType = mData.other_product;
-        }
+        let deviceType = getDeviceType(mData);
 
         html += `<div class="report-card-item"><span class="label">📞 الهاتف:</span><span class="value">${c.phone}</span></div>`;
         html += `<div class="report-card-item"><span class="label">📍 الولاية:</span><span class="value">${c.state}</span></div>`;
@@ -2316,16 +2350,7 @@ function showStateDetails(state, fromStr, toStr){
         const mData = managerData[c.rowIndex] || {};
 
         // Determine device type from manager data
-        let deviceType = '-';
-        if(mData.filter_details && mData.filter_details !== ''){
-            deviceType = mData.filter_details;
-        } else if(mData.package_name && mData.package_name !== ''){
-            deviceType = mData.package_name;
-        } else if(mData.order_type && mData.order_type !== ''){
-            deviceType = mData.order_type;
-        } else if(mData.other_product && mData.other_product !== ''){
-            deviceType = mData.other_product;
-        }
+        let deviceType = getDeviceType(mData);
 
         html += `<div class="report-card">`;
         html += `<div class="report-card-header"><h4>👤 ${c.name}</h4><span style="color:#667eea;font-weight:700">${c.parsedDate ? c.parsedDate.toLocaleDateString('ar-SA') : ''}</span></div>`;
@@ -2400,7 +2425,7 @@ function generateDailyReport(){
     html += `<p style="text-align:center;color:#666;margin-bottom:20px">${reportDate.toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>`;
 
     html += '<table class="report-table">';
-    html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الولاية</th><th>نوع التركيب</th><th>الفني</th><th>حالة التركيب</th><th>ملاحظات</th></tr>';
+    html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الولاية</th><th>نوع التركيب</th><th>نوع الجهاز</th><th>الفني</th><th>حالة التركيب</th><th>ملاحظات</th></tr>';
 
     filtered.forEach((c, idx) => {
         const sData = supervisorData[c.rowIndex] || {};
@@ -2411,6 +2436,7 @@ function generateDailyReport(){
         html += `<td style="direction:ltr">${c.phone}</td>`;
         html += `<td>${c.state || '-'}</td>`;
         html += `<td>${mData.transaction_type || c.transactionType || '-'}</td>`;
+        html += `<td>${getDeviceType(mData)}</td>`;
         html += `<td>${sData.technician || '-'}</td>`;
         html += `<td>${sData.installation_status || 'قيد الانتظار'}</td>`;
         html += `<td>${sData.notes || mData.notes || '-'}</td>`;
