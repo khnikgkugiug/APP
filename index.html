@@ -302,6 +302,24 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
     color:#1a1a2e;
 }
 
+/* Report table scroll on mobile */
+@media(max-width:768px){
+    #dailyReportPrintArea,
+    #reportResults {
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+    }
+    .report-table{
+        min-width:800px;
+        font-size:.85rem;
+    }
+    .report-table th,
+    .report-table td{
+        padding:8px 10px;
+        white-space:nowrap;
+    }
+}
+
 /* Print styles for reports */
 @media print{
     .toolbar, .filter-section, .login-section, .customers-grid, #emptyState, #loadingSection{
