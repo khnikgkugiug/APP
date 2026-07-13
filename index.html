@@ -369,6 +369,7 @@ input[type="time"]:focus {
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -723,6 +724,8 @@ input[type="time"]:focus {
 <h3>💰 المالية</h3>
 <div class="form-grid">
 <div class="form-group"><label>الإجمالي (من مدير خط السير)</label><input type="number" id="s_manager_total" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed"></div>
+<!-- FIX #1: Added readonly field showing manager's paid amount -->
+<div class="form-group"><label>المقدم (من مدير خط السير)</label><input type="number" id="s_manager_paid" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed"></div>
 <div class="form-group"><label>المبلغ المدفوع</label><input type="number" id="s_amount_paid" oninput="calculateSupervisorBalance()"></div>
 <div class="form-group"><label>في حساب</label><input type="text" id="s_in_account"></div>
 <div class="form-group"><label>باقي</label><input type="number" id="s_balance" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed" oninput="togglePaymentDateField()"></div>
@@ -831,7 +834,7 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 3;
+const APP_VERSION = 4;
 
 // Check version on page load - reload once if needed
 (function checkVersion(){
@@ -1238,7 +1241,7 @@ function applyFilters(){
         }
         if(statusFilter!=='all'){
             const hasM=managerData[c.rowIndex]&&Object.keys(managerData[c.rowIndex]).length>0;
-            const hasS=supervisorData[c.rowIndex]&&Object.keys(supervisorData[c.rowIndex]).length>0;
+            const hasS=supervisorData[c.rowIndex]&&hasMeaningfulSupervisorData(supervisorData[c.rowIndex]);
             if(statusFilter==='none'&&(hasM||hasS)) return false;
             if(statusFilter==='manager'&&(!hasM||hasS)) return false;
             if(statusFilter==='completed'&&(!hasM||!hasS)) return false;
@@ -1299,6 +1302,31 @@ function getDateBadgeText(date){
     return date.toLocaleDateString('ar-SA');
 }
 
+// FIX #2: Helper to check if supervisor data has meaningful content
+function hasMeaningfulSupervisorData(sData){
+    if(!sData || typeof sData !== 'object') return false;
+    // Check if any field has a real value (not empty string, not _synced)
+    const meaningfulFields = [
+        'technician', 'car', 'installation_status', 'delay_reason', 'items',
+        'returned_items', 'start_time', 'end_time', 'spare_needed', 'spare_details',
+        'amount_paid', 'in_account', 'balance', 'payment_date', 'notes',
+        'tds_before', 'tds_after', 'device_location', 'check_connections',
+        'check_electricity', 'check_drain', 'check_inlet_pressure',
+        'check_motor_pressure', 'check_production', 'check_tank_pressure',
+        'check_leak', 'taste_check', 'color_check', 'supervisor_softener',
+        'water_type', 'connections_rating', 'electricity_rating', 'connection_type',
+        'inlet_pressure_value', 'vacuum_installed', 'resin_status',
+        'tds_before_softener', 'tds_after_softener', 'limescale_before_softener',
+        'limescale_after_softener', 'leak_check', 'color_after_softener',
+        'backwash_time', 'backwash_duration', 'fast_rinse_time', 'salt_level',
+        'has_shelter', 'wash_time', 'salt_amount'
+    ];
+    return meaningfulFields.some(field => {
+        const val = sData[field];
+        return val !== undefined && val !== '' && val !== null;
+    });
+}
+
 function renderCustomers(){
     const grid=document.getElementById('customersGrid');
     grid.innerHTML='';
@@ -1312,7 +1340,8 @@ function renderCustomers(){
     customersToRender.forEach((customer)=>{
         const index=customer.rowIndex;
         const hasM=managerData[index]&&Object.keys(managerData[index]).length>0;
-        const hasS=supervisorData[index]&&Object.keys(supervisorData[index]).length>0;
+        // FIX #2: Check if supervisor data has MEANINGFUL content (not just empty object with _synced)
+        const hasS=supervisorData[index]&&hasMeaningfulSupervisorData(supervisorData[index]);
         let statusText='قيد الانتظار',statusClass='status-pending';
         const sDataForStatus=supervisorData[index]||{};
         const installationStatus=sDataForStatus.installation_status||'';
@@ -1387,8 +1416,10 @@ function toggleSoftenerFields(){
 
 function calculateSupervisorBalance(){
     const total = parseFloat(document.getElementById('s_manager_total').value) || 0;
+    const managerPaid = parseFloat(document.getElementById('s_manager_paid').value) || 0;
     const paid = parseFloat(document.getElementById('s_amount_paid').value) || 0;
-    const remaining = total - paid;
+    // FIX: Balance = Total - (Manager Paid + Supervisor Paid)
+    const remaining = total - (managerPaid + paid);
     document.getElementById('s_balance').value = remaining >= 0 ? remaining : 0;
     togglePaymentDateField();
 }
@@ -1585,6 +1616,8 @@ function openSupervisorModal(index){
     // Show manager's paid amount as default if supervisor hasn't entered one
     const mPaid = mData.paid || '';
     document.getElementById('s_manager_total').value = mData.total || '';
+    // FIX #1: Show manager's paid amount as reference
+    document.getElementById('s_manager_paid').value = mData.paid || '';
     document.getElementById('s_amount_paid').value = ex.amount_paid || mPaid;
     calculateSupervisorBalance();
     document.getElementById('s_in_account').value=ex.in_account||'';
@@ -1685,6 +1718,10 @@ async function saveSupervisorData(){
         salt_amount:document.getElementById('s_salt_amount').value
     };
     supervisorData[currentCustomerIndex]=data;
+    // FIX #2: If all fields are empty, remove the entry so customer shows as "waiting for supervisor"
+    if(!hasMeaningfulSupervisorData(data)){
+        delete supervisorData[currentCustomerIndex];
+    }
     saveToLocalStorage();
     showSaveIndicator(true);
     const result=await sendToSheet(currentCustomerIndex,null,data);
