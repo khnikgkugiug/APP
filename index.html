@@ -834,7 +834,7 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 4;
+const APP_VERSION = 5;
 
 // Check version on page load - reload once if needed
 (function checkVersion(){
@@ -849,9 +849,12 @@ const APP_VERSION = 4;
             return;
         }
 
-        // Need to reload with new version
+        // Need to reload with new version - ALWAYS reload if version mismatch
         if (!savedVersion || parseInt(savedVersion) !== APP_VERSION) {
             localStorage.setItem('zoom_appVersion', APP_VERSION);
+            // Clear ALL cached data to force fresh load
+            localStorage.removeItem('zoom_managerData');
+            localStorage.removeItem('zoom_supervisorData');
             const url = new URL(window.location.href);
             url.searchParams.set('v', APP_VERSION);
             url.searchParams.set('t', Date.now());
@@ -1614,11 +1617,12 @@ function openSupervisorModal(index){
     document.getElementById('s_spare_details').value=ex.spare_details||'';
     toggleSpareFields();
     // Show manager's paid amount as default if supervisor hasn't entered one
-    const mPaid = mData.paid || '';
     document.getElementById('s_manager_total').value = mData.total || '';
-    // FIX #1: Show manager's paid amount as reference
+    // FIX #1: Show manager's paid amount as reference (read-only)
     document.getElementById('s_manager_paid').value = mData.paid || '';
-    document.getElementById('s_amount_paid').value = ex.amount_paid || mPaid;
+    // FIX: s_amount_paid starts EMPTY - supervisor fills it manually
+    // Only show previous supervisor value if exists, never default to manager paid
+    document.getElementById('s_amount_paid').value = ex.amount_paid || '';
     calculateSupervisorBalance();
     document.getElementById('s_in_account').value=ex.in_account||'';
     // Show manager's remaining amount as default if supervisor hasn't entered one
@@ -1717,11 +1721,29 @@ async function saveSupervisorData(){
         wash_time:document.getElementById('s_wash_time').value,
         salt_amount:document.getElementById('s_salt_amount').value
     };
-    supervisorData[currentCustomerIndex]=data;
-    // FIX #2: If all fields are empty, remove the entry so customer shows as "waiting for supervisor"
-    if(!hasMeaningfulSupervisorData(data)){
+    const isEmpty = !hasMeaningfulSupervisorData(data);
+
+    if(isEmpty){
+        // FIX #2: If all fields are empty, remove the entry so customer shows as "waiting for supervisor"
         delete supervisorData[currentCustomerIndex];
+        saveToLocalStorage();
+        showSaveIndicator(true);
+        // Send clear command to GAS to delete data from sheet
+        const result=await sendToSheet(currentCustomerIndex,null,{_clearSupervisor:true});
+        showSaveIndicator(false);
+        if(result.success){
+            closeModal('supervisorModal');
+            renderCustomers();
+            showAlert('✅ تم مسح البيانات من الشيت والجهاز!','success');
+        }else{
+            showAlert('⚠️ تم المسح محلياً لكن فشل الإرسال للشيت: '+result.error,'error');
+            closeModal('supervisorModal');
+            renderCustomers();
+        }
+        return;
     }
+
+    supervisorData[currentCustomerIndex]=data;
     saveToLocalStorage();
     showSaveIndicator(true);
     const result=await sendToSheet(currentCustomerIndex,null,data);
@@ -1745,12 +1767,13 @@ async function saveSupervisorData(){
 async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
     const customer=customers.find(c=>c.rowIndex===rowIndex);
     const customerName=customer?customer.name:'';
+    const isClearSupervisor = supervisorDataArg && supervisorDataArg._clearSupervisor === true;
     const payload={
         customerName:customerName,
         rowIndex:rowIndex,
         managerData:managerDataArg||{},
         supervisorData:supervisorDataArg||{},
-        action:'saveData',
+        action: isClearSupervisor ? 'clearSupervisor' : 'saveData',
         timestamp:new Date().toISOString(),
         dateValue:(managerDataArg&&managerDataArg.installation_date)?managerDataArg.installation_date:''
     };
@@ -1770,7 +1793,7 @@ async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
 
         // With no-cors we can't read response, but request WAS sent
         // Wait briefly for GAS to process
-        await new Promise(resolve=>setTimeout(resolve,1500));
+        await new Promise(resolve=>setTimeout(resolve,2000));
 
         // Verify by re-reading the row from sheet
         const verifyUrl=`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(CONFIG.SHEET_NAME)}!H${rowIndex}:CB${rowIndex}?key=${CONFIG.API_KEY}`;
@@ -1779,17 +1802,39 @@ async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
         const verifyResponse=await fetch(verifyUrl);
         const verifyData=await verifyResponse.json();
 
-        if(verifyData.values&&verifyData.values[0]){
-            const rowData=verifyData.values[0];
-            const hasData=rowData.some(cell=>cell&&cell!=='');
-            if(hasData){
-                console.log('✅ Data confirmed in sheet!');
+        if(isClearSupervisor){
+            // For clear: verify that supervisor columns are EMPTY
+            if(!verifyData.values || !verifyData.values[0]){
+                console.log('✅ Supervisor data cleared from sheet!');
                 return{success:true};
+            }
+            const rowData=verifyData.values[0];
+            // Check supervisor columns (AF=index 30 to CB=index 79 in the row slice)
+            // But rowData starts from column H (index 7), so AF is index 30-7=23
+            // Actually the verify URL gets H:CB, so H is index 0 in rowData
+            // AF is column 31 (0-indexed), so in H:CB range, AF is index 31-7=24
+            // Let's check if any supervisor column has data
+            const supervisorCols = rowData.slice(24); // AF onwards
+            const hasSupervisorData = supervisorCols.some(cell=>cell&&cell!=='');
+            if(!hasSupervisorData){
+                console.log('✅ Supervisor data cleared from sheet!');
+                return{success:true};
+            }
+            console.log('⚠️ Supervisor data still exists after clear, retrying...');
+        } else {
+            // For save: verify data exists
+            if(verifyData.values&&verifyData.values[0]){
+                const rowData=verifyData.values[0];
+                const hasData=rowData.some(cell=>cell&&cell!=='');
+                if(hasData){
+                    console.log('✅ Data confirmed in sheet!');
+                    return{success:true};
+                }
             }
         }
 
         // If verification failed, try once more
-        console.log('⚠️ No data found, retrying...');
+        console.log('⚠️ Verification failed, retrying...');
         const retryResponse=await fetch(CONFIG.GAS_URL,{
             method:'POST',
             headers:{'Content-Type':'text/plain;charset=utf-8'},
