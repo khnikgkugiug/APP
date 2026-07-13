@@ -368,6 +368,7 @@ input[type="time"]:focus {
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -533,6 +534,7 @@ input[type="time"]:focus {
 <option>مصطفى</option>
 <option>عبدالرحمن</option>
 <option>مجدي</option>
+<option>حسن</option>
 </select>
 </div>
 <div class="filter-group" id="reportStateGroup" style="display:none">
@@ -690,8 +692,8 @@ input[type="time"]:focus {
 <div class="form-section">
 <h3>👷 فني التركيب</h3>
 <div class="form-grid">
-<div class="form-group"><label>فني التركيب</label><select id="s_technician"><option value="">اختر...</option><option>رمضان</option><option>أبوزيد</option><option>رضا</option><option>صبري</option><option>سباعي</option><option>مصطفى</option><option>عبدالرحمن</option><option>مجدي</option></select></div>
-<div class="form-group"><label>السيارة</label><select id="s_car"><option value="">اختر...</option><option>باجيرو</option><option>شانجان</option><option>MG</option><option>رينو724</option><option>رينو772</option></select></div>
+<div class="form-group"><label>فني التركيب <span style="color:#fdcb6e;font-size:.8rem">(اضغط على كل اختيار لتفعيله/إلغائه)</span></label><select id="s_technician" multiple size="4"><option value="">اختر...</option><option>رمضان</option><option>أبوزيد</option><option>رضا</option><option>صبري</option><option>سباعي</option><option>مصطفى</option><option>عبدالرحمن</option><option>مجدي</option><option>حسن</option></select></div>
+<div class="form-group"><label>السيارة</label><select id="s_car"><option value="">اختر...</option><option>باجيرو</option><option>شانجان</option><option>MG</option><option>رينو724</option><option>رينو772</option><option>بيكاب</option><option>سيارة ايجار</option></select></div>
 <div class="form-group"><label>حالة التركيب</label><select id="s_installation_status" onchange="toggleDelayFields()"><option value="">اختر...</option><option>تركيب جزئي</option><option>تركيب بدون تشغيل</option><option>تأجيل</option><option>تركيب وتشغيل</option></select></div>
 <div class="form-group conditional-field" id="delay_reason_group"><label>سبب التأجيل</label><textarea id="s_delay_reason"></textarea></div>
 </div>
@@ -1567,7 +1569,8 @@ function openSupervisorModal(index){
         supervisorName = '';
     }
     document.getElementById('s_supervisor_name').value = supervisorName;
-    document.getElementById('s_technician').value=ex.technician||'';
+    setMultiSelectValues('s_technician', ex.technician || '');
+    initMultiSelect('s_technician');
     document.getElementById('s_car').value=ex.car||'';
     document.getElementById('s_installation_status').value=ex.installation_status||'';
     document.getElementById('s_delay_reason').value=ex.delay_reason||'';
@@ -1631,7 +1634,7 @@ function openSupervisorModal(index){
 async function saveSupervisorData(){
     const data={
         supervisor_name:document.getElementById('s_supervisor_name').value,
-        technician:document.getElementById('s_technician').value,
+        technician:getMultiSelectValues('s_technician'),
         car:document.getElementById('s_car').value,
         installation_status:document.getElementById('s_installation_status').value,
         delay_reason:document.getElementById('s_delay_reason').value,
@@ -2210,22 +2213,31 @@ function generateTechnicianReport(){
         return sData.technician; // Must have a technician assigned
     });
 
-    // Group by technician
+    // Group by technician (handle multi-select by splitting)
     const techStats = {};
     filtered.forEach(c => {
         const sData = supervisorData[c.rowIndex] || {};
-        const tech = sData.technician;
-        if(!tech) return;
-        if(selectedTech !== 'all' && tech !== selectedTech) return;
+        const techStr = sData.technician;
+        if(!techStr) return;
 
-        if(!techStats[tech]){
-            techStats[tech] = { count: 0, customers: [], statuses: {} };
-        }
-        techStats[tech].count++;
-        techStats[tech].customers.push(c);
+        // Split by comma to get individual technicians
+        const techList = techStr.split(',').map(t => t.trim()).filter(t => t);
 
-        const status = sData.installation_status || 'غير محدد';
-        techStats[tech].statuses[status] = (techStats[tech].statuses[status] || 0) + 1;
+        techList.forEach(tech => {
+            if(selectedTech !== 'all' && tech !== selectedTech) return;
+
+            if(!techStats[tech]){
+                techStats[tech] = { count: 0, customers: [], statuses: {} };
+            }
+            techStats[tech].count++;
+            // Avoid duplicate customers in the list
+            if(!techStats[tech].customers.includes(c)){
+                techStats[tech].customers.push(c);
+            }
+
+            const status = sData.installation_status || 'غير محدد';
+            techStats[tech].statuses[status] = (techStats[tech].statuses[status] || 0) + 1;
+        });
     });
 
     // Build HTML
@@ -2266,7 +2278,7 @@ function showTechnicianDetails(tech, fromStr, toStr){
         return date >= fromDate && date <= toDate;
     }).filter(c => {
         const sData = supervisorData[c.rowIndex] || {};
-        return sData.technician === tech;
+        return sData.technician && sData.technician.includes(tech);
     });
 
     let html = `<h3 style="color:#fdcb6e;margin:20px 0">👷 تفاصيل تركيبات ${tech}</h3>`;
