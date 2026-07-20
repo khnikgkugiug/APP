@@ -52,6 +52,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .status-manager-done{background:#cce5ff;color:#004085}
 .status-completed{background:#d4edda;color:#155724}
 .status-delayed{background:#f8d7da;color:#721c24}
+
 .customer-actions{display:flex;gap:10px;margin-top:15px}
 .customer-actions .btn{flex:1;padding:10px;font-size:.9rem;justify-content:center}
 .sync-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700;margin-top:5px;background:#f8d7da;color:#721c24;border:1px solid rgba(114,28,36,.15)}
@@ -370,6 +371,7 @@ input[type="time"]:focus {
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -459,6 +461,7 @@ input[type="time"]:focus {
 <option value="تركيب بدون تشغيل">تركيب بدون تشغيل</option>
 <option value="تأجيل">تأجيل</option>
 <option value="تركيب وتشغيل">تركيب وتشغيل</option>
+
 </select>
 </div>
 </div>
@@ -834,7 +837,7 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 5;
+const APP_VERSION = 6;
 
 // Check version on page load - reload once if needed
 (function checkVersion(){
@@ -1169,6 +1172,9 @@ async function loadSheetData(forceRefresh=false){
         });
         customers.forEach(c=>{c.parsedDate=parseSheetDate(c.date);});
 
+        // Merge duplicate customers - keep latest date, merge supervisor data
+        customers = mergeDuplicateCustomers(customers);
+
         // === THE FIX ===
         // The Sheet is ALWAYS the source of truth. Period.
         // Whatever is in the Sheet right now is what the user sees.
@@ -1330,6 +1336,81 @@ function hasMeaningfulSupervisorData(sData){
     });
 }
 
+
+// ═══════════════════════════════════════════════════════════
+// MERGE DUPLICATE CUSTOMERS (same name+phone)
+// Keep latest date, merge supervisor data from all occurrences
+// ═══════════════════════════════════════════════════════════
+function mergeDuplicateCustomers(rawCustomers) {
+    const customerMap = new Map();
+
+    rawCustomers.forEach(c => {
+        const key = (c.name + '|' + c.phone).trim().toLowerCase();
+
+        if (!customerMap.has(key)) {
+            customerMap.set(key, {
+                latest: c,
+                allRows: [c.rowIndex],
+                latestDate: c.parsedDate
+            });
+        } else {
+            const existing = customerMap.get(key);
+            existing.allRows.push(c.rowIndex);
+
+            // Keep the one with latest date
+            if (c.parsedDate && existing.latestDate) {
+                if (c.parsedDate > existing.latestDate) {
+                    existing.latest = c;
+                    existing.latestDate = c.parsedDate;
+                }
+            } else if (c.parsedDate && !existing.latestDate) {
+                existing.latest = c;
+                existing.latestDate = c.parsedDate;
+            }
+        }
+    });
+
+    // Merge supervisor data from ALL rows into the latest row
+    const mergedCustomers = [];
+    customerMap.forEach((data, key) => {
+        const mainCustomer = data.latest;
+        const mainIdx = mainCustomer.rowIndex;
+
+        // Find best supervisor data across all rows
+        let bestSupervisorData = supervisorData[mainIdx] || {};
+        let bestSupervisorRow = mainIdx;
+
+        data.allRows.forEach(rowIdx => {
+            const sData = supervisorData[rowIdx];
+            if (sData && hasMeaningfulSupervisorData(sData)) {
+                // Prefer the one with installation_status
+                if (sData.installation_status && !bestSupervisorData.installation_status) {
+                    bestSupervisorData = sData;
+                    bestSupervisorRow = rowIdx;
+                }
+            }
+        });
+
+        // Copy best supervisor data to main row
+        if (bestSupervisorRow !== mainIdx && Object.keys(bestSupervisorData).length > 0) {
+            supervisorData[mainIdx] = { ...bestSupervisorData, _mergedFrom: bestSupervisorRow };
+        }
+
+        // Mark if this customer was delayed from a previous date
+        const anyDelayed = data.allRows.some(rowIdx => {
+            const sData = supervisorData[rowIdx];
+            return sData && sData.installation_status === 'تأجيل';
+        });
+
+        mainCustomer._wasDelayed = anyDelayed;
+        mainCustomer._allRowIndices = data.allRows;
+
+        mergedCustomers.push(mainCustomer);
+    });
+
+    return mergedCustomers;
+}
+
 function renderCustomers(){
     const grid=document.getElementById('customersGrid');
     grid.innerHTML='';
@@ -1348,13 +1429,19 @@ function renderCustomers(){
         let statusText='قيد الانتظار',statusClass='status-pending';
         const sDataForStatus=supervisorData[index]||{};
         const installationStatus=sDataForStatus.installation_status||'';
-        if(installationStatus==='تأجيل'){statusText='مؤجل';statusClass='status-delayed';}
+        // Show actual supervisor status
+        const wasDelayed = customer._wasDelayed || false;
+
+        if(installationStatus==='تأجيل' || wasDelayed){statusText='مؤجل';statusClass='status-delayed';}
+        else if(installationStatus==='تركيب بدون تشغيل'){statusText='تركيب بدون تشغيل';statusClass='status-manager-done';}
+        else if(installationStatus==='تركيب جزئي'){statusText='تركيب جزئي';statusClass='status-manager-done';}
+        else if(installationStatus==='تركيب وتشغيل'){statusText='تركيب وتشغيل';statusClass='status-completed';}
         else if(hasM&&!hasS){statusText='بانتظار المشرف';statusClass='status-manager-done';}
         else if(hasS){statusText='مكتمل';statusClass='status-completed';}
         const card=document.createElement('div');
         card.className='customer-card';
         let printBtn='';
-        if(hasM&&hasS&&installationStatus!=='تأجيل'){
+        if(hasM&&hasS&&installationStatus){
             printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">✅ تم إكمال جميع البيانات</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير هذا العميل</button></div>`;
         }else if(hasM&&currentUser==='manager'){
             printBtn=`<div class="print-btn-container"><p style="color:#2c3e50;font-weight:700;font-size:1rem">📋 بيانات مدير خط السير</p><button class="btn btn-warning" onclick="printSingleReport(${index})">🖨️ طباعة تقرير</button></div>`;
@@ -1379,7 +1466,7 @@ function renderCustomers(){
                             return `<div class="supervisor-name">👤 ${supName}</div>`;
                         }
                         return '';
-                    })()}${customer.parsedDate ? `<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>` : ''}${unsyncedBadge}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
+                    })()}${customer.parsedDate ? `<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>` : ''}${unsyncedBadge}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS&&(installationStatus==='تركيب وتشغيل'||installationStatus==='تركيب بدون تشغيل'||installationStatus==='تركيب جزئي')?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
         grid.appendChild(card);
     });
 }
@@ -1938,8 +2025,8 @@ function buildPrintRows(mData,sData){
         html+=addRow('متبقي',mData.remaining);
         html+=addRow('توقيت الموعد',mData.appointment_time);
         html+=addRow('تاريخ الموعد',mData.appointment_date?new Date(mData.appointment_date).toLocaleString('ar-SA'):'');
-        html+=addRow('طباعة',mData.print);
-        html+=addRowFull('لوكيشن',mData.location_link);
+        
+        
         html+=addRow('تاريخ التركيب',mData.installation_date);
         html+=addRowFull('ملاحظات',mData.notes);
         html+=`</table>`;
@@ -1995,8 +2082,6 @@ function buildPrintRows(mData,sData){
         html+=addRow('وقت الغسيل السريع',sData.fast_rinse_time);
         html+=addRow('منسوب الملح',sData.salt_level);
         html+=addRow('مظلة',sData.has_shelter);
-        html+=addRow('وقت الغسيل',sData.wash_time);
-        html+=addRow('كمية الملح',sData.salt_amount);
         html+=addRow('وقت الغسيل',sData.wash_time);
         html+=addRow('كمية الملح',sData.salt_amount);
         html+=addRowFull('ملاحظات المشرف',sData.notes);
