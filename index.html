@@ -698,8 +698,8 @@ input[type="time"]:focus {
 </button>
 </div>
 
-<!-- Loading -->
-<div class="loading" id="inventoryLoadingSection">
+<!-- Loading - hidden for inventory manager, permits load from localStorage instantly -->
+<div class="loading" id="inventoryLoadingSection" style="display:none">
 <div class="loading-spinner"></div>
 <p>جاري تحميل البيانات...</p>
 </div>
@@ -728,7 +728,7 @@ input[type="time"]:focus {
 <div class="empty-state" id="inventoryEmptyState" style="display:none">
 <div class="icon">📭</div>
 <h3>لا توجد إذونات</h3>
-<p id="inventoryEmptyStateMsg">لا توجد إذونات تم إرسالها بعد</p>
+<p id="inventoryEmptyStateMsg">لا توجد إذونات تم إرسالها بعد. عندما يقوم مدير خط السير بإرسال إذن صرف، سيظهر هنا.</p>
 </div>
 </div>
 
@@ -1126,7 +1126,7 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 7;
+const APP_VERSION = 8;
 
 // Check version on page load - reload once if needed
 (function checkVersion(){
@@ -1241,6 +1241,8 @@ function login(role){
         document.getElementById('mainContent').classList.remove('active');
         document.getElementById('inventorySection').style.display = 'block';
         document.getElementById('reportsSection').style.display = 'none';
+        // Hide loading immediately - we load from localStorage only
+        document.getElementById('inventoryLoadingSection').style.display = 'none';
         // Load from localStorage only (permits are stored locally, not in sheet)
         loadFromLocalStorage();
         loadPermitData();
@@ -3388,6 +3390,8 @@ function sendPermitToWarehouse(rowIndex){
 
     setPermitStatus(rowIndex, 'sent');
     showAlert('✅ تم إرسال الإذن لمدير المخزن!','success');
+
+    // Refresh the view to update the status button
     applyInventoryFilters();
 }
 
@@ -3622,7 +3626,7 @@ async function savePermitToSheet(){
 
     const notes = document.getElementById('permit_notes').value;
 
-    // Save to localStorage
+    // Save to localStorage ONLY (permits are NOT sent to Google Sheet)
     permitData[currentPermitRowIndex] = {
         issued: true,
         date: new Date().toISOString(),
@@ -3636,7 +3640,7 @@ async function savePermitToSheet(){
     await new Promise(resolve=>setTimeout(resolve,500));
     showSaveIndicator(false);
 
-    showAlert('✅ تم حفظ إذن الصرف!','success');
+    showAlert('✅ تم حفظ إذن الصرف محلياً!','success');
     closeModal('inventoryPermitModal');
     applyInventoryFilters();
 }
