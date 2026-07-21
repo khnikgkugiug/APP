@@ -661,10 +661,10 @@ input[type="time"]:focus {
 </div>
 </div>
 
-<!-- Filter Section for Warehouse Manager -->
+<!-- Filter Section for Warehouse Manager - Supervisor only -->
 <div class="filter-section">
 <h3>🔍 تصفية الإذونات</h3>
-<div class="filter-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));align-items:end">
+<div class="filter-grid" style="grid-template-columns:300px 1fr;align-items:end">
 <div class="filter-group">
 <label>المشرف</label>
 <select id="inventorySupervisorFilter" onchange="applyInventoryFilters()">
@@ -673,15 +673,6 @@ input[type="time"]:focus {
 <option>معاذ</option>
 <option>هادي</option>
 <option>عمر</option>
-</select>
-</div>
-<div class="filter-group">
-<label>التاريخ</label>
-<select id="inventoryDateFilter" onchange="applyInventoryFilters()">
-<option value="today">اليوم</option>
-<option value="all">كل التواريخ</option>
-<option value="tomorrow">غداً</option>
-<option value="week">هذا الأسبوع</option>
 </select>
 </div>
 <div class="filter-actions" style="margin-top:0">
@@ -1242,14 +1233,18 @@ function login(role){
         document.getElementById('mainContent').classList.remove('active');
         document.getElementById('inventorySection').style.display = 'block';
         document.getElementById('reportsSection').style.display = 'none';
-        // Hide loading immediately - we load from localStorage only
-        document.getElementById('inventoryLoadingSection').style.display = 'none';
-        // Load from localStorage only (permits are stored locally, not in sheet)
+        // Show loading while we load sheet data (we need customer names from sheet)
+        document.getElementById('inventoryLoadingSection').style.display = 'block';
+        // Load from localStorage first (permits are stored locally)
         loadFromLocalStorage();
         loadPermitData();
         loadPermitStatus();
-        applyInventoryFilters();
-        return; // Skip sheet loading for inventory manager
+        // Load sheet data to get customer names, then apply filters
+        loadSheetData(true).then(()=>{
+            document.getElementById('inventoryLoadingSection').style.display = 'none';
+            applyInventoryFilters();
+        });
+        return; // Skip the rest of the login flow (sheet already loaded above)
     } else {
         document.getElementById('mainContent').classList.add('active');
         document.getElementById('inventorySection').style.display = 'none';
@@ -2931,7 +2926,7 @@ function generateDailyReport(){
         html += `<p style="text-align:center;color:#fdcb6e;margin-bottom:20px;font-size:0.9rem">✏️ اضغط على أي خلية لتعديلها مباشرة</p>`;
 
         html += '<table class="report-table" id="routeTable">';
-        html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الجهاز</th><th>الملاحظات</th><th>المشرف</th><th>حفظ</th></tr>';
+        html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الجهاز</th><th>الملاحظات</th><th>المشرف</th></tr>';
 
         filtered.forEach((c, idx) => {
             const mData = managerData[c.rowIndex] || {};
@@ -2942,25 +2937,24 @@ function generateDailyReport(){
             const rowId = c.rowIndex;
             html += `<tr data-row="${rowId}">`;
             html += `<td>${idx + 1}</td>`;
-            html += `<td contenteditable="true" class="editable-cell" data-field="name">${c.name}</td>`;
-            html += `<td contenteditable="true" class="editable-cell" data-field="phone" style="direction:ltr">${c.phone}</td>`;
-            html += `<td contenteditable="true" class="editable-cell" data-field="device">${getDeviceType(mData)}</td>`;
-            html += `<td contenteditable="true" class="editable-cell" data-field="notes">${mData.notes || ''}</td>`;
-            html += `<td contenteditable="true" class="editable-cell" data-field="supervisor">${supName}</td>`;
-            html += `<td><button class="btn btn-success" onclick="saveRouteEdit(${rowId})" style="padding:6px 12px;font-size:0.8rem">💾 حفظ</button></td>`;
+            html += `<td style="font-weight:700">${c.name}</td>`;
+            html += `<td style="direction:ltr">${c.phone}</td>`;
+            html += `<td>${getDeviceType(mData)}</td>`;
+            html += `<td>${mData.notes || ''}</td>`;
+            html += `<td>${supName}</td>`;
             html += `</tr>`;
 
             const permit = permitData[rowId];
             const hasPermit = permit && permit.issued;
             const permitStatus = getPermitStatus(rowId);
-            html += `<tr style="background:rgba(253,203,110,.1)"><td colspan="7" style="text-align:center;padding:8px;display:flex;gap:10px;justify-content:center">`;
+            html += `<tr style="background:rgba(253,203,110,.1)"><td colspan="6" style="text-align:center;padding:8px;display:flex;gap:10px;justify-content:center">`;
             html += `<button class="btn btn-warning" onclick="openPermitModal(${rowId})" style="padding:6px 15px;font-size:0.85rem">`;
             html += hasPermit ? '📋 عرض/تعديل إذن الصرف' : '📝 إصدار إذن صرف';
             html += `</button>`;
-            // Show send button only if permit exists and not yet sent
-            if(hasPermit && permitStatus !== 'sent' && permitStatus !== 'approved'){
+            // Show send button for ALL customers (auto-creates permit if needed)
+            if(permitStatus !== 'sent' && permitStatus !== 'approved'){
                 html += `<button class="btn btn-success" onclick="sendPermitToWarehouse(${rowId})" style="padding:6px 15px;font-size:0.85rem">📤 إرسال لمدير المخزن</button>`;
-            } else if(permitStatus === 'sent' || permitStatus === 'approved'){
+            } else {
                 html += `<span style="color:#00b894;font-weight:700;padding:6px 15px;font-size:0.85rem">✅ تم الإرسال</span>`;
             }
             html += `</td></tr>`;
@@ -3209,7 +3203,6 @@ function refreshInventoryData(){
 
 function applyInventoryFilters(){
     const supervisorFilter = document.getElementById('inventorySupervisorFilter').value;
-    const dateFilter = document.getElementById('inventoryDateFilter').value;
 
     // Build permits list from localStorage (sent/approved permits only)
     const permits = [];
@@ -3229,30 +3222,10 @@ function applyInventoryFilters(){
         const permit = permitData[rowIdx];
         if(!permit || !permit.issued) return;
 
-        // Filter by supervisor
+        // Filter by supervisor only
         if(supervisorFilter !== 'all'){
             const supName = mData.supervisor_name || customer.supervisorName || '';
             if(supName !== supervisorFilter) return;
-        }
-
-        // Filter by date (permit date, not customer date)
-        const permitDate = permit.date ? new Date(permit.date) : null;
-        if(permitDate){
-            const today = new Date(); today.setHours(0,0,0,0);
-            const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
-
-            if(dateFilter === 'today'){
-                if(permitDate.getDate() !== today.getDate() || permitDate.getMonth() !== today.getMonth() || permitDate.getFullYear() !== today.getFullYear()) return;
-            } else if(dateFilter === 'tomorrow'){
-                if(permitDate.getDate() !== tomorrow.getDate() || permitDate.getMonth() !== tomorrow.getMonth() || permitDate.getFullYear() !== tomorrow.getFullYear()) return;
-            } else if(dateFilter === 'week'){
-                const startOfWeek = new Date(today);
-                startOfWeek.setDate(today.getDate() - today.getDay());
-                const endOfWeek = new Date(startOfWeek);
-                endOfWeek.setDate(startOfWeek.getDate() + 7);
-                if(permitDate < startOfWeek || permitDate >= endOfWeek) return;
-            }
-            // 'all' = no date filter
         }
 
         permits.push({
@@ -3270,7 +3243,6 @@ function applyInventoryFilters(){
 
 function clearInventoryFilters(){
     document.getElementById('inventorySupervisorFilter').value = 'all';
-    document.getElementById('inventoryDateFilter').value = 'today';
     applyInventoryFilters();
 }
 
@@ -3387,12 +3359,22 @@ function sendPermitToWarehouse(rowIndex){
         permit = permitData[rowIndex];
     }
 
+    // Update permit date to today (when it was sent)
+    if(permitData[rowIndex]){
+        permitData[rowIndex].date = new Date().toISOString();
+        savePermitData();
+    }
+
     setPermitStatus(rowIndex, 'sent');
     savePermitStatus();
     showAlert('✅ تم إرسال الإذن لمدير المخزن!','success');
 
-    // Refresh the view to update the status button
-    applyInventoryFilters();
+    // Refresh the view that the user is currently looking at
+    if(document.getElementById('routeTable')){
+        generateDailyReport();
+    } else {
+        applyInventoryFilters();
+    }
 }
 
 // ═══════════════════════════════════════════════════════════
