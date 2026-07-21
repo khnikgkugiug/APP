@@ -2952,10 +2952,18 @@ function generateDailyReport(){
 
             const permit = permitData[rowId];
             const hasPermit = permit && permit.issued;
-            html += `<tr style="background:rgba(253,203,110,.1)"><td colspan="7" style="text-align:center;padding:8px">`;
+            const permitStatus = getPermitStatus(rowId);
+            html += `<tr style="background:rgba(253,203,110,.1)"><td colspan="7" style="text-align:center;padding:8px;display:flex;gap:10px;justify-content:center">`;
             html += `<button class="btn btn-warning" onclick="openPermitModal(${rowId})" style="padding:6px 15px;font-size:0.85rem">`;
             html += hasPermit ? '📋 عرض/تعديل إذن الصرف' : '📝 إصدار إذن صرف';
-            html += `</button></td></tr>`;
+            html += `</button>`;
+            // Show send button only if permit exists and not yet sent
+            if(hasPermit && permitStatus !== 'sent' && permitStatus !== 'approved'){
+                html += `<button class="btn btn-success" onclick="sendPermitToWarehouse(${rowId})" style="padding:6px 15px;font-size:0.85rem">📤 إرسال لمدير المخزن</button>`;
+            } else if(permitStatus === 'sent' || permitStatus === 'approved'){
+                html += `<span style="color:#00b894;font-weight:700;padding:6px 15px;font-size:0.85rem">✅ تم الإرسال</span>`;
+            }
+            html += `</td></tr>`;
         });
     } else {
         html += `<h2 style="text-align:center;color:#667eea;margin-bottom:5px">Zoom - التقرير اليومي</h2>`;
