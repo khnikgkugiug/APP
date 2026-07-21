@@ -1126,7 +1126,7 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 8;
+const APP_VERSION = 9;
 
 // Check version on page load - reload once if needed
 (function checkVersion(){
@@ -1144,11 +1144,12 @@ const APP_VERSION = 8;
         // Need to reload with new version - ALWAYS reload if version mismatch
         if (!savedVersion || parseInt(savedVersion) !== APP_VERSION) {
             localStorage.setItem('zoom_appVersion', APP_VERSION);
-            // Clear ALL cached data to force fresh load
-            localStorage.removeItem('zoom_managerData');
-            localStorage.removeItem('zoom_supervisorData');
-            localStorage.removeItem('zoom_permitData');
-            localStorage.removeItem('zoom_permitStatus');
+            // DON'T clear permit data - it's local only and should persist
+            // Only clear manager/supervisor data that comes from sheet
+            // localStorage.removeItem('zoom_managerData');
+            // localStorage.removeItem('zoom_supervisorData');
+            // KEEP: localStorage.removeItem('zoom_permitData');
+            // KEEP: localStorage.removeItem('zoom_permitStatus');
             const url = new URL(window.location.href);
             url.searchParams.set('v', APP_VERSION);
             url.searchParams.set('t', Date.now());
@@ -1296,6 +1297,7 @@ function logout(){
     const reportsSection = document.getElementById('reportsSection');
     if(reportsSection) reportsSection.style.display = 'none';
     if(autoRefreshInterval){clearInterval(autoRefreshInterval);autoRefreshInterval=null;}
+    // DON'T clear localStorage - permit data should persist between sessions
 }
 
 function debouncedApplyFilters(){
@@ -1969,7 +1971,7 @@ async function saveManagerData(){
         closeModal('managerModal');
         renderCustomers();
         lastSavedIndex=currentCustomerIndex;
-        showAlert('✅ تم الحفظ في الشيت والجهاز!','success');
+        showAlert('✅ تم الحفظ!','success');
     }else{
         showAlert('⚠️ تم الحفظ محلياً لكن فشل الإرسال للشيت: '+result.error,'error');
         closeModal('managerModal');
@@ -2150,7 +2152,7 @@ async function saveSupervisorData(){
         closeModal('supervisorModal');
         renderCustomers();
         lastSavedIndex=currentCustomerIndex;
-        showAlert('✅ تم الحفظ في الشيت والجهاز!','success');
+        showAlert('✅ تم الحفظ!','success');
         const hasM=managerData[currentCustomerIndex]&&Object.keys(managerData[currentCustomerIndex]).length>0;
         if(hasM) setTimeout(()=>{document.getElementById('printSuccessModal').classList.add('active')},500);
     }else{
@@ -3005,45 +3007,17 @@ async function saveRouteEdit(rowIndex){
     }
 
     showSaveIndicator(true);
-    showAlert('⏳ جاري الحفظ...','info');
-
-    const payload = {
-        customerName: customer.name,
-        rowIndex: rowIndex,
-        managerData: {
-            name: updates.name || customer.name,
-            phone: updates.phone || customer.phone,
-            notes: updates.notes || '',
-            supervisor_name: updates.supervisor || ''
-        },
-        supervisorData: {},
-        action: 'saveData',
-        timestamp: new Date().toISOString()
-    };
 
     if(!managerData[rowIndex]) managerData[rowIndex] = {};
     if(updates.notes) managerData[rowIndex].notes = updates.notes;
     if(updates.supervisor) managerData[rowIndex].supervisor_name = updates.supervisor;
+    if(updates.name) managerData[rowIndex].customer_name = updates.name;
+    if(updates.phone) managerData[rowIndex].customer_phone = updates.phone;
+    if(updates.device) managerData[rowIndex].device_type = updates.device;
     saveToLocalStorage();
 
-    try{
-        await fetch(CONFIG.GAS_URL,{
-            method:'POST',
-            headers:{'Content-Type':'text/plain;charset=utf-8'},
-            body:JSON.stringify(payload),
-            mode:'no-cors'
-        });
-
-        await new Promise(resolve=>setTimeout(resolve,2000));
-
-        showSaveIndicator(false);
-        showAlert('✅ تم الحفظ في الشيت!','success');
-        await loadSheetData(true);
-
-    }catch(error){
-        showSaveIndicator(false);
-        showAlert('⚠️ تم الحفظ محلياً لكن فشل الإرسال للشيت','error');
-    }
+    showSaveIndicator(false);
+    showAlert('✅ تم الحفظ!','success');
 }
 
 function printReportContent(){
@@ -3381,14 +3355,32 @@ function sendPermitToWarehouse(rowIndex){
         return;
     }
 
-    // Check if permit has items
-    const permit = permitData[rowIndex];
+    // Check if permit has items - if not, create default items from device type
+    let permit = permitData[rowIndex];
     if(!permit || !permit.items || permit.items.length === 0){
-        showAlert('❌ الإذن فارغ - افتح الإذن وأضف مواد أولاً','error');
-        return;
+        // Try to create default items from manager data
+        const mData = managerData[rowIndex] || {};
+        const deviceKey = getInventoryDeviceKey(mData);
+        const materials = DEVICE_MATERIALS[deviceKey] || DEVICE_MATERIALS['فلتر ديجيتال'] || [];
+
+        if(materials.length === 0){
+            showAlert('❌ الإذن فارغ - افتح الإذن وأضف مواد أولاً','error');
+            return;
+        }
+
+        // Auto-create permit with default materials
+        permitData[rowIndex] = {
+            issued: true,
+            date: new Date().toISOString(),
+            items: materials.map(m => ({name: m.name, unit: m.unit, qty: m.qty})),
+            notes: ''
+        };
+        savePermitData();
+        permit = permitData[rowIndex];
     }
 
     setPermitStatus(rowIndex, 'sent');
+    savePermitStatus();
     showAlert('✅ تم إرسال الإذن لمدير المخزن!','success');
 
     // Refresh the view to update the status button
@@ -3640,7 +3632,7 @@ async function savePermitToSheet(){
     await new Promise(resolve=>setTimeout(resolve,500));
     showSaveIndicator(false);
 
-    showAlert('✅ تم حفظ إذن الصرف محلياً!','success');
+    showAlert('✅ تم حفظ إذن الصرف!','success');
     closeModal('inventoryPermitModal');
     applyInventoryFilters();
 }
