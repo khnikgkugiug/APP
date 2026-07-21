@@ -321,64 +321,6 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
     color:#1a1a2e;
 }
 
-/* ===== INVENTORY SECTION STYLES ===== */
-.permit-item{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:12px 15px;
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:10px;
-    margin-bottom:10px;
-    transition:all .3s;
-}
-.permit-item:hover{
-    background:rgba(255,255,255,.12);
-    border-color:rgba(255,255,255,.3);
-}
-.permit-item-name{
-    color:#fff;
-    font-weight:600;
-    font-size:1rem;
-}
-.permit-item-unit{
-    color:rgba(255,255,255,.6);
-    font-size:.85rem;
-}
-.permit-item-qty{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-.permit-item-qty input{
-    width:60px;
-    text-align:center;
-    padding:8px;
-    background:rgba(255,255,255,.12);
-    border:1px solid rgba(255,255,255,.25);
-    border-radius:8px;
-    color:#fff;
-    font-size:1rem;
-    font-weight:700;
-}
-.permit-item-qty input:focus{
-    outline:none;
-    border-color:#fdcb6e;
-    box-shadow:0 0 10px rgba(253,203,110,.2);
-}
-.permit-status-badge{
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
-    padding:5px 12px;
-    border-radius:20px;
-    font-size:.75rem;
-    font-weight:700;
-}
-.permit-status-issued{background:#d4edda;color:#155724}
-.permit-status-pending{background:#fff3cd;color:#856404}
-
 /* Report table scroll on mobile */
 @media(max-width:768px){
     #dailyReportPrintArea,
@@ -448,6 +390,7 @@ input[type="time"]:focus {
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -469,11 +412,7 @@ input[type="time"]:focus {
 <h3>المشرف</h3>
 <p>مراجعة البيانات وإدخال تقارير التركيب</p>
 </div>
-<div class="login-card" onclick="login('inventory')">
-<div class="icon">📦</div>
-<h3>مدير المخزن</h3>
-<p>إدارة المخزن وإصدار إذونات الصرف</p>
-</div>
+
 </div>
 <div class="main-content" id="mainContent">
 <div class="toolbar">
@@ -561,80 +500,6 @@ input[type="time"]:focus {
 <h3>لا يوجد عملاء</h3>
 <p id="emptyStateMsg">تأكد من اسم الـ Sheet Tab أو جرب تغيير فلاتر البحث</p>
 </div>
-</div>
-</div>
-
-<!-- ==================== INVENTORY SECTION ==================== -->
-<div class="main-content" id="inventorySection" style="display:none">
-<div class="toolbar">
-<h2>📦 إدارة المخزن وإذن الصرف</h2>
-<div class="toolbar-buttons">
-<button class="btn btn-secondary" onclick="closeInventorySection()">🔙 رجوع للرئيسية</button>
-<button class="btn btn-primary" onclick="refreshInventoryData()">🔄 تحديث</button>
-</div>
-</div>
-
-<!-- Filter Section -->
-<div class="filter-section">
-<h3>🔍 البحث والتصفية</h3>
-<div class="filter-grid">
-<div class="filter-group">
-<label>بحث بالاسم أو الرقم</label>
-<input type="text" id="inventorySearchInput" placeholder="اكتب اسم العميل أو رقم الهاتف..." oninput="debouncedApplyInventoryFilters()">
-</div>
-<div class="filter-group">
-<label>تصفية بالتاريخ</label>
-<select id="inventoryDateFilter" onchange="applyInventoryFilters()">
-<option value="today">اليوم</option>
-<option value="all">كل المواعيد</option>
-<option value="tomorrow">غداً</option>
-<option value="week">هذا الأسبوع</option>
-<option value="custom">تاريخ محدد...</option>
-</select>
-</div>
-<div class="filter-group" id="inventoryCustomDateGroup" style="display:none">
-<label>اختر التاريخ</label>
-<input type="date" id="inventoryCustomDate" onchange="applyInventoryFilters()">
-</div>
-<div class="filter-group">
-<label>المشرف</label>
-<select id="inventorySupervisorFilter" onchange="applyInventoryFilters()">
-<option value="all">كل المشرفين</option>
-<option>عبداللطيف</option>
-<option>معاذ</option>
-<option>هادي</option>
-<option>عمر</option>
-</select>
-</div>
-<div class="filter-group">
-<label>حالة إذن الصرف</label>
-<select id="inventoryStatusFilter" onchange="applyInventoryFilters()">
-<option value="all">الكل</option>
-<option value="pending">⏳ لم يصدر</option>
-<option value="issued">✅ تم الإصدار</option>
-</select>
-</div>
-</div>
-<div class="filter-actions">
-<button class="btn btn-secondary" onclick="clearInventoryFilters()">🗑️ مسح الفلاتر</button>
-<span id="inventoryResultsCount" style="color:rgba(255,255,255,.7);align-self:center"></span>
-</div>
-</div>
-
-<!-- Loading -->
-<div class="loading" id="inventoryLoadingSection">
-<div class="loading-spinner"></div>
-<p>جاري تحميل البيانات...</p>
-</div>
-
-<!-- Customers Grid -->
-<div class="customers-grid" id="inventoryCustomersGrid"></div>
-
-<!-- Empty State -->
-<div class="empty-state" id="inventoryEmptyState" style="display:none">
-<div class="icon">📭</div>
-<h3>لا يوجد عملاء</h3>
-<p id="inventoryEmptyStateMsg">لا توجد تركيبات مطابقة للفلاتر</p>
 </div>
 </div>
 
@@ -963,48 +828,6 @@ input[type="time"]:focus {
 </div>
 </div>
 
-<!-- Inventory Permit Modal -->
-<div class="modal-overlay" id="inventoryPermitModal">
-<div class="modal-content" style="max-width:900px">
-<div class="modal-header">
-<h2>📋 إذن صرف مواد</h2>
-<button class="modal-close" onclick="closeModal('inventoryPermitModal')">&times;</button>
-</div>
-<div class="modal-body">
-<div id="permitCustomerInfo" style="background:rgba(255,255,255,.1);border-radius:10px;padding:15px;margin-bottom:20px;border:1px solid rgba(255,255,255,.2)">
-<h3 style="color:#fdcb6e;margin-bottom:10px">👤 معلومات العميل</h3>
-<div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
-<div class="form-group"><label>اسم العميل</label><input type="text" id="permit_customer_name" readonly></div>
-<div class="form-group"><label>رقم الهاتف</label><input type="text" id="permit_customer_phone" readonly style="direction:ltr;text-align:right"></div>
-<div class="form-group"><label>التاريخ</label><input type="text" id="permit_date" readonly></div>
-<div class="form-group"><label>المشرف</label><input type="text" id="permit_supervisor" readonly></div>
-</div>
-</div>
-
-<h3 style="color:#fdcb6e;margin-bottom:15px">📦 مواد الصرف</h3>
-<p style="color:rgba(255,255,255,.7);margin-bottom:15px;font-size:0.9rem">✏️ اضغط على الكمية لتعديلها | ➕ أضف مادة جديدة | ❌ احذف أي مادة</p>
-
-<div id="permitItemsList" style="margin-bottom:20px">
-<!-- Items will be inserted here -->
-</div>
-
-<div style="display:flex;gap:10px;margin-bottom:20px">
-<button class="btn btn-secondary" onclick="addPermitItem()" style="flex:1">➕ إضافة مادة جديدة</button>
-</div>
-
-<div style="background:rgba(255,255,255,.1);border-radius:10px;padding:15px;border:1px solid rgba(255,255,255,.2)">
-<h3 style="color:#fdcb6e;margin-bottom:10px">📝 ملاحظات إذن الصرف</h3>
-<textarea id="permit_notes" style="width:100%;padding:12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;min-height:80px;resize:vertical" placeholder="اكتب أي ملاحظات على إذن الصرف..."></textarea>
-</div>
-</div>
-<div class="modal-footer">
-<button class="btn btn-secondary" onclick="closeModal('inventoryPermitModal')">إلغاء</button>
-<button class="btn btn-primary" onclick="savePermitToSheet()">💾 حفظ التعديلات</button>
-<button class="btn btn-warning" onclick="printPermit()">🖨️ طباعة الإذن</button>
-</div>
-</div>
-</div>
-
 <!-- Print Modal -->
 <div class="modal-overlay" id="printModal">
 <div class="modal-content" style="max-width:1000px">
@@ -1034,7 +857,7 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 6;
+const APP_VERSION = 7;
 
 // Check version on page load - reload once if needed
 (function checkVersion(){
@@ -1055,6 +878,7 @@ const APP_VERSION = 6;
             // Clear ALL cached data to force fresh load
             localStorage.removeItem('zoom_managerData');
             localStorage.removeItem('zoom_supervisorData');
+            localStorage.removeItem('zoom_permitData');
             const url = new URL(window.location.href);
             url.searchParams.set('v', APP_VERSION);
             url.searchParams.set('t', Date.now());
@@ -1115,29 +939,24 @@ function login(role){
     document.getElementById('loginSection').style.display='none';
 
     // Show appropriate section based on role
-    if(role === 'inventory'){
-        document.getElementById('mainContent').style.display = 'none';
-        document.getElementById('inventorySection').style.display = 'block';
-        document.getElementById('reportsSection').style.display = 'none';
-    } else {
+    {
         document.getElementById('mainContent').classList.add('active');
-        document.getElementById('inventorySection').style.display = 'none';
-    }
+            }
 
-    document.getElementById('userTitle').textContent=role==='manager'?'👷 مدير خط السير':role==='inventory'?'📦 مدير المخزن':'👨‍💼 المشرف';
+    document.getElementById('userTitle').textContent=role==='manager'?'👷 مدير خط السير':'👨‍💼 المشرف';
     document.getElementById('installationStatusFilterGroup').style.display=role==='supervisor'?'block':'none';
     // Show reports button for supervisor, manager, and inventory
     const reportsBtn = document.getElementById('reportsBtn');
     if(reportsBtn){
-        reportsBtn.style.display = (role==='supervisor' || role==='manager' || role==='inventory')?'inline-flex':'none';
+        reportsBtn.style.display = (role==='supervisor' || role==='manager')?'inline-flex':'none';
     }
     clearOldSupervisorCache();
     loadFromLocalStorage();
-    loadPermitData();
+    
     loadSheetData(true);
     if(autoRefreshInterval) clearInterval(autoRefreshInterval);
     autoRefreshInterval=setInterval(()=>{
-        const anyModalOpen=['managerModal','supervisorModal','inventoryPermitModal'].some(id=>document.getElementById(id).classList.contains('active'));
+        const anyModalOpen=['managerModal','supervisorModal'].some(id=>document.getElementById(id).classList.contains('active'));
         if(!anyModalOpen) loadSheetData(true);
     },60000);
 }
@@ -1150,9 +969,7 @@ function logout(){
     document.getElementById('mainContent').classList.remove('active');
     document.getElementById('mainContent').style.display = '';
     document.getElementById('customersGrid').innerHTML='';
-    // Hide inventory section
-    const inventorySection = document.getElementById('inventorySection');
-    if(inventorySection) inventorySection.style.display = 'none';
+    
     // Reset supervisor filter
     document.getElementById('supervisorFilter').value='all';
     document.getElementById('supervisorFilter').disabled=false;
@@ -1776,24 +1593,20 @@ function openManagerModal(index){
     document.getElementById('m_phone').value=c.phone;
     document.getElementById('m_state').value=c.state;
     const ex=managerData[index]||{};
-    // Handle date field: show from sheet if exists, otherwise allow manager to fill
+    // Handle date field: always editable, prefill from sheet if exists
     const dateField = document.getElementById('m_date');
     const sheetDate = c.date ? formatDateForInput(c.date) : '';
     if (sheetDate) {
-        // Date exists in sheet - show it readonly
+        // Date exists in sheet - show it but allow editing
         dateField.value = sheetDate;
-        dateField.readOnly = true;
-        dateField.style.background = 'rgba(255,255,255,.06)';
-        dateField.style.cursor = 'not-allowed';
-        dateField.title = 'التاريخ من الشييت - غير قابل للتعديل';
     } else {
-        // No date in sheet - allow manager to fill
+        // No date in sheet - use saved installation date or empty
         dateField.value = ex.installation_date ? formatDateForInput(ex.installation_date) : '';
-        dateField.readOnly = false;
-        dateField.style.background = '';
-        dateField.style.cursor = '';
-        dateField.title = 'اكتب تاريخ التركيب';
     }
+    dateField.readOnly = false;
+    dateField.style.background = '';
+    dateField.style.cursor = '';
+    dateField.title = 'اكتب أو عدل تاريخ التركيب';
     document.getElementById('m_supervisor_name').value=ex.supervisor_name||c.supervisorName||'';
     document.getElementById('m_transaction_type').value=ex.transaction_type||c.transactionType||'';
     document.getElementById('m_location_attached').value=ex.location_attached||'';
@@ -2585,47 +2398,6 @@ function getDeviceType(mData){
     return parts.length > 0 ? parts.join(' + ') : '-';
 }
 
-// Get device key for inventory materials lookup
-function getInventoryDeviceKey(mData){
-    // Check softener first
-    if(mData.softener === 'نعم' && mData.softener_size){
-        const size = mData.softener_size;
-        const type = mData.softener_type || '';
-        if(type.includes('دبل')){
-            return 'سوفتنر ' + size + ' دبل';
-        }
-        return 'سوفتنر ' + size;
-    }
-    // Check filter details
-    if(mData.filter_details && mData.filter_details !== ''){
-        const filter = mData.filter_details.trim();
-        if(DEVICE_MATERIALS[filter]){
-            return filter;
-        }
-        // Try to match partial names
-        if(filter.includes('ديجيتال')) return 'فلتر ديجيتال';
-        if(filter.includes('100 اقتصادي')) return 'فلتر 100 اقتصادي';
-        if(filter.includes('100 بلازما')) return 'فلتر 100 بلازما';
-        if(filter.includes('400 اقتصادي')) return 'فلتر 400 اقتصادي';
-        if(filter.includes('400 بلازما')) return 'فلتر 400 بلازما';
-        if(filter.includes('جلاكسي')) return 'جلاكسي';
-        if(filter.includes('مبرد ابيض')) return 'مبرد ابيض زووم';
-        if(filter.includes('مبرد اسود')) return 'مبرد اسود';
-        if(filter.includes('مبرد ذهبي')) return 'مبرد ذهبي';
-        if(filter.includes('خزان 2')) return 'فلتر خزان 2';
-        if(filter.includes('خزان 3')) return 'فلتر خزان 3';
-        if(filter.includes('قارورة عادية')) return 'قارورة عادية';
-        if(filter.includes('قارورة مسطحة')) return 'قارورة مسطحة';
-    }
-    // Check package name or other product
-    if(mData.package_name && DEVICE_MATERIALS[mData.package_name]){
-        return mData.package_name;
-    }
-    if(mData.other_product && DEVICE_MATERIALS[mData.other_product]){
-        return mData.other_product;
-    }
-    return 'فلتر ديجيتال'; // default fallback
-}
 
 // ===== REPORT 1: TECHNICIAN REPORT =====
 function generateTechnicianReport(){
@@ -2916,13 +2688,7 @@ function generateDailyReport(){
             html += `<td><button class="btn btn-success" onclick="saveRouteEdit(${rowId})" style="padding:6px 12px;font-size:0.8rem">💾 حفظ</button></td>`;
             html += `</tr>`;
 
-            // Add permit button row for manager
-            const permit = permitData[rowId];
-            const hasPermit = permit && permit.issued;
-            html += `<tr style="background:rgba(253,203,110,.1)"><td colspan="7" style="text-align:center;padding:8px">`;
-            html += `<button class="btn btn-warning" onclick="openPermitModal(${rowId})" style="padding:6px 15px;font-size:0.85rem">`;
-            html += hasPermit ? '📋 عرض/تعديل إذن الصرف' : '📝 إصدار إذن صرف';
-            html += `</button></td></tr>`;
+            
         });
     } else {
         // Supervisor view: full daily report format
@@ -3118,488 +2884,6 @@ input[type="time"]:focus {
 }
 
 
-
-// ═══════════════════════════════════════════════════════════
-// INVENTORY MANAGER FUNCTIONS
-// ═══════════════════════════════════════════════════════════
-
-// Device materials mapping - each device has its required materials
-// Format: 'Device Name': [{name: 'Material', unit: 'unit', qty: number}, ...]
-const DEVICE_MATERIALS = {
-    // ═══ SOFTENERS ═══
-    'سوفتنر 10': [
-        {name: 'سوفتنر 10', unit: 'قطعة', qty: 1},
-        {name: 'هيد سوفتنر', unit: 'قطعة', qty: 1},
-        {name: 'خزان ملح', unit: 'قطعة', qty: 1},
-        {name: 'ملح', unit: 'شكارة', qty: 1},
-        {name: 'ريزن', unit: 'شكارة', qty: 1},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1},
-        {name: 'فلتر خزان 2 مرحلة', unit: 'قطعة', qty: 1}
-    ],
-    'سوفتنر 13': [
-        {name: 'سوفتنر 13', unit: 'قطعة', qty: 1},
-        {name: 'هيد سوفتنر', unit: 'قطعة', qty: 1},
-        {name: 'خزان ملح', unit: 'قطعة', qty: 1},
-        {name: 'ملح', unit: 'شكارة', qty: 2},
-        {name: 'ريزن', unit: 'شكارة', qty: 2},
-        {name: 'كيس هاي بريشير', unit: 'قطعة', qty: 1},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1},
-        {name: 'فلتر خزان 3 مرحلة', unit: 'قطعة', qty: 1}
-    ],
-    'سوفتنر 16': [
-        {name: 'سوفتنر 16', unit: 'قطعة', qty: 1},
-        {name: 'هيد سوفتنر', unit: 'قطعة', qty: 1},
-        {name: 'خزان ملح', unit: 'قطعة', qty: 1},
-        {name: 'ملح 10 كيلو', unit: 'شكارة', qty: 3},
-        {name: 'ريزن', unit: 'شكارة', qty: 3},
-        {name: 'كيس هاي بريشير', unit: 'قطعة', qty: 1},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1},
-        {name: 'فلتر خزان 3 مرحلة', unit: 'قطعة', qty: 1}
-    ],
-    'سوفتنر 16 دبل': [
-        {name: 'سوفتنر 16', unit: 'قطعة', qty: 2},
-        {name: 'هيد سوفتنر', unit: 'قطعة', qty: 2},
-        {name: 'خزان ملح', unit: 'قطعة', qty: 1},
-        {name: 'عبوة ملح', unit: 'شكارة', qty: 2},
-        {name: 'ريزن', unit: 'شكارة', qty: 3},
-        {name: 'كيس هاي بريشير', unit: 'قطعة', qty: 1},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1},
-        {name: 'فيزل كاربون وزلط ورمل', unit: 'قطعة', qty: 1},
-        {name: 'فلتر ديجيتال', unit: 'قطعة', qty: 1},
-        {name: 'عرض شمعات 6 شهور وسنة', unit: 'عرض', qty: 1}
-    ],
-
-    // ═══ FILTERS ═══
-    'فلتر ديجيتال': [
-        {name: 'فلتر ديجيتال', unit: 'قطعة', qty: 1},
-        {name: 'شمعات', unit: 'قطعة', qty: 3},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-    'فلتر 100 اقتصادي': [
-        {name: 'فلتر 100 اقتصادي', unit: 'قطعة', qty: 1},
-        {name: 'شمعات', unit: 'قطعة', qty: 3},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-    'فلتر 100 بلازما': [
-        {name: 'فلتر 100 بلازما', unit: 'قطعة', qty: 1},
-        {name: 'شمعات', unit: 'قطعة', qty: 3},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-    'فلتر 400 اقتصادي': [
-        {name: 'فلتر 400 اقتصادي', unit: 'قطعة', qty: 1},
-        {name: 'شمعات', unit: 'قطعة', qty: 4},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-    'فلتر 400 بلازما': [
-        {name: 'فلتر 400 بلازما', unit: 'قطعة', qty: 1},
-        {name: 'شمعات', unit: 'قطعة', qty: 4},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-    'جلاكسي': [
-        {name: 'فلتر جلاكسي', unit: 'قطعة', qty: 1},
-        {name: 'شمعات', unit: 'قطعة', qty: 5},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-
-    // ═══ COOLERS ═══
-    'مبرد ابيض زووم': [
-        {name: 'مبرد ابيض زووم', unit: 'قطعة', qty: 1},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-    'مبرد اسود': [
-        {name: 'مبرد اسود', unit: 'قطعة', qty: 1},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-    'مبرد ذهبي': [
-        {name: 'مبرد ذهبي', unit: 'قطعة', qty: 1},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-
-    // ═══ TANK FILTERS ═══
-    'فلتر خزان 2': [
-        {name: 'فلتر خزان 2 مرحلة', unit: 'قطعة', qty: 1},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-    'فلتر خزان 3': [
-        {name: 'فلتر خزان 3 مرحلة', unit: 'قطعة', qty: 1},
-        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
-    ],
-
-    // ═══ BOTTLES ═══
-    'قارورة عادية': [
-        {name: 'قارورة عادية', unit: 'قطعة', qty: 1}
-    ],
-    'قارورة مسطحة': [
-        {name: 'قارورة مسطحة', unit: 'قطعة', qty: 1}
-    ]
-};
-
-// Permit data storage
-let permitData = {};
-let currentPermitRowIndex = -1;
-
-function openInventorySection(){
-    document.getElementById('mainContent').style.display = 'none';
-    document.getElementById('reportsSection').style.display = 'none';
-    document.getElementById('inventorySection').style.display = 'block';
-    loadInventoryData();
-}
-
-function closeInventorySection(){
-    document.getElementById('inventorySection').style.display = 'none';
-    document.getElementById('mainContent').style.display = 'block';
-}
-
-function refreshInventoryData(){
-    loadInventoryData();
-    showAlert('🔄 تم تحديث بيانات المخزن','success');
-}
-
-async function loadInventoryData(){
-    document.getElementById('inventoryLoadingSection').style.display = 'block';
-    document.getElementById('inventoryCustomersGrid').innerHTML = '';
-    document.getElementById('inventoryEmptyState').style.display = 'none';
-
-    // Use existing customers data (already loaded)
-    applyInventoryFilters();
-    document.getElementById('inventoryLoadingSection').style.display = 'none';
-}
-
-function debouncedApplyInventoryFilters(){
-    if(filterTimeout) clearTimeout(filterTimeout);
-    filterTimeout = setTimeout(()=>{
-        applyInventoryFilters();
-        filterTimeout = null;
-    },300);
-}
-
-function applyInventoryFilters(){
-    const searchTerm = document.getElementById('inventorySearchInput').value.trim().toLowerCase();
-    const dateFilter = document.getElementById('inventoryDateFilter').value;
-    const statusFilter = document.getElementById('inventoryStatusFilter').value;
-    const customDateStr = document.getElementById('inventoryCustomDate').value;
-    const supervisorFilter = document.getElementById('inventorySupervisorFilter').value;
-
-    document.getElementById('inventoryCustomDateGroup').style.display = dateFilter === 'custom' ? 'block' : 'none';
-
-    const today = new Date(); today.setHours(0,0,0,0);
-    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
-
-    const filtered = customers.filter(c => {
-        if(searchTerm){
-            const nameMatch = c.name.toLowerCase().includes(searchTerm);
-            const phoneMatch = c.phone.toLowerCase().includes(searchTerm);
-            if(!nameMatch && !phoneMatch) return false;
-        }
-
-        if(dateFilter !== 'all'){
-            if(dateFilter === 'today'){ if(!isSameDate(c.parsedDate, today)) return false; }
-            else if(dateFilter === 'tomorrow'){ if(!isSameDate(c.parsedDate, tomorrow)) return false; }
-            else if(dateFilter === 'week'){ if(!isThisWeek(c.parsedDate)) return false; }
-            else if(dateFilter === 'custom' && customDateStr){
-                const customDate = new Date(customDateStr); customDate.setHours(0,0,0,0);
-                if(!isSameDate(c.parsedDate, customDate)) return false;
-            }
-        }
-
-        // Only show customers that have manager data (installation scheduled)
-        const mData = managerData[c.rowIndex] || {};
-        if(!mData.transaction_type && !c.transactionType) return false;
-
-        if(supervisorFilter !== 'all'){
-            const supName = mData.supervisor_name || c.supervisorName || '';
-            if(supName !== supervisorFilter) return false;
-        }
-
-        // Filter by permit status
-        if(statusFilter !== 'all'){
-            const permit = permitData[c.rowIndex];
-            const hasPermit = permit && permit.issued;
-            if(statusFilter === 'issued' && !hasPermit) return false;
-            if(statusFilter === 'pending' && hasPermit) return false;
-        }
-
-        return true;
-    });
-
-    renderInventoryCustomers(filtered);
-    document.getElementById('inventoryResultsCount').textContent = `(${filtered.length} عميل)`;
-}
-
-function clearInventoryFilters(){
-    document.getElementById('inventorySearchInput').value = '';
-    document.getElementById('inventoryDateFilter').value = 'today';
-    document.getElementById('inventoryStatusFilter').value = 'all';
-    document.getElementById('inventorySupervisorFilter').value = 'all';
-    document.getElementById('inventoryCustomDate').value = '';
-    document.getElementById('inventoryCustomDateGroup').style.display = 'none';
-    applyInventoryFilters();
-}
-
-function renderInventoryCustomers(filteredCustomers){
-    const grid = document.getElementById('inventoryCustomersGrid');
-    grid.innerHTML = '';
-
-    if(filteredCustomers.length === 0){
-        document.getElementById('inventoryEmptyState').style.display = 'block';
-        return;
-    }
-
-    document.getElementById('inventoryEmptyState').style.display = 'none';
-
-    filteredCustomers.forEach(customer => {
-        const index = customer.rowIndex;
-        const mData = managerData[index] || {};
-        const sData = supervisorData[index] || {};
-        const permit = permitData[index];
-        const hasPermit = permit && permit.issued;
-
-        let deviceType = getDeviceType(mData);
-        const deviceKey = getInventoryDeviceKey(mData);
-
-        const statusText = hasPermit ? '✅ تم إصدار الإذن' : '⏳ لم يصدر';
-        const statusClass = hasPermit ? 'permit-status-issued' : 'permit-status-pending';
-
-        const card = document.createElement('div');
-        card.className = 'customer-card';
-        card.innerHTML = `
-            <div class="customer-header">
-                <div class="customer-info">
-                    <h3>${customer.name}</h3>
-                    <div class="phone">📞 ${customer.phone}</div>
-                    <div class="state">📍 ${customer.state} - ${customer.governorate}</div>
-                    <div class="supervisor-name">👤 ${mData.supervisor_name || customer.supervisorName || '-'}</div>
-                    <div class="date-badge ${getDateBadgeClass(customer.parsedDate)}">📅 ${getDateBadgeText(customer.parsedDate)}</div>
-                    <div style="margin-top:8px"><span class="permit-status-badge ${statusClass}">${statusText}</span></div>
-                </div>
-                <div style="text-align:left">
-                    <div style="color:#667eea;font-weight:700;font-size:0.9rem;margin-bottom:5px">📦 ${deviceType}</div>
-                </div>
-            </div>
-            <div class="customer-actions">
-                <button class="btn btn-primary" onclick="openPermitModal(${index})">
-                    ${hasPermit ? '👁️ عرض الإذن' : '📝 إصدار إذن صرف'}
-                </button>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-function openPermitModal(rowIndex){
-    currentPermitRowIndex = rowIndex;
-    const customer = customers.find(c => c.rowIndex === rowIndex);
-    const mData = managerData[rowIndex] || {};
-    const sData = supervisorData[rowIndex] || {};
-
-    if(!customer) return;
-
-    // Update modal title based on role
-    const modalTitle = document.querySelector('#inventoryPermitModal .modal-header h2');
-    if(modalTitle){
-        modalTitle.textContent = currentUser === 'manager' ? '📋 إذن صرف مواد (مدير خط السير)' : '📋 إذن صرف مواد (مدير المخزن)';
-    }
-
-    // Fill customer info
-    document.getElementById('permit_customer_name').value = customer.name;
-    document.getElementById('permit_customer_phone').value = customer.phone;
-    document.getElementById('permit_date').value = customer.parsedDate ? customer.parsedDate.toLocaleDateString('ar-SA') : '';
-    document.getElementById('permit_supervisor').value = mData.supervisor_name || customer.supervisorName || sData.supervisor_name || '';
-
-    // Determine device type and get materials
-    let deviceType = getDeviceType(mData);
-    const deviceKey = getInventoryDeviceKey(mData);
-
-    const materials = DEVICE_MATERIALS[deviceKey] || DEVICE_MATERIALS['فلتر ديجيتال'] || [];
-
-    // Check if permit already exists
-    const existingPermit = permitData[rowIndex];
-    const existingNotes = existingPermit ? existingPermit.notes : '';
-    document.getElementById('permit_notes').value = existingNotes;
-
-    // Build materials list
-    let itemsHtml = '';
-    materials.forEach((item, idx) => {
-        const existingQty = existingPermit && existingPermit.items && existingPermit.items[idx] ? existingPermit.items[idx].qty : item.qty;
-        itemsHtml += `
-            <div class="permit-item" id="permit_item_${idx}">
-                <div style="flex:1">
-                    <div class="permit-item-name">${item.name}</div>
-                    <div class="permit-item-unit">الوحدة: ${item.unit}</div>
-                </div>
-                <div class="permit-item-qty" style="display:flex;align-items:center;gap:10px">
-                    <span style="color:rgba(255,255,255,.7)">الكمية:</span>
-                    <input type="number" id="permit_qty_${idx}" value="${existingQty}" min="0" data-name="${item.name}" data-unit="${item.unit}" style="width:60px;text-align:center">
-                    <button class="btn btn-secondary" onclick="removePermitItem(${idx})" style="padding:4px 8px;font-size:0.75rem;background:rgba(231,76,60,.3);border-color:rgba(231,76,60,.5)">❌</button>
-                </div>
-            </div>
-        `;
-    });
-
-    document.getElementById('permitItemsList').innerHTML = itemsHtml;
-    document.getElementById('inventoryPermitModal').classList.add('active');
-}
-
-async function savePermitToSheet(){
-    if(currentPermitRowIndex < 0) return;
-
-    const customer = customers.find(c => c.rowIndex === currentPermitRowIndex);
-    if(!customer) return;
-
-    // Collect items (both existing with data-name and new with text inputs)
-    const items = [];
-    const itemDivs = document.querySelectorAll('#permitItemsList .permit-item');
-
-    itemDivs.forEach(div => {
-        const qtyInput = div.querySelector('input[type="number"]');
-        const nameInput = div.querySelector('input[type="text"][id^="permit_name_"]');
-        const unitInput = div.querySelector('input[type="text"][id^="permit_unit_"]');
-
-        let name, unit, qty;
-
-        if(nameInput){
-            // New item with text inputs
-            name = nameInput.value.trim();
-            unit = unitInput ? unitInput.value.trim() : 'قطعة';
-            qty = parseInt(qtyInput.value) || 0;
-        } else {
-            // Existing item with data attributes
-            name = qtyInput.dataset.name;
-            unit = qtyInput.dataset.unit;
-            qty = parseInt(qtyInput.value) || 0;
-        }
-
-        if(name && qty > 0){
-            items.push({name: name, unit: unit, qty: qty});
-        }
-    });
-
-    const notes = document.getElementById('permit_notes').value;
-
-    // Save to localStorage only
-    permitData[currentPermitRowIndex] = {
-        issued: true,
-        date: new Date().toISOString(),
-        items: items,
-        notes: notes
-    };
-
-    try{
-        localStorage.setItem('zoom_permitData', JSON.stringify(permitData));
-    }catch(e){}
-
-    showSaveIndicator(true);
-    await new Promise(resolve=>setTimeout(resolve,500));
-    showSaveIndicator(false);
-
-    showAlert('✅ تم حفظ إذن الصرف محلياً!','success');
-    closeModal('inventoryPermitModal');
-    applyInventoryFilters();
-}
-
-function printPermit(){
-    const customerName = document.getElementById('permit_customer_name').value;
-    const customerPhone = document.getElementById('permit_customer_phone').value;
-    const date = document.getElementById('permit_date').value;
-    const supervisor = document.getElementById('permit_supervisor').value;
-    const notes = document.getElementById('permit_notes').value;
-
-    // Collect items
-    let itemsHtml = '';
-    const itemInputs = document.querySelectorAll('#permitItemsList input');
-    itemInputs.forEach(input => {
-        const name = input.dataset.name;
-        const unit = input.dataset.unit;
-        const qty = input.value;
-        if(qty > 0){
-            itemsHtml += `<tr><td style="border:1px solid #333;padding:10px">${name}</td><td style="border:1px solid #333;padding:10px;text-align:center">${qty}</td><td style="border:1px solid #333;padding:10px;text-align:center">${unit}</td></tr>`;
-        }
-    });
-
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<html dir="rtl" lang="ar"><head><title>إذن صرف - ${customerName}</title><style>
-        @page{size:A4;margin:15mm}
-        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:20px;color:#000}
-        .header{text-align:center;border-bottom:2px solid #667eea;padding-bottom:15px;margin-bottom:20px}
-        .header h2{color:#667eea;margin:0}
-        .header p{color:#666;margin:5px 0 0}
-        .info{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px;background:#f8f9fa;padding:15px;border-radius:10px}
-        .info-item{display:flex;justify-content:space-between}
-        .info-label{color:#666;font-weight:600}
-        .info-value{color:#000;font-weight:700}
-        table{width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333}
-        th,td{border:1px solid #333;padding:10px;text-align:right}
-        th{background:#667eea;color:#fff}
-        .notes{background:#f8f9fa;padding:15px;border-radius:10px;margin-top:20px}
-        .notes h3{color:#667eea;margin-bottom:10px}
-        .signatures{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid #ccc}
-        .signature{text-align:center}
-        .signature-line{border-top:1px solid #000;width:150px;margin:0 auto 5px;padding-top:5px}
-        @media print{body{background:#fff}}
-    </style></head><body>
-        <div class="header">
-            <h2>📦 إذن صرف مواد</h2>
-            <p>Zoom - نظام إدارة التركيبات</p>
-        </div>
-        <div class="info">
-            <div class="info-item"><span class="info-label">اسم العميل:</span><span class="info-value">${customerName}</span></div>
-            <div class="info-item"><span class="info-label">رقم الهاتف:</span><span class="info-value" style="direction:ltr">${customerPhone}</span></div>
-            <div class="info-item"><span class="info-label">التاريخ:</span><span class="info-value">${date}</span></div>
-            <div class="info-item"><span class="info-label">المشرف:</span><span class="info-value">${supervisor}</span></div>
-        </div>
-        <table>
-            <tr><th>المادة</th><th style="width:100px;text-align:center">الكمية</th><th style="width:100px;text-align:center">الوحدة</th></tr>
-            ${itemsHtml}
-        </table>
-        ${notes ? `<div class="notes"><h3>📝 ملاحظات</h3><p>${notes}</p></div>` : ''}
-        <div class="signatures">
-            <div class="signature"><div class="signature-line"></div><p>توقيع مدير المخزن</p></div>
-            <div class="signature"><div class="signature-line"></div><p>توقيع المشرف</p></div>
-        </div>
-    </body></html>`);
-    printWindow.document.close();
-    printWindow.print();
-}
-
-// Load permit data from localStorage
-function addPermitItem(){
-    const container = document.getElementById('permitItemsList');
-    const itemCount = container.querySelectorAll('.permit-item').length;
-    const newId = 'new_' + Date.now();
-
-    const newItemHtml = `
-        <div class="permit-item" id="permit_item_${newId}" style="background:rgba(253,203,110,.1);border-color:#fdcb6e">
-            <div style="flex:1;display:flex;gap:10px;align-items:center">
-                <input type="text" id="permit_name_${newId}" placeholder="اسم المادة" style="flex:1;padding:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:8px;color:#fff" value="">
-                <input type="text" id="permit_unit_${newId}" placeholder="الوحدة" style="width:80px;padding:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:8px;color:#fff" value="قطعة">
-            </div>
-            <div class="permit-item-qty" style="display:flex;align-items:center;gap:10px">
-                <span style="color:rgba(255,255,255,.7)">الكمية:</span>
-                <input type="number" id="permit_qty_${newId}" value="1" min="0" data-name="" data-unit="" style="width:60px;text-align:center">
-                <button class="btn btn-secondary" onclick="removePermitItem('${newId}')" style="padding:4px 8px;font-size:0.75rem;background:rgba(231,76,60,.3);border-color:rgba(231,76,60,.5)">❌</button>
-            </div>
-        </div>
-    `;
-
-    container.insertAdjacentHTML('beforeend', newItemHtml);
-}
-
-function removePermitItem(id){
-    const item = document.getElementById('permit_item_' + id);
-    if(item){
-        item.remove();
-    }
-}
-
-function loadPermitData(){
-    try{
-        const saved = localStorage.getItem('zoom_permitData');
-        if(saved) permitData = JSON.parse(saved);
-    }catch(e){}
-}
-
-// Initialize permit data on load
-loadPermitData();
 
 document.addEventListener('keydown',function(e){
     if(e.key==='Escape'){
