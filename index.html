@@ -34,6 +34,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .btn-success{background:linear-gradient(135deg,#00b894,#00a885);color:#fff}
 .btn-success:hover{box-shadow:0 5px 20px rgba(0,184,148,.4)}
 .btn-warning{background:linear-gradient(135deg,#fdcb6e,#f39c12);color:#1a1a2e}
+.btn-danger{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff}
+.btn-danger:hover{box-shadow:0 5px 20px rgba(231,76,60,.4)}
 .loading{text-align:center;padding:60px}
 .loading-spinner{width:60px;height:60px;border:4px solid rgba(255,255,255,.2);border-top:4px solid #fff;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
 @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
@@ -52,6 +54,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .status-manager-done{background:#cce5ff;color:#004085}
 .status-completed{background:#d4edda;color:#155724}
 .status-delayed{background:#f8d7da;color:#721c24}
+.status-sent{background:#d4edda;color:#155724}
+.status-waiting{background:#fff3cd;color:#856404}
 
 .customer-actions{display:flex;gap:10px;margin-top:15px}
 .customer-actions .btn{flex:1;padding:10px;font-size:.9rem;justify-content:center}
@@ -211,6 +215,24 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
     margin-top:20px;
     color:#1a1a2e;
 }
+.editable-cell{
+    background:rgba(102,126,234,.1);
+    border:2px dashed transparent;
+    padding:8px;
+    cursor:text;
+    transition:all .2s;
+    min-width:80px;
+}
+.editable-cell:hover{
+    border-color:#667eea;
+    background:rgba(102,126,234,.2);
+}
+.editable-cell:focus{
+    outline:none;
+    border-color:#fdcb6e;
+    background:#fff;
+    box-shadow:0 0 10px rgba(253,203,110,.3);
+}
 .report-table th{
     background:linear-gradient(135deg,#667eea,#764ba2);
     color:#fff;
@@ -303,6 +325,140 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
     color:#1a1a2e;
 }
 
+/* ===== INVENTORY SECTION STYLES ===== */
+.permit-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:10px;
+    margin-bottom:10px;
+    transition:all .3s;
+}
+.permit-item:hover{
+    background:rgba(255,255,255,.12);
+    border-color:rgba(255,255,255,.3);
+}
+.permit-item-name{
+    color:#fff;
+    font-weight:600;
+    font-size:1rem;
+}
+.permit-item-unit{
+    color:rgba(255,255,255,.6);
+    font-size:.85rem;
+}
+.permit-item-qty{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.permit-item-qty input{
+    width:60px;
+    text-align:center;
+    padding:8px;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:8px;
+    color:#fff;
+    font-size:1rem;
+    font-weight:700;
+}
+.permit-item-qty input:focus{
+    outline:none;
+    border-color:#fdcb6e;
+    box-shadow:0 0 10px rgba(253,203,110,.2);
+}
+.permit-status-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:5px 12px;
+    border-radius:20px;
+    font-size:.75rem;
+    font-weight:700;
+}
+.permit-status-issued{background:#d4edda;color:#155724}
+.permit-status-pending{background:#fff3cd;color:#856404}
+.permit-status-sent{background:#cce5ff;color:#004085}
+.permit-status-approved{background:#d4edda;color:#155724}
+
+/* ===== INVENTORY TABLE STYLES ===== */
+.inventory-table{
+    width:100%;
+    border-collapse:collapse;
+    background:rgba(255,255,255,.95);
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 4px 15px rgba(0,0,0,.2);
+    color:#1a1a2e;
+    font-size:.95rem;
+}
+.inventory-table th{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:#fff;
+    padding:14px 12px;
+    text-align:right;
+    font-weight:700;
+    font-size:.95rem;
+}
+.inventory-table td{
+    padding:12px 12px;
+    border-bottom:1px solid rgba(0,0,0,.08);
+    text-align:right;
+    vertical-align:middle;
+}
+.inventory-table tr:hover td{
+    background:rgba(102,126,234,.06);
+}
+.inventory-table tr:last-child td{
+    border-bottom:none;
+}
+.inventory-table .row-number{
+    color:#667eea;
+    font-weight:700;
+    font-size:1.1rem;
+    width:50px;
+    text-align:center;
+}
+.inventory-table .device-cell{
+    color:#764ba2;
+    font-weight:600;
+    max-width:200px;
+}
+.inventory-table .actions-cell{
+    display:flex;
+    gap:6px;
+    flex-wrap:nowrap;
+}
+.inventory-table .actions-cell .btn{
+    padding:6px 12px;
+    font-size:.8rem;
+    white-space:nowrap;
+}
+.inventory-table .status-cell{
+    text-align:center;
+}
+.inventory-table .status-cell .status-badge{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:12px;
+    font-size:.75rem;
+    font-weight:700;
+}
+
+/* Print all button for inventory */
+.print-all-container{
+    text-align:center;
+    margin:20px 0;
+    padding:20px;
+    background:rgba(255,255,255,.08);
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,.15);
+}
+
 /* Report table scroll on mobile */
 @media(max-width:768px){
     #dailyReportPrintArea,
@@ -318,6 +474,23 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
     .report-table td{
         padding:8px 10px;
         white-space:nowrap;
+    }
+    .inventory-table{
+        font-size:.85rem;
+    }
+    .inventory-table th,
+    .inventory-table td{
+        padding:8px 6px;
+    }
+    .inventory-table .actions-cell{
+        flex-direction:column;
+        gap:4px;
+    }
+    .inventory-table .actions-cell .btn{
+        padding:5px 8px;
+        font-size:.75rem;
+        width:100%;
+        justify-content:center;
     }
 }
 
@@ -363,15 +536,6 @@ input[type="time"]:focus {
 }
 </style>
 <base target="_blank">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -392,6 +556,11 @@ input[type="time"]:focus {
 <div class="icon">👨‍💼</div>
 <h3>المشرف</h3>
 <p>مراجعة البيانات وإدخال تقارير التركيب</p>
+</div>
+<div class="login-card" onclick="login('inventory')">
+<div class="icon">📦</div>
+<h3>مدير المخزن</h3>
+<p>إدارة المخزن وإذونات الصرف</p>
 </div>
 </div>
 <div class="main-content" id="mainContent">
@@ -461,7 +630,6 @@ input[type="time"]:focus {
 <option value="تركيب بدون تشغيل">تركيب بدون تشغيل</option>
 <option value="تأجيل">تأجيل</option>
 <option value="تركيب وتشغيل">تركيب وتشغيل</option>
-
 </select>
 </div>
 </div>
@@ -480,6 +648,87 @@ input[type="time"]:focus {
 <h3>لا يوجد عملاء</h3>
 <p id="emptyStateMsg">تأكد من اسم الـ Sheet Tab أو جرب تغيير فلاتر البحث</p>
 </div>
+</div>
+</div>
+
+<!-- ==================== INVENTORY SECTION ==================== -->
+<div class="main-content" id="inventorySection" style="display:none">
+<div class="toolbar">
+<h2>📦 إذونات صرف المواد</h2>
+<div class="toolbar-buttons">
+<button class="btn btn-secondary" onclick="logout()">🚪 خروج</button>
+<button class="btn btn-primary" onclick="refreshInventoryData()">🔄 تحديث</button>
+</div>
+</div>
+
+<!-- Filter Section for Warehouse Manager -->
+<div class="filter-section">
+<h3>🔍 تصفية الإذونات</h3>
+<div class="filter-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));align-items:end">
+<div class="filter-group">
+<label>المشرف</label>
+<select id="inventorySupervisorFilter" onchange="applyInventoryFilters()">
+<option value="all">كل المشرفين</option>
+<option>عبداللطيف</option>
+<option>معاذ</option>
+<option>هادي</option>
+<option>عمر</option>
+</select>
+</div>
+<div class="filter-group">
+<label>التاريخ</label>
+<select id="inventoryDateFilter" onchange="applyInventoryFilters()">
+<option value="today">اليوم</option>
+<option value="all">كل التواريخ</option>
+<option value="tomorrow">غداً</option>
+<option value="week">هذا الأسبوع</option>
+</select>
+</div>
+<div class="filter-actions" style="margin-top:0">
+<button class="btn btn-secondary" onclick="clearInventoryFilters()">🗑️ مسح الفلتر</button>
+<span id="inventoryResultsCount" style="color:rgba(255,255,255,.7);align-self:center"></span>
+</div>
+</div>
+</div>
+
+<!-- Print All Button -->
+<div class="print-all-container" id="printAllContainer" style="display:none">
+<button class="btn btn-warning" onclick="printAllPermits()" style="font-size:1.1rem;padding:14px 30px">
+🖨️ طباعة كل إذونات المشرف
+</button>
+</div>
+
+<!-- Loading -->
+<div class="loading" id="inventoryLoadingSection">
+<div class="loading-spinner"></div>
+<p>جاري تحميل البيانات...</p>
+</div>
+
+<!-- Inventory Table -->
+<div id="inventoryTableContainer" style="overflow-x:auto;margin-top:20px">
+<table class="inventory-table" id="inventoryTable">
+<thead>
+<tr>
+<th style="width:50px">#</th>
+<th>اسم العميل</th>
+<th>رقم الهاتف</th>
+<th>التاريخ</th>
+<th>الجهاز</th>
+<th>المشرف</th>
+<th>حالة الإذن</th>
+<th style="width:280px">إجراءات</th>
+</tr>
+</thead>
+<tbody id="inventoryTableBody">
+</tbody>
+</table>
+</div>
+
+<!-- Empty State -->
+<div class="empty-state" id="inventoryEmptyState" style="display:none">
+<div class="icon">📭</div>
+<h3>لا توجد إذونات</h3>
+<p id="inventoryEmptyStateMsg">لا توجد إذونات تم إرسالها بعد</p>
 </div>
 </div>
 
@@ -508,8 +757,8 @@ input[type="time"]:focus {
 </div>
 <div class="login-card" onclick="showReport('daily')" style="min-width:auto;padding:25px">
 <div class="icon">📅</div>
-<h3>التقرير اليومي للمشرف</h3>
-<p>عملاء المشرف في يوم معين للطباعة</p>
+<h3 id="dailyReportTitle">التقرير اليومي</h3>
+<p id="dailyReportDesc">عملاء في يوم معين للطباعة</p>
 </div>
 </div>
 </div>
@@ -727,7 +976,6 @@ input[type="time"]:focus {
 <h3>💰 المالية</h3>
 <div class="form-grid">
 <div class="form-group"><label>الإجمالي (من مدير خط السير)</label><input type="number" id="s_manager_total" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed"></div>
-<!-- FIX #1: Added readonly field showing manager's paid amount -->
 <div class="form-group"><label>المقدم (من مدير خط السير)</label><input type="number" id="s_manager_paid" readonly style="background:rgba(255,255,255,.06);cursor:not-allowed"></div>
 <div class="form-group"><label>المبلغ المدفوع</label><input type="number" id="s_amount_paid" oninput="calculateSupervisorBalance()"></div>
 <div class="form-group"><label>في حساب</label><input type="text" id="s_in_account"></div>
@@ -808,6 +1056,48 @@ input[type="time"]:focus {
 </div>
 </div>
 
+<!-- Inventory Permit Modal -->
+<div class="modal-overlay" id="inventoryPermitModal">
+<div class="modal-content" style="max-width:900px">
+<div class="modal-header">
+<h2>📋 إذن صرف مواد</h2>
+<button class="modal-close" onclick="closeModal('inventoryPermitModal')">&times;</button>
+</div>
+<div class="modal-body">
+<div id="permitCustomerInfo" style="background:rgba(255,255,255,.1);border-radius:10px;padding:15px;margin-bottom:20px;border:1px solid rgba(255,255,255,.2)">
+<h3 style="color:#fdcb6e;margin-bottom:10px">👤 معلومات العميل</h3>
+<div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+<div class="form-group"><label>اسم العميل</label><input type="text" id="permit_customer_name" readonly></div>
+<div class="form-group"><label>رقم الهاتف</label><input type="text" id="permit_customer_phone" readonly style="direction:ltr;text-align:right"></div>
+<div class="form-group"><label>التاريخ</label><input type="text" id="permit_date" readonly></div>
+<div class="form-group"><label>المشرف</label><input type="text" id="permit_supervisor" readonly></div>
+</div>
+</div>
+
+<h3 style="color:#fdcb6e;margin-bottom:15px">📦 مواد الصرف</h3>
+<p style="color:rgba(255,255,255,.7);margin-bottom:15px;font-size:0.9rem">✏️ اضغط على الكمية لتعديلها | ➕ أضف مادة جديدة | ❌ احذف أي مادة</p>
+
+<div id="permitItemsList" style="margin-bottom:20px">
+<!-- Items will be inserted here -->
+</div>
+
+<div style="display:flex;gap:10px;margin-bottom:20px">
+<button class="btn btn-secondary" onclick="addPermitItem()" style="flex:1">➕ إضافة مادة جديدة</button>
+</div>
+
+<div style="background:rgba(255,255,255,.1);border-radius:10px;padding:15px;border:1px solid rgba(255,255,255,.2)">
+<h3 style="color:#fdcb6e;margin-bottom:10px">📝 ملاحظات إذن الصرف</h3>
+<textarea id="permit_notes" style="width:100%;padding:12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;min-height:80px;resize:vertical" placeholder="اكتب أي ملاحظات على إذن الصرف..."></textarea>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" onclick="closeModal('inventoryPermitModal')">إلغاء</button>
+<button class="btn btn-primary" onclick="savePermitToSheet()">💾 حفظ التعديلات</button>
+<button class="btn btn-warning" onclick="printPermit()">🖨️ طباعة الإذن</button>
+</div>
+</div>
+</div>
+
 <!-- Print Modal -->
 <div class="modal-overlay" id="printModal">
 <div class="modal-content" style="max-width:1000px">
@@ -823,7 +1113,6 @@ input[type="time"]:focus {
 </div>
 </div>
 </div>
-
 <script>
 const CONFIG = {
     API_KEY: 'AIzaSyCBaf2mbc1jzHUg2K34sGhinFHsrSWcQ-0',
@@ -837,7 +1126,7 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 6;
+const APP_VERSION = 7;
 
 // Check version on page load - reload once if needed
 (function checkVersion(){
@@ -858,6 +1147,8 @@ const APP_VERSION = 6;
             // Clear ALL cached data to force fresh load
             localStorage.removeItem('zoom_managerData');
             localStorage.removeItem('zoom_supervisorData');
+            localStorage.removeItem('zoom_permitData');
+            localStorage.removeItem('zoom_permitStatus');
             const url = new URL(window.location.href);
             url.searchParams.set('v', APP_VERSION);
             url.searchParams.set('t', Date.now());
@@ -867,7 +1158,6 @@ const APP_VERSION = 6;
 
         localStorage.setItem('zoom_appVersion', APP_VERSION);
     } catch(e) {
-        // localStorage not available, continue normally
         console.log('Version check skipped:', e);
     }
 })();
@@ -875,7 +1165,34 @@ const APP_VERSION = 6;
 let currentUser=null,customers=[],filteredCustomers=[],currentCustomerIndex=-1,managerData={},supervisorData={},lastSavedIndex=-1;
 let filterTimeout=null,lastFilterHash='',sheetCache=null,sheetCacheTime=0;
 
+// Permit status tracking: 'draft' (manager editing), 'sent' (manager sent to warehouse), 'approved' (warehouse approved)
+let permitStatus = {};
+let currentPermitRowIndex = -1;
 
+// ═══════════════════════════════════════════════════════════
+// PERMIT STATUS MANAGEMENT
+// ═══════════════════════════════════════════════════════════
+function loadPermitStatus(){
+    try{
+        const saved = localStorage.getItem('zoom_permitStatus');
+        if(saved) permitStatus = JSON.parse(saved);
+    }catch(e){permitStatus = {};}
+}
+
+function savePermitStatus(){
+    try{
+        localStorage.setItem('zoom_permitStatus', JSON.stringify(permitStatus));
+    }catch(e){}
+}
+
+function getPermitStatus(rowIndex){
+    return permitStatus[rowIndex] || 'draft';
+}
+
+function setPermitStatus(rowIndex, status){
+    permitStatus[rowIndex] = status;
+    savePermitStatus();
+}
 
 // Helper: Convert any date format to YYYY-MM-DD for input[type="date"]
 function formatDateForInput(dateStr){
@@ -916,20 +1233,40 @@ let autoRefreshInterval=null;
 function login(role){
     currentUser=role;
     document.getElementById('loginSection').style.display='none';
-    document.getElementById('mainContent').classList.add('active');
-    document.getElementById('userTitle').textContent=role==='manager'?'👷 مدير خط السير':'👨‍💼 المشرف';
+
+    // Show appropriate section based on role
+    if(role === 'inventory'){
+        // Inventory manager goes DIRECTLY to inventory section - no mainContent at all
+        document.getElementById('mainContent').style.display = 'none';
+        document.getElementById('mainContent').classList.remove('active');
+        document.getElementById('inventorySection').style.display = 'block';
+        document.getElementById('reportsSection').style.display = 'none';
+        // Load from localStorage only (permits are stored locally, not in sheet)
+        loadFromLocalStorage();
+        loadPermitData();
+        loadPermitStatus();
+        applyInventoryFilters();
+        return; // Skip sheet loading for inventory manager
+    } else {
+        document.getElementById('mainContent').classList.add('active');
+        document.getElementById('inventorySection').style.display = 'none';
+    }
+
+    document.getElementById('userTitle').textContent=role==='manager'?'👷 مدير خط السير':role==='inventory'?'📦 مدير المخزن':'👨‍💼 المشرف';
     document.getElementById('installationStatusFilterGroup').style.display=role==='supervisor'?'block':'none';
-    // Show reports button only for supervisor
+    // Show reports button for supervisor, manager, and inventory
     const reportsBtn = document.getElementById('reportsBtn');
     if(reportsBtn){
-        reportsBtn.style.display = role==='supervisor'?'inline-flex':'none';
+        reportsBtn.style.display = (role==='supervisor' || role==='manager' || role==='inventory')?'inline-flex':'none';
     }
     clearOldSupervisorCache();
     loadFromLocalStorage();
+    loadPermitData();
+    loadPermitStatus();
     loadSheetData(true);
     if(autoRefreshInterval) clearInterval(autoRefreshInterval);
     autoRefreshInterval=setInterval(()=>{
-        const anyModalOpen=['managerModal','supervisorModal'].some(id=>document.getElementById(id).classList.contains('active'));
+        const anyModalOpen=['managerModal','supervisorModal','inventoryPermitModal'].some(id=>document.getElementById(id).classList.contains('active'));
         if(!anyModalOpen) loadSheetData(true);
     },60000);
 }
@@ -940,7 +1277,11 @@ function logout(){
     filteredCustomers=[];
     document.getElementById('loginSection').style.display='flex';
     document.getElementById('mainContent').classList.remove('active');
+    document.getElementById('mainContent').style.display = '';
     document.getElementById('customersGrid').innerHTML='';
+    // Hide inventory section
+    const inventorySection = document.getElementById('inventorySection');
+    if(inventorySection) inventorySection.style.display = 'none';
     // Reset supervisor filter
     document.getElementById('supervisorFilter').value='all';
     document.getElementById('supervisorFilter').disabled=false;
@@ -1102,7 +1443,6 @@ async function loadSheetData(forceRefresh=false){
             }
 
             // Read supervisor data from sheet columns (AE-BZ = indices 30-77)
-            // Note: AE (30) is supervisor_name from manager, AF (31) is technician, AG (32) is car
             const hasSupervisorData = row[30] || row[31] || row[32] || row[33] || row[34] || row[35] || 
                                       row[36] || row[37] || row[38] || row[39] || row[40] || 
                                       row[41] || row[42] || row[43] || row[44] || row[45] || 
@@ -1116,9 +1456,9 @@ async function loadSheetData(forceRefresh=false){
 
             if (hasSupervisorData) {
                 sheetSupervisorData[idx] = {
-                    supervisor_name: row[30] || '',  // AE - supervisor name from manager
-                    technician: row[31] || '',       // AF - technician
-                    car: row[32] || '',              // AG - car
+                    supervisor_name: row[30] || '',
+                    technician: row[31] || '',
+                    car: row[32] || '',
                     installation_status: row[33] || '',
                     delay_reason: row[34] || '',
                     items: row[35] || '',
@@ -1164,8 +1504,8 @@ async function loadSheetData(forceRefresh=false){
                     fast_rinse_time: row[75] || '',
                     salt_level: row[76] || '',
                     has_shelter: row[77] || '',
-                    wash_time: row[78] || '',  // CA (col 79 in GAS) - وقت الغسيل
-                    salt_amount: row[79] || '',  // CB (col 80 in GAS) - كمية الملح
+                    wash_time: row[78] || '',
+                    salt_amount: row[79] || '',
                     _synced: true
                 };
             }
@@ -1177,8 +1517,6 @@ async function loadSheetData(forceRefresh=false){
 
         // === THE FIX ===
         // The Sheet is ALWAYS the source of truth. Period.
-        // Whatever is in the Sheet right now is what the user sees.
-        // We completely replace localStorage with fresh sheet data.
         managerData={...sheetManagerData};
         supervisorData={...sheetSupervisorData};
 
@@ -1198,7 +1536,6 @@ async function loadSheetData(forceRefresh=false){
         });
 
         // Save the fresh sheet data to localStorage
-        // This ensures if user edits the Sheet directly, the app reflects it immediately
         saveToLocalStorage();
 
         sheetCache=customers;
@@ -1265,7 +1602,6 @@ function applyFilters(){
             const supervisorName=mData.supervisor_name||c.supervisorName||'';
             if(supervisorName!==supervisorFilter) return false;
         }
-        // Note: All customers are visible to supervisor, including delayed ones
         if(installationStatusFilter!=='all'){
             const sData=supervisorData[c.rowIndex]||{};
             const installationStatus=sData.installation_status||'';
@@ -1311,10 +1647,8 @@ function getDateBadgeText(date){
     return date.toLocaleDateString('ar-SA');
 }
 
-// FIX #2: Helper to check if supervisor data has meaningful content
 function hasMeaningfulSupervisorData(sData){
     if(!sData || typeof sData !== 'object') return false;
-    // Check if any field has a real value (not empty string, not _synced)
     const meaningfulFields = [
         'technician', 'car', 'installation_status', 'delay_reason', 'items',
         'returned_items', 'start_time', 'end_time', 'spare_needed', 'spare_details',
@@ -1336,11 +1670,6 @@ function hasMeaningfulSupervisorData(sData){
     });
 }
 
-
-// ═══════════════════════════════════════════════════════════
-// MERGE DUPLICATE CUSTOMERS (same name+phone)
-// Keep latest date, merge supervisor data from all occurrences
-// ═══════════════════════════════════════════════════════════
 function mergeDuplicateCustomers(rawCustomers) {
     const customerMap = new Map();
 
@@ -1357,7 +1686,6 @@ function mergeDuplicateCustomers(rawCustomers) {
             const existing = customerMap.get(key);
             existing.allRows.push(c.rowIndex);
 
-            // Keep the one with latest date
             if (c.parsedDate && existing.latestDate) {
                 if (c.parsedDate > existing.latestDate) {
                     existing.latest = c;
@@ -1370,20 +1698,17 @@ function mergeDuplicateCustomers(rawCustomers) {
         }
     });
 
-    // Merge supervisor data from ALL rows into the latest row
     const mergedCustomers = [];
     customerMap.forEach((data, key) => {
         const mainCustomer = data.latest;
         const mainIdx = mainCustomer.rowIndex;
 
-        // Find best supervisor data across all rows
         let bestSupervisorData = supervisorData[mainIdx] || {};
         let bestSupervisorRow = mainIdx;
 
         data.allRows.forEach(rowIdx => {
             const sData = supervisorData[rowIdx];
             if (sData && hasMeaningfulSupervisorData(sData)) {
-                // Prefer the one with installation_status
                 if (sData.installation_status && !bestSupervisorData.installation_status) {
                     bestSupervisorData = sData;
                     bestSupervisorRow = rowIdx;
@@ -1391,12 +1716,10 @@ function mergeDuplicateCustomers(rawCustomers) {
             }
         });
 
-        // Copy best supervisor data to main row
         if (bestSupervisorRow !== mainIdx && Object.keys(bestSupervisorData).length > 0) {
             supervisorData[mainIdx] = { ...bestSupervisorData, _mergedFrom: bestSupervisorRow };
         }
 
-        // Mark if this customer was delayed from a previous date
         const anyDelayed = data.allRows.some(rowIdx => {
             const sData = supervisorData[rowIdx];
             return sData && sData.installation_status === 'تأجيل';
@@ -1424,12 +1747,10 @@ function renderCustomers(){
     customersToRender.forEach((customer)=>{
         const index=customer.rowIndex;
         const hasM=managerData[index]&&Object.keys(managerData[index]).length>0;
-        // FIX #2: Check if supervisor data has MEANINGFUL content (not just empty object with _synced)
         const hasS=supervisorData[index]&&hasMeaningfulSupervisorData(supervisorData[index]);
         let statusText='قيد الانتظار',statusClass='status-pending';
         const sDataForStatus=supervisorData[index]||{};
         const installationStatus=sDataForStatus.installation_status||'';
-        // Show actual supervisor status
         const wasDelayed = customer._wasDelayed || false;
 
         if(installationStatus==='تأجيل' || wasDelayed){statusText='مؤجل';statusClass='status-delayed';}
@@ -1508,7 +1829,6 @@ function calculateSupervisorBalance(){
     const total = parseFloat(document.getElementById('s_manager_total').value) || 0;
     const managerPaid = parseFloat(document.getElementById('s_manager_paid').value) || 0;
     const paid = parseFloat(document.getElementById('s_amount_paid').value) || 0;
-    // FIX: Balance = Total - (Manager Paid + Supervisor Paid)
     const remaining = total - (managerPaid + paid);
     document.getElementById('s_balance').value = remaining >= 0 ? remaining : 0;
     togglePaymentDateField();
@@ -1564,18 +1884,15 @@ function openManagerModal(index){
     document.getElementById('m_phone').value=c.phone;
     document.getElementById('m_state').value=c.state;
     const ex=managerData[index]||{};
-    // Handle date field: show from sheet if exists, otherwise allow manager to fill
     const dateField = document.getElementById('m_date');
     const sheetDate = c.date ? formatDateForInput(c.date) : '';
     if (sheetDate) {
-        // Date exists in sheet - show it readonly
         dateField.value = sheetDate;
         dateField.readOnly = true;
         dateField.style.background = 'rgba(255,255,255,.06)';
         dateField.style.cursor = 'not-allowed';
         dateField.title = 'التاريخ من الشييت - غير قابل للتعديل';
     } else {
-        // No date in sheet - allow manager to fill
         dateField.value = ex.installation_date ? formatDateForInput(ex.installation_date) : '';
         dateField.readOnly = false;
         dateField.style.background = '';
@@ -1682,9 +1999,6 @@ function openSupervisorModal(index){
     }
 
     const ex=supervisorData[index]||{};
-    // Get supervisor name - prefer the supervisor's own saved value, then fall back to
-    // the name the manager already picked (mData), then whatever's in the base Sheet columns.
-    // Filter out invalid values like 'نعم' or 'لا'.
     let supervisorName = ex.supervisor_name || mData.supervisor_name || c.supervisorName || '';
     if(supervisorName === 'نعم' || supervisorName === 'لا' || supervisorName === 'true' || supervisorName === 'false'){
         supervisorName = '';
@@ -1703,16 +2017,11 @@ function openSupervisorModal(index){
     document.getElementById('s_spare_needed').value=ex.spare_needed||'';
     document.getElementById('s_spare_details').value=ex.spare_details||'';
     toggleSpareFields();
-    // Show manager's paid amount as default if supervisor hasn't entered one
     document.getElementById('s_manager_total').value = mData.total || '';
-    // FIX #1: Show manager's paid amount as reference (read-only)
     document.getElementById('s_manager_paid').value = mData.paid || '';
-    // FIX: s_amount_paid starts EMPTY - supervisor fills it manually
-    // Only show previous supervisor value if exists, never default to manager paid
     document.getElementById('s_amount_paid').value = ex.amount_paid || '';
     calculateSupervisorBalance();
     document.getElementById('s_in_account').value=ex.in_account||'';
-    // Show manager's remaining amount as default if supervisor hasn't entered one
     const mRemaining = mData.remaining || '';
     document.getElementById('s_balance').value = ex.balance || mRemaining;
     togglePaymentDateField();
@@ -1811,11 +2120,9 @@ async function saveSupervisorData(){
     const isEmpty = !hasMeaningfulSupervisorData(data);
 
     if(isEmpty){
-        // FIX #2: If all fields are empty, remove the entry so customer shows as "waiting for supervisor"
         delete supervisorData[currentCustomerIndex];
         saveToLocalStorage();
         showSaveIndicator(true);
-        // Send clear command to GAS to delete data from sheet
         const result=await sendToSheet(currentCustomerIndex,null,{_clearSupervisor:true});
         showSaveIndicator(false);
         if(result.success){
@@ -1868,7 +2175,6 @@ async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
     console.log('📤 Sending to GAS:',JSON.stringify(payload,null,2));
 
     try{
-        // Use no-cors to avoid all CORS/redirect issues
         const response=await fetch(CONFIG.GAS_URL,{
             method:'POST',
             headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -1877,31 +2183,20 @@ async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
         });
 
         console.log('📥 GAS response (opaque): request sent');
-
-        // With no-cors we can't read response, but request WAS sent
-        // Wait briefly for GAS to process
         await new Promise(resolve=>setTimeout(resolve,2000));
 
-        // Verify by re-reading the row from sheet
         const verifyUrl=`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(CONFIG.SHEET_NAME)}!H${rowIndex}:CB${rowIndex}?key=${CONFIG.API_KEY}`;
-
         console.log('🔍 Verifying data at row',rowIndex);
         const verifyResponse=await fetch(verifyUrl);
         const verifyData=await verifyResponse.json();
 
         if(isClearSupervisor){
-            // For clear: verify that supervisor columns are EMPTY
             if(!verifyData.values || !verifyData.values[0]){
                 console.log('✅ Supervisor data cleared from sheet!');
                 return{success:true};
             }
             const rowData=verifyData.values[0];
-            // Check supervisor columns (AF=index 30 to CB=index 79 in the row slice)
-            // But rowData starts from column H (index 7), so AF is index 30-7=23
-            // Actually the verify URL gets H:CB, so H is index 0 in rowData
-            // AF is column 31 (0-indexed), so in H:CB range, AF is index 31-7=24
-            // Let's check if any supervisor column has data
-            const supervisorCols = rowData.slice(24); // AF onwards
+            const supervisorCols = rowData.slice(24);
             const hasSupervisorData = supervisorCols.some(cell=>cell&&cell!=='');
             if(!hasSupervisorData){
                 console.log('✅ Supervisor data cleared from sheet!');
@@ -1909,7 +2204,6 @@ async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
             }
             console.log('⚠️ Supervisor data still exists after clear, retrying...');
         } else {
-            // For save: verify data exists
             if(verifyData.values&&verifyData.values[0]){
                 const rowData=verifyData.values[0];
                 const hasData=rowData.some(cell=>cell&&cell!=='');
@@ -1920,7 +2214,6 @@ async function sendToSheet(rowIndex,managerDataArg,supervisorDataArg){
             }
         }
 
-        // If verification failed, try once more
         console.log('⚠️ Verification failed, retrying...');
         const retryResponse=await fetch(CONFIG.GAS_URL,{
             method:'POST',
@@ -2025,8 +2318,6 @@ function buildPrintRows(mData,sData){
         html+=addRow('متبقي',mData.remaining);
         html+=addRow('توقيت الموعد',mData.appointment_time);
         html+=addRow('تاريخ الموعد',mData.appointment_date?new Date(mData.appointment_date).toLocaleString('ar-SA'):'');
-        
-        
         html+=addRow('تاريخ التركيب',mData.installation_date);
         html+=addRowFull('ملاحظات',mData.notes);
         html+=`</table>`;
@@ -2141,32 +2432,7 @@ function printReport(){
         th,td{border:1px solid #333;padding:10px;text-align:right}
         th{background:#f0f0f0;width:25%}
         @media print{body{background:#fff}.no-print{display:none}}
-    
-/* Time input styling */
-input[type="time"] {
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.25);
-    border-radius: 10px;
-    color: #fff;
-    padding: 12px 15px;
-    font-size: .95rem;
-    width: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-input[type="time"]:focus {
-    outline: none;
-    border-color: #fdcb6e;
-    box-shadow: 0 0 10px rgba(253,203,110,.2);
-    background: rgba(255,255,255,.18);
-}
-/* For mobile */
-@media(max-width:480px){
-    input[type="time"] {
-        padding: 14px 12px;
-        font-size: 1rem;
-    }
-}
-</style></head><body>${content}</body></html>`);
+    </style></head><body>${content}</body></html>`);
     printWindow.document.close();
     printWindow.print();
 }
@@ -2244,31 +2510,31 @@ function showAlert(message,type){
 let currentReportType = null;
 
 function openReportsSection(){
-    // Security check: only supervisor can access reports
-    if(currentUser !== 'supervisor'){
-        showAlert('❌ التقارير متاحة للمشرفين فقط','error');
+    if(currentUser !== 'supervisor' && currentUser !== 'manager' && currentUser !== 'inventory'){
+        showAlert('❌ التقارير غير متاحة','error');
         return;
     }
     document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('inventorySection').style.display = 'none';
     document.getElementById('reportsSection').style.display = 'block';
-    // Hide filters initially
     document.getElementById('reportFilters').style.display = 'none';
     document.getElementById('reportResults').innerHTML = '';
     currentReportType = null;
-    // Populate states dropdown
     populateStatesDropdown();
 }
 
 function closeReportsSection(){
     document.getElementById('reportsSection').style.display = 'none';
-    document.getElementById('mainContent').style.display = 'block';
+    if(currentUser === 'inventory'){
+        document.getElementById('inventorySection').style.display = 'block';
+    } else {
+        document.getElementById('mainContent').style.display = 'block';
+    }
 }
 
 function populateStatesDropdown(){
     const stateSelect = document.getElementById('reportState');
-    // Get unique states from customers
     const states = [...new Set(customers.map(c => c.state).filter(s => s))].sort();
-    // Keep the "all" option and add states
     stateSelect.innerHTML = '<option value="all">كل الولايات</option>';
     states.forEach(state => {
         const opt = document.createElement('option');
@@ -2284,10 +2550,21 @@ function showReport(type){
     const titleEl = document.getElementById('reportFilterTitle');
     const resultsDiv = document.getElementById('reportResults');
 
+    const dailyTitle = document.getElementById('dailyReportTitle');
+    const dailyDesc = document.getElementById('dailyReportDesc');
+    if(dailyTitle && dailyDesc){
+        if(currentUser === 'manager'){
+            dailyTitle.textContent = 'خط سير العملاء';
+            dailyDesc.textContent = 'خط سير العملاء في يوم معين للطباعة';
+        } else {
+            dailyTitle.textContent = 'التقرير اليومي للمشرف';
+            dailyDesc.textContent = 'عملاء المشرف في يوم معين للطباعة';
+        }
+    }
+
     filtersDiv.style.display = 'block';
     resultsDiv.innerHTML = '';
 
-    // Show/hide relevant filter groups
     document.getElementById('reportDateFromGroup').style.display = type === 'daily' ? 'none' : 'block';
     document.getElementById('reportDateToGroup').style.display = type === 'daily' ? 'none' : 'block';
     document.getElementById('reportTechnicianGroup').style.display = type === 'technician' ? 'block' : 'none';
@@ -2295,13 +2572,16 @@ function showReport(type){
     document.getElementById('reportSupervisorGroup').style.display = type === 'daily' ? 'block' : 'none';
     document.getElementById('reportSingleDateGroup').style.display = type === 'daily' ? 'block' : 'none';
 
-    // Set default dates
     const today = new Date();
     const thirtyDaysAgo = new Date(today);
     thirtyDaysAgo.setDate(today.getDate() - 30);
 
     if(type === 'daily'){
-        titleEl.textContent = '📅 فلاتر التقرير اليومي';
+        if(currentUser === 'manager'){
+            titleEl.textContent = '📅 فلاتر خط السير';
+        } else {
+            titleEl.textContent = '📅 فلاتر التقرير اليومي';
+        }
         document.getElementById('reportSingleDate').value = formatDateForInput(today);
         document.getElementById('reportSupervisor').disabled = false;
     } else {
@@ -2356,7 +2636,43 @@ function getDeviceType(mData){
     return parts.length > 0 ? parts.join(' + ') : '-';
 }
 
-// ===== REPORT 1: TECHNICIAN REPORT =====
+function getInventoryDeviceKey(mData){
+    if(mData.softener === 'نعم' && mData.softener_size){
+        const size = mData.softener_size;
+        const type = mData.softener_type || '';
+        if(type.includes('دبل')){
+            return 'سوفتنر ' + size + ' دبل';
+        }
+        return 'سوفتنر ' + size;
+    }
+    if(mData.filter_details && mData.filter_details !== ''){
+        const filter = mData.filter_details.trim();
+        if(DEVICE_MATERIALS[filter]){
+            return filter;
+        }
+        if(filter.includes('ديجيتال')) return 'فلتر ديجيتال';
+        if(filter.includes('100 اقتصادي')) return 'فلتر 100 اقتصادي';
+        if(filter.includes('100 بلازما')) return 'فلتر 100 بلازما';
+        if(filter.includes('400 اقتصادي')) return 'فلتر 400 اقتصادي';
+        if(filter.includes('400 بلازما')) return 'فلتر 400 بلازما';
+        if(filter.includes('جلاكسي')) return 'جلاكسي';
+        if(filter.includes('مبرد ابيض')) return 'مبرد ابيض زووم';
+        if(filter.includes('مبرد اسود')) return 'مبرد اسود';
+        if(filter.includes('مبرد ذهبي')) return 'مبرد ذهبي';
+        if(filter.includes('خزان 2')) return 'فلتر خزان 2';
+        if(filter.includes('خزان 3')) return 'فلتر خزان 3';
+        if(filter.includes('قارورة عادية')) return 'قارورة عادية';
+        if(filter.includes('قارورة مسطحة')) return 'قارورة مسطحة';
+    }
+    if(mData.package_name && DEVICE_MATERIALS[mData.package_name]){
+        return mData.package_name;
+    }
+    if(mData.other_product && DEVICE_MATERIALS[mData.other_product]){
+        return mData.other_product;
+    }
+    return 'فلتر ديجيتال';
+}
+
 function generateTechnicianReport(){
     const fromDate = parseSheetDate(document.getElementById('reportDateFrom').value);
     const toDate = parseSheetDate(document.getElementById('reportDateTo').value);
@@ -2367,7 +2683,6 @@ function generateTechnicianReport(){
         return;
     }
 
-    // Filter customers by date range and who have supervisor data
     const filtered = customers.filter(c => {
         if(!c.parsedDate) return false;
         const date = new Date(c.parsedDate);
@@ -2377,17 +2692,15 @@ function generateTechnicianReport(){
         return date >= fromDate && date <= toDate;
     }).filter(c => {
         const sData = supervisorData[c.rowIndex] || {};
-        return sData.technician; // Must have a technician assigned
+        return sData.technician;
     });
 
-    // Group by technician (handle multi-select by splitting)
     const techStats = {};
     filtered.forEach(c => {
         const sData = supervisorData[c.rowIndex] || {};
         const techStr = sData.technician;
         if(!techStr) return;
 
-        // Split by comma to get individual technicians
         const techList = techStr.split(',').map(t => t.trim()).filter(t => t);
 
         techList.forEach(tech => {
@@ -2397,7 +2710,6 @@ function generateTechnicianReport(){
                 techStats[tech] = { count: 0, customers: [], statuses: {} };
             }
             techStats[tech].count++;
-            // Avoid duplicate customers in the list
             if(!techStats[tech].customers.includes(c)){
                 techStats[tech].customers.push(c);
             }
@@ -2407,7 +2719,6 @@ function generateTechnicianReport(){
         });
     });
 
-    // Build HTML
     let html = '<div class="report-summary">';
     html += `<div class="report-summary-item"><div class="number">${filtered.length}</div><div class="label">إجمالي التركيبات</div></div>`;
     html += `<div class="report-summary-item"><div class="number">${Object.keys(techStats).length}</div><div class="label">عدد الفنيين</div></div>`;
@@ -2454,12 +2765,11 @@ function showTechnicianDetails(tech, fromStr, toStr){
     filtered.forEach(c => {
         const sData = supervisorData[c.rowIndex] || {};
         const mData = managerData[c.rowIndex] || {};
+        let deviceType = getDeviceType(mData);
+
         html += `<div class="report-card">`;
         html += `<div class="report-card-header"><h4>👤 ${c.name}</h4><span style="color:#667eea;font-weight:700">${c.parsedDate ? c.parsedDate.toLocaleDateString('ar-SA') : ''}</span></div>`;
         html += `<div class="report-card-body">`;
-        // Determine device type from manager data
-        let deviceType = getDeviceType(mData);
-
         html += `<div class="report-card-item"><span class="label">📞 الهاتف:</span><span class="value">${c.phone}</span></div>`;
         html += `<div class="report-card-item"><span class="label">📍 الولاية:</span><span class="value">${c.state}</span></div>`;
         html += `<div class="report-card-item"><span class="label">📦 نوع الجهاز:</span><span class="value">${deviceType}</span></div>`;
@@ -2472,7 +2782,6 @@ function showTechnicianDetails(tech, fromStr, toStr){
     document.getElementById('reportResults').innerHTML = html;
 }
 
-// ===== REPORT 2: STATE REPORT =====
 function generateStateReport(){
     const fromDate = parseSheetDate(document.getElementById('reportDateFrom').value);
     const toDate = parseSheetDate(document.getElementById('reportDateTo').value);
@@ -2495,7 +2804,6 @@ function generateStateReport(){
         return true;
     });
 
-    // Group by state
     const stateStats = {};
     filtered.forEach(c => {
         const state = c.state || 'غير محدد';
@@ -2545,8 +2853,6 @@ function showStateDetails(state, fromStr, toStr){
     filtered.forEach(c => {
         const sData = supervisorData[c.rowIndex] || {};
         const mData = managerData[c.rowIndex] || {};
-
-        // Determine device type from manager data
         let deviceType = getDeviceType(mData);
 
         html += `<div class="report-card">`;
@@ -2563,7 +2869,6 @@ function showStateDetails(state, fromStr, toStr){
     document.getElementById('reportResults').innerHTML = html;
 }
 
-// ===== REPORT 3: DAILY SUPERVISOR REPORT =====
 function generateDailyReport(){
     const reportDate = parseSheetDate(document.getElementById('reportSingleDate').value);
     const selectedSupervisor = document.getElementById('reportSupervisor').value;
@@ -2573,7 +2878,6 @@ function generateDailyReport(){
         return;
     }
 
-    // Filter customers for this date and supervisor
     const filtered = customers.filter(c => {
         if(!c.parsedDate) return false;
         return isSameDate(c.parsedDate, reportDate);
@@ -2597,7 +2901,6 @@ function generateDailyReport(){
         return;
     }
 
-    // Group by supervisor for the summary
     const supStats = {};
     filtered.forEach(c => {
         const mData = managerData[c.rowIndex] || {};
@@ -2616,29 +2919,63 @@ function generateDailyReport(){
     });
     html += '</div>';
 
-    // Print-friendly table
     html += '<div id="dailyReportPrintArea">';
-    html += `<h2 style="text-align:center;color:#667eea;margin-bottom:5px">Zoom - التقرير اليومي</h2>`;
-    html += `<p style="text-align:center;color:#666;margin-bottom:20px">${reportDate.toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>`;
 
-    html += '<table class="report-table">';
-    html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الولاية</th><th>نوع التركيب</th><th>نوع الجهاز</th><th>الفني</th><th>حالة التركيب</th><th>ملاحظات</th></tr>';
+    if(currentUser === 'manager'){
+        html += `<h2 style="text-align:center;color:#667eea;margin-bottom:5px">Zoom - خط سير العملاء</h2>`;
+        html += `<p style="text-align:center;color:#666;margin-bottom:20px">${reportDate.toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>`;
+        html += `<p style="text-align:center;color:#fdcb6e;margin-bottom:20px;font-size:0.9rem">✏️ اضغط على أي خلية لتعديلها مباشرة</p>`;
 
-    filtered.forEach((c, idx) => {
-        const sData = supervisorData[c.rowIndex] || {};
-        const mData = managerData[c.rowIndex] || {};
-        html += `<tr>`;
-        html += `<td>${idx + 1}</td>`;
-        html += `<td style="font-weight:700">${c.name}</td>`;
-        html += `<td style="direction:ltr">${c.phone}</td>`;
-        html += `<td>${c.state || '-'}</td>`;
-        html += `<td>${mData.transaction_type || c.transactionType || '-'}</td>`;
-        html += `<td>${getDeviceType(mData)}</td>`;
-        html += `<td>${sData.technician || '-'}</td>`;
-        html += `<td>${sData.installation_status || 'قيد الانتظار'}</td>`;
-        html += `<td>${sData.notes || mData.notes || '-'}</td>`;
-        html += `</tr>`;
-    });
+        html += '<table class="report-table" id="routeTable">';
+        html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الجهاز</th><th>الملاحظات</th><th>المشرف</th><th>حفظ</th></tr>';
+
+        filtered.forEach((c, idx) => {
+            const mData = managerData[c.rowIndex] || {};
+            const sData = supervisorData[c.rowIndex] || {};
+            let supName = mData.supervisor_name || c.supervisorName || sData.supervisor_name || '';
+            if(supName==='نعم'||supName==='لا'||supName==='true'||supName==='false') supName='';
+
+            const rowId = c.rowIndex;
+            html += `<tr data-row="${rowId}">`;
+            html += `<td>${idx + 1}</td>`;
+            html += `<td contenteditable="true" class="editable-cell" data-field="name">${c.name}</td>`;
+            html += `<td contenteditable="true" class="editable-cell" data-field="phone" style="direction:ltr">${c.phone}</td>`;
+            html += `<td contenteditable="true" class="editable-cell" data-field="device">${getDeviceType(mData)}</td>`;
+            html += `<td contenteditable="true" class="editable-cell" data-field="notes">${mData.notes || ''}</td>`;
+            html += `<td contenteditable="true" class="editable-cell" data-field="supervisor">${supName}</td>`;
+            html += `<td><button class="btn btn-success" onclick="saveRouteEdit(${rowId})" style="padding:6px 12px;font-size:0.8rem">💾 حفظ</button></td>`;
+            html += `</tr>`;
+
+            const permit = permitData[rowId];
+            const hasPermit = permit && permit.issued;
+            html += `<tr style="background:rgba(253,203,110,.1)"><td colspan="7" style="text-align:center;padding:8px">`;
+            html += `<button class="btn btn-warning" onclick="openPermitModal(${rowId})" style="padding:6px 15px;font-size:0.85rem">`;
+            html += hasPermit ? '📋 عرض/تعديل إذن الصرف' : '📝 إصدار إذن صرف';
+            html += `</button></td></tr>`;
+        });
+    } else {
+        html += `<h2 style="text-align:center;color:#667eea;margin-bottom:5px">Zoom - التقرير اليومي</h2>`;
+        html += `<p style="text-align:center;color:#666;margin-bottom:20px">${reportDate.toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>`;
+
+        html += '<table class="report-table">';
+        html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الولاية</th><th>نوع التركيب</th><th>نوع الجهاز</th><th>الفني</th><th>حالة التركيب</th><th>ملاحظات</th></tr>';
+
+        filtered.forEach((c, idx) => {
+            const sData = supervisorData[c.rowIndex] || {};
+            const mData = managerData[c.rowIndex] || {};
+            html += `<tr>`;
+            html += `<td>${idx + 1}</td>`;
+            html += `<td style="font-weight:700">${c.name}</td>`;
+            html += `<td style="direction:ltr">${c.phone}</td>`;
+            html += `<td>${c.state || '-'}</td>`;
+            html += `<td>${mData.transaction_type || c.transactionType || '-'}</td>`;
+            html += `<td>${getDeviceType(mData)}</td>`;
+            html += `<td>${sData.technician || '-'}</td>`;
+            html += `<td>${sData.installation_status || 'قيد الانتظار'}</td>`;
+            html += `<td>${sData.notes || mData.notes || '-'}</td>`;
+            html += `</tr>`;
+        });
+    }
 
     html += '</table>';
     html += '</div>';
@@ -2646,10 +2983,70 @@ function generateDailyReport(){
     document.getElementById('reportResults').innerHTML = html;
 }
 
+async function saveRouteEdit(rowIndex){
+    const row = document.querySelector(`tr[data-row="${rowIndex}"]`);
+    if(!row) return;
+
+    const cells = row.querySelectorAll('.editable-cell');
+    const updates = {};
+
+    cells.forEach(cell => {
+        const field = cell.dataset.field;
+        const value = cell.textContent.trim();
+        updates[field] = value;
+    });
+
+    const customer = customers.find(c => c.rowIndex === rowIndex);
+    if(!customer){
+        showAlert('❌ العميل غير موجود','error');
+        return;
+    }
+
+    showSaveIndicator(true);
+    showAlert('⏳ جاري الحفظ...','info');
+
+    const payload = {
+        customerName: customer.name,
+        rowIndex: rowIndex,
+        managerData: {
+            name: updates.name || customer.name,
+            phone: updates.phone || customer.phone,
+            notes: updates.notes || '',
+            supervisor_name: updates.supervisor || ''
+        },
+        supervisorData: {},
+        action: 'saveData',
+        timestamp: new Date().toISOString()
+    };
+
+    if(!managerData[rowIndex]) managerData[rowIndex] = {};
+    if(updates.notes) managerData[rowIndex].notes = updates.notes;
+    if(updates.supervisor) managerData[rowIndex].supervisor_name = updates.supervisor;
+    saveToLocalStorage();
+
+    try{
+        await fetch(CONFIG.GAS_URL,{
+            method:'POST',
+            headers:{'Content-Type':'text/plain;charset=utf-8'},
+            body:JSON.stringify(payload),
+            mode:'no-cors'
+        });
+
+        await new Promise(resolve=>setTimeout(resolve,2000));
+
+        showSaveIndicator(false);
+        showAlert('✅ تم الحفظ في الشيت!','success');
+        await loadSheetData(true);
+
+    }catch(error){
+        showSaveIndicator(false);
+        showAlert('⚠️ تم الحفظ محلياً لكن فشل الإرسال للشيت','error');
+    }
+}
+
 function printReportContent(){
     const printArea = document.getElementById('dailyReportPrintArea');
     if(!printArea){
-        // For technician/state reports, print the whole results
         const results = document.getElementById('reportResults').innerHTML;
         if(!results){
             showAlert('❌ لا يوجد تقرير للطباعة','error');
@@ -2665,32 +3062,7 @@ function printReportContent(){
             h2,h3{color:#667eea}
             .report-card{border:1px solid #ccc;padding:15px;margin-bottom:10px;page-break-inside:avoid}
             .report-card-header{border-bottom:2px solid #667eea;padding-bottom:10px;margin-bottom:10px}
-        
-/* Time input styling */
-input[type="time"] {
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.25);
-    border-radius: 10px;
-    color: #fff;
-    padding: 12px 15px;
-    font-size: .95rem;
-    width: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-input[type="time"]:focus {
-    outline: none;
-    border-color: #fdcb6e;
-    box-shadow: 0 0 10px rgba(253,203,110,.2);
-    background: rgba(255,255,255,.18);
-}
-/* For mobile */
-@media(max-width:480px){
-    input[type="time"] {
-        padding: 14px 12px;
-        font-size: 1rem;
-    }
-}
-</style></head><body>${results}</body></html>`);
+        </style></head><body>${results}</body></html>`);
         printWindow.document.close();
         printWindow.print();
         return;
@@ -2705,43 +3077,691 @@ input[type="time"]:focus {
         th{background:#667eea;color:#fff}
         h2{color:#667eea;text-align:center}
         p{text-align:center;color:#666}
-    
-/* Time input styling */
-input[type="time"] {
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.25);
-    border-radius: 10px;
-    color: #fff;
-    padding: 12px 15px;
-    font-size: .95rem;
-    width: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-input[type="time"]:focus {
-    outline: none;
-    border-color: #fdcb6e;
-    box-shadow: 0 0 10px rgba(253,203,110,.2);
-    background: rgba(255,255,255,.18);
-}
-/* For mobile */
-@media(max-width:480px){
-    input[type="time"] {
-        padding: 14px 12px;
-        font-size: 1rem;
-    }
-}
-</style></head><body>${printArea.innerHTML}</body></html>`);
+    </style></head><body>${printArea.innerHTML}</body></html>`);
     printWindow.document.close();
     printWindow.print();
 }
 
+// ═══════════════════════════════════════════════════════════
+// INVENTORY MANAGER FUNCTIONS - COMPLETELY REWRITTEN
+// ═══════════════════════════════════════════════════════════
+
+// Device materials mapping
+const DEVICE_MATERIALS = {
+    'سوفتنر 10': [
+        {name: 'سوفتنر 10', unit: 'قطعة', qty: 1},
+        {name: 'هيد سوفتنر', unit: 'قطعة', qty: 1},
+        {name: 'خزان ملح', unit: 'قطعة', qty: 1},
+        {name: 'ملح', unit: 'شكارة', qty: 1},
+        {name: 'ريزن', unit: 'شكارة', qty: 1},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1},
+        {name: 'فلتر خزان 2 مرحلة', unit: 'قطعة', qty: 1}
+    ],
+    'سوفتنر 13': [
+        {name: 'سوفتنر 13', unit: 'قطعة', qty: 1},
+        {name: 'هيد سوفتنر', unit: 'قطعة', qty: 1},
+        {name: 'خزان ملح', unit: 'قطعة', qty: 1},
+        {name: 'ملح', unit: 'شكارة', qty: 2},
+        {name: 'ريزن', unit: 'شكارة', qty: 2},
+        {name: 'كيس هاي بريشير', unit: 'قطعة', qty: 1},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1},
+        {name: 'فلتر خزان 3 مرحلة', unit: 'قطعة', qty: 1}
+    ],
+    'سوفتنر 16': [
+        {name: 'سوفتنر 16', unit: 'قطعة', qty: 1},
+        {name: 'هيد سوفتنر', unit: 'قطعة', qty: 1},
+        {name: 'خزان ملح', unit: 'قطعة', qty: 1},
+        {name: 'ملح 10 كيلو', unit: 'شكارة', qty: 3},
+        {name: 'ريزن', unit: 'شكارة', qty: 3},
+        {name: 'كيس هاي بريشير', unit: 'قطعة', qty: 1},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1},
+        {name: 'فلتر خزان 3 مرحلة', unit: 'قطعة', qty: 1}
+    ],
+    'سوفتنر 16 دبل': [
+        {name: 'سوفتنر 16', unit: 'قطعة', qty: 2},
+        {name: 'هيد سوفتنر', unit: 'قطعة', qty: 2},
+        {name: 'خزان ملح', unit: 'قطعة', qty: 1},
+        {name: 'عبوة ملح', unit: 'شكارة', qty: 2},
+        {name: 'ريزن', unit: 'شكارة', qty: 3},
+        {name: 'كيس هاي بريشير', unit: 'قطعة', qty: 1},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1},
+        {name: 'فيزل كاربون وزلط ورمل', unit: 'قطعة', qty: 1},
+        {name: 'فلتر ديجيتال', unit: 'قطعة', qty: 1},
+        {name: 'عرض شمعات 6 شهور وسنة', unit: 'عرض', qty: 1}
+    ],
+    'فلتر ديجيتال': [
+        {name: 'فلتر ديجيتال', unit: 'قطعة', qty: 1},
+        {name: 'شمعات', unit: 'قطعة', qty: 3},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'فلتر 100 اقتصادي': [
+        {name: 'فلتر 100 اقتصادي', unit: 'قطعة', qty: 1},
+        {name: 'شمعات', unit: 'قطعة', qty: 3},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'فلتر 100 بلازما': [
+        {name: 'فلتر 100 بلازما', unit: 'قطعة', qty: 1},
+        {name: 'شمعات', unit: 'قطعة', qty: 3},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'فلتر 400 اقتصادي': [
+        {name: 'فلتر 400 اقتصادي', unit: 'قطعة', qty: 1},
+        {name: 'شمعات', unit: 'قطعة', qty: 4},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'فلتر 400 بلازما': [
+        {name: 'فلتر 400 بلازما', unit: 'قطعة', qty: 1},
+        {name: 'شمعات', unit: 'قطعة', qty: 4},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'جلاكسي': [
+        {name: 'فلتر جلاكسي', unit: 'قطعة', qty: 1},
+        {name: 'شمعات', unit: 'قطعة', qty: 5},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'مبرد ابيض زووم': [
+        {name: 'مبرد ابيض زووم', unit: 'قطعة', qty: 1},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'مبرد اسود': [
+        {name: 'مبرد اسود', unit: 'قطعة', qty: 1},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'مبرد ذهبي': [
+        {name: 'مبرد ذهبي', unit: 'قطعة', qty: 1},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'فلتر خزان 2': [
+        {name: 'فلتر خزان 2 مرحلة', unit: 'قطعة', qty: 1},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'فلتر خزان 3': [
+        {name: 'فلتر خزان 3 مرحلة', unit: 'قطعة', qty: 1},
+        {name: 'فاكيوم', unit: 'قطعة', qty: 1}
+    ],
+    'قارورة عادية': [
+        {name: 'قارورة عادية', unit: 'قطعة', qty: 1}
+    ],
+    'قارورة مسطحة': [
+        {name: 'قارورة مسطحة', unit: 'قطعة', qty: 1}
+    ]
+};
+
+// Permit data storage
+let permitData = {};
+
+function loadPermitData(){
+    try{
+        const saved = localStorage.getItem('zoom_permitData');
+        if(saved) permitData = JSON.parse(saved);
+    }catch(e){permitData = {}}
+}
+
+function savePermitData(){
+    try{
+        localStorage.setItem('zoom_permitData', JSON.stringify(permitData));
+    }catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════════
+// INVENTORY SECTION - TABLE VIEW FOR WAREHOUSE MANAGER
+// ═══════════════════════════════════════════════════════════
+
+function closeInventorySection(){
+    // For inventory manager, close = logout (go back to login screen)
+    // For other roles, go back to main content
+    if(currentUser === 'inventory'){
+        logout();
+    } else {
+        document.getElementById('inventorySection').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+    }
+}
+
+function refreshInventoryData(){
+    applyInventoryFilters();
+    showAlert('🔄 تم تحديث بيانات المخزن','success');
+}
+
+function applyInventoryFilters(){
+    const supervisorFilter = document.getElementById('inventorySupervisorFilter').value;
+    const dateFilter = document.getElementById('inventoryDateFilter').value;
+
+    // Build permits list from localStorage (sent/approved permits only)
+    const permits = [];
+
+    // For warehouse manager: only show permits with status 'sent' or 'approved'
+    // These are stored in permitStatus and permitData
+    Object.keys(permitStatus).forEach(rowIndex => {
+        const status = permitStatus[rowIndex];
+        // Only show sent or approved permits to warehouse manager
+        if(status !== 'sent' && status !== 'approved') return;
+
+        const rowIdx = parseInt(rowIndex);
+        const customer = customers.find(c => c.rowIndex === rowIdx);
+        if(!customer) return;
+
+        const mData = managerData[rowIdx] || {};
+        const permit = permitData[rowIdx];
+        if(!permit || !permit.issued) return;
+
+        // Filter by supervisor
+        if(supervisorFilter !== 'all'){
+            const supName = mData.supervisor_name || customer.supervisorName || '';
+            if(supName !== supervisorFilter) return;
+        }
+
+        // Filter by date (permit date, not customer date)
+        const permitDate = permit.date ? new Date(permit.date) : null;
+        if(permitDate){
+            const today = new Date(); today.setHours(0,0,0,0);
+            const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
+
+            if(dateFilter === 'today'){
+                if(permitDate.getDate() !== today.getDate() || permitDate.getMonth() !== today.getMonth() || permitDate.getFullYear() !== today.getFullYear()) return;
+            } else if(dateFilter === 'tomorrow'){
+                if(permitDate.getDate() !== tomorrow.getDate() || permitDate.getMonth() !== tomorrow.getMonth() || permitDate.getFullYear() !== tomorrow.getFullYear()) return;
+            } else if(dateFilter === 'week'){
+                const startOfWeek = new Date(today);
+                startOfWeek.setDate(today.getDate() - today.getDay());
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(startOfWeek.getDate() + 7);
+                if(permitDate < startOfWeek || permitDate >= endOfWeek) return;
+            }
+            // 'all' = no date filter
+        }
+
+        permits.push({
+            rowIndex: rowIdx,
+            customer: customer,
+            managerData: mData,
+            permit: permit,
+            status: status
+        });
+    });
+
+    renderInventoryTable(permits);
+    document.getElementById('inventoryResultsCount').textContent = `(${permits.length} إذن)`;
+}
+
+function clearInventoryFilters(){
+    document.getElementById('inventorySupervisorFilter').value = 'all';
+    document.getElementById('inventoryDateFilter').value = 'today';
+    applyInventoryFilters();
+}
+
+function renderInventoryTable(permits){
+    const tbody = document.getElementById('inventoryTableBody');
+    const table = document.getElementById('inventoryTable');
+    const emptyState = document.getElementById('inventoryEmptyState');
+    const printAllContainer = document.getElementById('printAllContainer');
+
+    tbody.innerHTML = '';
+
+    if(permits.length === 0){
+        table.style.display = 'none';
+        emptyState.style.display = 'block';
+        printAllContainer.style.display = 'none';
+        return;
+    }
+
+    table.style.display = 'table';
+    emptyState.style.display = 'none';
+
+    // Show print all button only if there are results and we're filtering by supervisor
+    const supervisorFilter = document.getElementById('inventorySupervisorFilter').value;
+    if(supervisorFilter !== 'all' && permits.length > 0){
+        printAllContainer.style.display = 'block';
+    } else {
+        printAllContainer.style.display = 'none';
+    }
+
+    permits.forEach((permitItem, idx) => {
+        const rowIndex = permitItem.rowIndex;
+        const customer = permitItem.customer;
+        const mData = permitItem.managerData;
+        const permit = permitItem.permit;
+        const status = permitItem.status;
+
+        let deviceType = getDeviceType(mData);
+        const supervisorName = mData.supervisor_name || customer.supervisorName || '-';
+
+        // Show permit date (when it was sent), not customer date
+        const permitDate = permit.date ? new Date(permit.date) : null;
+        const dateStr = permitDate ? permitDate.toLocaleDateString('ar-SA') : '-';
+
+        // Status badge
+        let statusText, statusClass, statusBg;
+        if(status === 'sent'){
+            statusText = '✅ تم الإرسال';
+            statusClass = 'status-sent';
+            statusBg = '#cce5ff';
+        } else if(status === 'approved'){
+            statusText = '✅ تمت الموافقة';
+            statusClass = 'status-completed';
+            statusBg = '#d4edda';
+        } else {
+            statusText = '⏳ مسودة';
+            statusClass = 'status-waiting';
+            statusBg = '#fff3cd';
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="row-number">${idx + 1}</td>
+            <td style="font-weight:700">${customer.name}</td>
+            <td style="direction:ltr">${customer.phone}</td>
+            <td>${dateStr}</td>
+            <td class="device-cell">${deviceType}</td>
+            <td>${supervisorName}</td>
+            <td class="status-cell"><span class="status-badge ${statusClass}" style="background:${statusBg}">${statusText}</span></td>
+            <td class="actions-cell">
+                ${currentUser === 'manager' ? `
+                    <button class="btn btn-primary" onclick="openPermitModal(${rowIndex})">✏️ عرض/تعديل</button>
+                    <button class="btn btn-success" onclick="sendPermitToWarehouse(${rowIndex})" ${status === 'sent' || status === 'approved' ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''}>📤 إرسال</button>
+                ` : `
+                    <button class="btn btn-primary" onclick="openPermitModal(${rowIndex})">✏️ عرض/تعديل</button>
+                    <button class="btn btn-warning" onclick="printSinglePermit(${rowIndex})">🖨️ طباعة</button>
+                `}
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SEND PERMIT TO WAREHOUSE (Manager only)
+// ═══════════════════════════════════════════════════════════
+function sendPermitToWarehouse(rowIndex){
+    const status = getPermitStatus(rowIndex);
+    if(status === 'sent' || status === 'approved'){
+        showAlert('⚠️ الإذن تم إرساله بالفعل','info');
+        return;
+    }
+
+    // Check if permit has items
+    const permit = permitData[rowIndex];
+    if(!permit || !permit.items || permit.items.length === 0){
+        showAlert('❌ الإذن فارغ - افتح الإذن وأضف مواد أولاً','error');
+        return;
+    }
+
+    setPermitStatus(rowIndex, 'sent');
+    showAlert('✅ تم إرسال الإذن لمدير المخزن!','success');
+    applyInventoryFilters();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PRINT ALL PERMITS FOR SELECTED SUPERVISOR
+// ═══════════════════════════════════════════════════════════
+function printAllPermits(){
+    const supervisorFilter = document.getElementById('inventorySupervisorFilter').value;
+    if(supervisorFilter === 'all'){
+        showAlert('❌ اختر مشرف أولاً','error');
+        return;
+    }
+
+    const filtered = customers.filter(c => {
+        const mData = managerData[c.rowIndex] || {};
+        if(!mData.transaction_type && !c.transactionType) return false;
+        const supName = mData.supervisor_name || c.supervisorName || '';
+        if(supName !== supervisorFilter) return false;
+        const status = getPermitStatus(c.rowIndex);
+        if(status !== 'sent' && status !== 'approved') return false;
+        return true;
+    });
+
+    if(filtered.length === 0){
+        showAlert('❌ لا توجد إذونات للطباعة','error');
+        return;
+    }
+
+    let html = `<div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:20px;color:#000">
+        <div style="text-align:center;border-bottom:2px solid #667eea;padding-bottom:15px;margin-bottom:20px">
+            <h2 style="color:#667aea;margin:0">📦 إذونات صرف مواد</h2>
+            <p style="color:#666;margin:5px 0 0">المشرف: ${supervisorFilter}</p>
+            <p style="color:#666;margin:5px 0 0">${new Date().toLocaleDateString('ar-SA')}</p>
+        </div>`;
+
+    filtered.forEach((c, idx) => {
+        const permit = permitData[c.rowIndex];
+        const mData = managerData[c.rowIndex] || {};
+
+        html += `<div style="border:2px solid #333;margin-bottom:20px;padding:15px;page-break-inside:avoid">
+            <h3 style="color:#667eea;border-bottom:1px solid #ccc;padding-bottom:5px">#${idx+1} - ${c.name}</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px;font-size:0.9rem">
+                <div><strong>الهاتف:</strong> ${c.phone}</div>
+                <div><strong>التاريخ:</strong> ${c.parsedDate ? c.parsedDate.toLocaleDateString('ar-SA') : '-'}</div>
+                <div><strong>الجهاز:</strong> ${getDeviceType(mData)}</div>
+                <div><strong>المشرف:</strong> ${mData.supervisor_name || c.supervisorName || '-'}</div>
+            </div>`;
+
+        if(permit && permit.items && permit.items.length > 0){
+            html += `<table style="width:100%;border-collapse:collapse;border:1px solid #333;font-size:0.9rem">
+                <tr style="background:#667aea;color:#fff"><th style="border:1px solid #333;padding:8px;text-align:right">المادة</th><th style="border:1px solid #333;padding:8px;text-align:center;width:80px">الكمية</th><th style="border:1px solid #333;padding:8px;text-align:center;width:80px">الوحدة</th></tr>`;
+            permit.items.forEach(item => {
+                html += `<tr><td style="border:1px solid #333;padding:8px">${item.name}</td><td style="border:1px solid #333;padding:8px;text-align:center">${item.qty}</td><td style="border:1px solid #333;padding:8px;text-align:center">${item.unit}</td></tr>`;
+            });
+            html += `</table>`;
+        }
+
+        if(permit && permit.notes){
+            html += `<div style="margin-top:10px;padding:10px;background:#f8f9fa;border-radius:5px"><strong>ملاحظات:</strong> ${permit.notes}</div>`;
+        }
+
+        html += `</div>`;
+    });
+
+    html += `<div style="display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid #ccc">
+        <div style="text-align:center"><div style="border-top:1px solid #000;width:150px;margin:0 auto 5px;padding-top:5px"></div><p>توقيع مدير المخزن</p></div>
+        <div style="text-align:center"><div style="border-top:1px solid #000;width:150px;margin:0 auto 5px;padding-top:5px"></div><p>توقيع المشرف</p></div>
+    </div></div>`;
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`<html dir="rtl" lang="ar"><head><title>إذونات الصرف - ${supervisorFilter}</title></head><body>${html}</body></html>`);
+    printWindow.document.close();
+    printWindow.print();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PRINT SINGLE PERMIT
+// ═══════════════════════════════════════════════════════════
+function printSinglePermit(rowIndex){
+    const customer = customers.find(c => c.rowIndex === rowIndex);
+    if(!customer) return;
+
+    const mData = managerData[rowIndex] || {};
+    const permit = permitData[rowIndex];
+
+    let itemsHtml = '';
+    if(permit && permit.items && permit.items.length > 0){
+        permit.items.forEach(item => {
+            itemsHtml += `<tr><td style="border:1px solid #333;padding:10px">${item.name}</td><td style="border:1px solid #333;padding:10px;text-align:center">${item.qty}</td><td style="border:1px solid #333;padding:10px;text-align:center">${item.unit}</td></tr>`;
+        });
+    }
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`<html dir="rtl" lang="ar"><head><title>إذن صرف - ${customer.name}</title><style>
+        @page{size:A4;margin:15mm}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:20px;color:#000}
+        .header{text-align:center;border-bottom:2px solid #667eea;padding-bottom:15px;margin-bottom:20px}
+        .header h2{color:#667eea;margin:0}
+        .header p{color:#666;margin:5px 0 0}
+        .info{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px;background:#f8f9fa;padding:15px;border-radius:10px}
+        .info-item{display:flex;justify-content:space-between}
+        .info-label{color:#666;font-weight:600}
+        .info-value{color:#000;font-weight:700}
+        table{width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333}
+        th,td{border:1px solid #333;padding:10px;text-align:right}
+        th{background:#667eea;color:#fff}
+        .notes{background:#f8f9fa;padding:15px;border-radius:10px;margin-top:20px}
+        .notes h3{color:#667eea;margin-bottom:10px}
+        .signatures{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid #ccc}
+        .signature{text-align:center}
+        .signature-line{border-top:1px solid #000;width:150px;margin:0 auto 5px;padding-top:5px}
+        @media print{body{background:#fff}}
+    </style></head><body>
+        <div class="header">
+            <h2>📦 إذن صرف مواد</h2>
+            <p>Zoom - نظام إدارة التركيبات</p>
+        </div>
+        <div class="info">
+            <div class="info-item"><span class="info-label">اسم العميل:</span><span class="info-value">${customer.name}</span></div>
+            <div class="info-item"><span class="info-label">رقم الهاتف:</span><span class="info-value" style="direction:ltr">${customer.phone}</span></div>
+            <div class="info-item"><span class="info-label">التاريخ:</span><span class="info-value">${customer.parsedDate ? customer.parsedDate.toLocaleDateString('ar-SA') : '-'}</span></div>
+            <div class="info-item"><span class="info-label">المشرف:</span><span class="info-value">${mData.supervisor_name || customer.supervisorName || '-'}</span></div>
+            <div class="info-item"><span class="info-label">الجهاز:</span><span class="info-value">${getDeviceType(mData)}</span></div>
+        </div>
+        <table>
+            <tr><th>المادة</th><th style="width:100px;text-align:center">الكمية</th><th style="width:100px;text-align:center">الوحدة</th></tr>
+            ${itemsHtml}
+        </table>
+        ${permit && permit.notes ? `<div class="notes"><h3>📝 ملاحظات</h3><p>${permit.notes}</p></div>` : ''}
+        <div class="signatures">
+            <div class="signature"><div class="signature-line"></div><p>توقيع مدير المخزن</p></div>
+            <div class="signature"><div class="signature-line"></div><p>توقيع المشرف</p></div>
+        </div>
+    </body></html>`);
+    printWindow.document.close();
+    printWindow.print();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PERMIT MODAL - VIEW/EDIT PERMIT
+// ═══════════════════════════════════════════════════════════
+function openPermitModal(rowIndex){
+    currentPermitRowIndex = rowIndex;
+    const customer = customers.find(c => c.rowIndex === rowIndex);
+    const mData = managerData[rowIndex] || {};
+    const sData = supervisorData[rowIndex] || {};
+
+    if(!customer) return;
+
+    // Update modal title based on role
+    const modalTitle = document.querySelector('#inventoryPermitModal .modal-header h2');
+    if(modalTitle){
+        if(currentUser === 'manager'){
+            modalTitle.textContent = '📋 إذن صرف مواد (مدير خط السير)';
+        } else {
+            modalTitle.textContent = '📋 إذن صرف مواد (مدير المخزن)';
+        }
+    }
+
+    // Fill customer info
+    document.getElementById('permit_customer_name').value = customer.name;
+    document.getElementById('permit_customer_phone').value = customer.phone;
+    document.getElementById('permit_date').value = customer.parsedDate ? customer.parsedDate.toLocaleDateString('ar-SA') : '';
+    document.getElementById('permit_supervisor').value = mData.supervisor_name || customer.supervisorName || sData.supervisor_name || '';
+
+    // Determine device type and get materials
+    const deviceKey = getInventoryDeviceKey(mData);
+    const materials = DEVICE_MATERIALS[deviceKey] || DEVICE_MATERIALS['فلتر ديجيتال'] || [];
+
+    // Check if permit already exists
+    const existingPermit = permitData[rowIndex];
+    const existingNotes = existingPermit ? existingPermit.notes : '';
+    document.getElementById('permit_notes').value = existingNotes;
+
+    // Build materials list
+    let itemsHtml = '';
+    materials.forEach((item, idx) => {
+        const existingQty = existingPermit && existingPermit.items && existingPermit.items[idx] ? existingPermit.items[idx].qty : item.qty;
+        itemsHtml += `
+            <div class="permit-item" id="permit_item_${idx}">
+                <div style="flex:1">
+                    <div class="permit-item-name">${item.name}</div>
+                    <div class="permit-item-unit">الوحدة: ${item.unit}</div>
+                </div>
+                <div class="permit-item-qty" style="display:flex;align-items:center;gap:10px">
+                    <span style="color:rgba(255,255,255,.7)">الكمية:</span>
+                    <input type="number" id="permit_qty_${idx}" value="${existingQty}" min="0" data-name="${item.name}" data-unit="${item.unit}" style="width:60px;text-align:center">
+                    <button class="btn btn-secondary" onclick="removePermitItem(${idx})" style="padding:4px 8px;font-size:0.75rem;background:rgba(231,76,60,.3);border-color:rgba(231,76,60,.5)">❌</button>
+                </div>
+            </div>
+        `;
+    });
+
+    document.getElementById('permitItemsList').innerHTML = itemsHtml;
+    document.getElementById('inventoryPermitModal').classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════
+// SAVE PERMIT
+// ═══════════════════════════════════════════════════════════
+async function savePermitToSheet(){
+    if(currentPermitRowIndex < 0) return;
+
+    const customer = customers.find(c => c.rowIndex === currentPermitRowIndex);
+    if(!customer) return;
+
+    // Collect items
+    const items = [];
+    const itemDivs = document.querySelectorAll('#permitItemsList .permit-item');
+
+    itemDivs.forEach(div => {
+        const qtyInput = div.querySelector('input[type="number"]');
+        const nameInput = div.querySelector('input[type="text"][id^="permit_name_"]');
+        const unitInput = div.querySelector('input[type="text"][id^="permit_unit_"]');
+
+        let name, unit, qty;
+
+        if(nameInput){
+            name = nameInput.value.trim();
+            unit = unitInput ? unitInput.value.trim() : 'قطعة';
+            qty = parseInt(qtyInput.value) || 0;
+        } else {
+            name = qtyInput.dataset.name;
+            unit = qtyInput.dataset.unit;
+            qty = parseInt(qtyInput.value) || 0;
+        }
+
+        if(name && qty > 0){
+            items.push({name: name, unit: unit, qty: qty});
+        }
+    });
+
+    const notes = document.getElementById('permit_notes').value;
+
+    // Save to localStorage
+    permitData[currentPermitRowIndex] = {
+        issued: true,
+        date: new Date().toISOString(),
+        items: items,
+        notes: notes
+    };
+
+    savePermitData();
+
+    showSaveIndicator(true);
+    await new Promise(resolve=>setTimeout(resolve,500));
+    showSaveIndicator(false);
+
+    showAlert('✅ تم حفظ إذن الصرف!','success');
+    closeModal('inventoryPermitModal');
+    applyInventoryFilters();
+}
+
+// ═══════════════════════════════════════════════════════════
+// ADD/REMOVE PERMIT ITEMS
+// ═══════════════════════════════════════════════════════════
+function addPermitItem(){
+    const container = document.getElementById('permitItemsList');
+    const newId = 'new_' + Date.now();
+
+    const newItemHtml = `
+        <div class="permit-item" id="permit_item_${newId}" style="background:rgba(253,203,110,.1);border-color:#fdcb6e">
+            <div style="flex:1;display:flex;gap:10px;align-items:center">
+                <input type="text" id="permit_name_${newId}" placeholder="اسم المادة" style="flex:1;padding:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:8px;color:#fff" value="">
+                <input type="text" id="permit_unit_${newId}" placeholder="الوحدة" style="width:80px;padding:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:8px;color:#fff" value="قطعة">
+            </div>
+            <div class="permit-item-qty" style="display:flex;align-items:center;gap:10px">
+                <span style="color:rgba(255,255,255,.7)">الكمية:</span>
+                <input type="number" id="permit_qty_${newId}" value="1" min="0" data-name="" data-unit="" style="width:60px;text-align:center">
+                <button class="btn btn-secondary" onclick="removePermitItem('${newId}')" style="padding:4px 8px;font-size:0.75rem;background:rgba(231,76,60,.3);border-color:rgba(231,76,60,.5)">❌</button>
+            </div>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', newItemHtml);
+}
+
+function removePermitItem(id){
+    const item = document.getElementById('permit_item_' + id);
+    if(item){
+        item.remove();
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PRINT PERMIT FROM MODAL
+// ═══════════════════════════════════════════════════════════
+function printPermit(){
+    const customerName = document.getElementById('permit_customer_name').value;
+    const customerPhone = document.getElementById('permit_customer_phone').value;
+    const date = document.getElementById('permit_date').value;
+    const supervisor = document.getElementById('permit_supervisor').value;
+    const notes = document.getElementById('permit_notes').value;
+
+    // Collect items from modal
+    let itemsHtml = '';
+    const itemInputs = document.querySelectorAll('#permitItemsList input[type="number"]');
+    itemInputs.forEach(input => {
+        const name = input.dataset.name;
+        const unit = input.dataset.unit;
+        const qty = input.value;
+        if(qty > 0 && name){
+            itemsHtml += `<tr><td style="border:1px solid #333;padding:10px">${name}</td><td style="border:1px solid #333;padding:10px;text-align:center">${qty}</td><td style="border:1px solid #333;padding:10px;text-align:center">${unit}</td></tr>`;
+        }
+    });
+
+    // Also check for new items with text inputs
+    const newNameInputs = document.querySelectorAll('input[id^="permit_name_new_"]');
+    newNameInputs.forEach(nameInput => {
+        const id = nameInput.id.replace('permit_name_', '');
+        const qtyInput = document.getElementById('permit_qty_' + id);
+        const unitInput = document.getElementById('permit_unit_' + id);
+        if(nameInput.value.trim() && qtyInput && parseInt(qtyInput.value) > 0){
+            itemsHtml += `<tr><td style="border:1px solid #333;padding:10px">${nameInput.value.trim()}</td><td style="border:1px solid #333;padding:10px;text-align:center">${qtyInput.value}</td><td style="border:1px solid #333;padding:10px;text-align:center">${unitInput ? unitInput.value : 'قطعة'}</td></tr>`;
+        }
+    });
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`<html dir="rtl" lang="ar"><head><title>إذن صرف - ${customerName}</title><style>
+        @page{size:A4;margin:15mm}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:20px;color:#000}
+        .header{text-align:center;border-bottom:2px solid #667eea;padding-bottom:15px;margin-bottom:20px}
+        .header h2{color:#667eea;margin:0}
+        .header p{color:#666;margin:5px 0 0}
+        .info{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px;background:#f8f9fa;padding:15px;border-radius:10px}
+        .info-item{display:flex;justify-content:space-between}
+        .info-label{color:#666;font-weight:600}
+        .info-value{color:#000;font-weight:700}
+        table{width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #333}
+        th,td{border:1px solid #333;padding:10px;text-align:right}
+        th{background:#667eea;color:#fff}
+        .notes{background:#f8f9fa;padding:15px;border-radius:10px;margin-top:20px}
+        .notes h3{color:#667eea;margin-bottom:10px}
+        .signatures{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid #ccc}
+        .signature{text-align:center}
+        .signature-line{border-top:1px solid #000;width:150px;margin:0 auto 5px;padding-top:5px}
+        @media print{body{background:#fff}}
+    </style></head><body>
+        <div class="header">
+            <h2>📦 إذن صرف مواد</h2>
+            <p>Zoom - نظام إدارة التركيبات</p>
+        </div>
+        <div class="info">
+            <div class="info-item"><span class="info-label">اسم العميل:</span><span class="info-value">${customerName}</span></div>
+            <div class="info-item"><span class="info-label">رقم الهاتف:</span><span class="info-value" style="direction:ltr">${customerPhone}</span></div>
+            <div class="info-item"><span class="info-label">التاريخ:</span><span class="info-value">${date}</span></div>
+            <div class="info-item"><span class="info-label">المشرف:</span><span class="info-value">${supervisor}</span></div>
+        </div>
+        <table>
+            <tr><th>المادة</th><th style="width:100px;text-align:center">الكمية</th><th style="width:100px;text-align:center">الوحدة</th></tr>
+            ${itemsHtml}
+        </table>
+        ${notes ? `<div class="notes"><h3>📝 ملاحظات</h3><p>${notes}</p></div>` : ''}
+        <div class="signatures">
+            <div class="signature"><div class="signature-line"></div><p>توقيع مدير المخزن</p></div>
+            <div class="signature"><div class="signature-line"></div><p>توقيع المشرف</p></div>
+        </div>
+    </body></html>`);
+    printWindow.document.close();
+    printWindow.print();
+}
+
+// Initialize on load
 document.addEventListener('keydown',function(e){
     if(e.key==='Escape'){
-        ['managerModal','supervisorModal','printModal','printSuccessModal'].forEach(id=>closeModal(id));
+        ['managerModal','supervisorModal','printModal','printSuccessModal','inventoryPermitModal'].forEach(id=>closeModal(id));
         const viewModal=document.getElementById('viewModal');
         if(viewModal) viewModal.remove();
     }
 });
+
+// Load permit data and status on page load
+loadPermitData();
+loadPermitStatus();
 </script>
 </body>
 </html>
