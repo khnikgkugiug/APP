@@ -391,6 +391,7 @@ input[type="time"]:focus {
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -2314,8 +2315,8 @@ function showReport(type){
     const dailyDesc = document.getElementById('dailyReportDesc');
     if(dailyTitle && dailyDesc){
         if(currentUser === 'manager'){
-            dailyTitle.textContent = 'خط سير العملاء';
-            dailyDesc.textContent = 'خط سير العملاء في يوم معين للطباعة';
+            dailyTitle.textContent = 'التقرير اليومي';
+            dailyDesc.textContent = 'التقرير اليومي للطباعة';
         } else {
             dailyTitle.textContent = 'التقرير اليومي للمشرف';
             dailyDesc.textContent = 'عملاء المشرف في يوم معين للطباعة';
@@ -2663,40 +2664,35 @@ function generateDailyReport(){
     html += '<div id="dailyReportPrintArea">';
 
     if(currentUser === 'manager'){
-        // Manager view: خط السير format with editable fields + permit button
-        html += `<h2 style="text-align:center;color:#667eea;margin-bottom:5px">Zoom - خط سير العملاء</h2>`;
-        html += `<p style="text-align:center;color:#666;margin-bottom:20px">${reportDate.toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>`;
-        html += `<p style="text-align:center;color:#fdcb6e;margin-bottom:20px;font-size:0.9rem">✏️ اضغط على أي خلية لتعديلها مباشرة</p>`;
-
-        html += '<table class="report-table" id="routeTable">';
-        html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الجهاز</th><th>الملاحظات</th><th>المشرف</th><th>حفظ</th></tr>';
-
-        filtered.forEach((c, idx) => {
-            const mData = managerData[c.rowIndex] || {};
-            const sData = supervisorData[c.rowIndex] || {};
-            let supName = mData.supervisor_name || c.supervisorName || sData.supervisor_name || '';
-            if(supName==='نعم'||supName==='لا'||supName==='true'||supName==='false') supName='';
-
-            const rowId = c.rowIndex;
-            html += `<tr data-row="${rowId}">`;
-            html += `<td>${idx + 1}</td>`;
-            html += `<td contenteditable="true" class="editable-cell" data-field="name">${c.name}</td>`;
-            html += `<td contenteditable="true" class="editable-cell" data-field="phone" style="direction:ltr">${c.phone}</td>`;
-            html += `<td contenteditable="true" class="editable-cell" data-field="device">${getDeviceType(mData)}</td>`;
-            html += `<td contenteditable="true" class="editable-cell" data-field="notes">${mData.notes || ''}</td>`;
-            html += `<td contenteditable="true" class="editable-cell" data-field="supervisor">${supName}</td>`;
-            html += `<td><button class="btn btn-success" onclick="saveRouteEdit(${rowId})" style="padding:6px 12px;font-size:0.8rem">💾 حفظ</button></td>`;
-            html += `</tr>`;
-
-            
-        });
-    } else {
-        // Supervisor view: full daily report format
+        // Manager view: same as supervisor format with manager financial data
         html += `<h2 style="text-align:center;color:#667eea;margin-bottom:5px">Zoom - التقرير اليومي</h2>`;
         html += `<p style="text-align:center;color:#666;margin-bottom:20px">${reportDate.toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>`;
 
         html += '<table class="report-table">';
-        html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الولاية</th><th>نوع التركيب</th><th>نوع الجهاز</th><th>الفني</th><th>حالة التركيب</th><th>ملاحظات</th></tr>';
+        html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الولاية</th><th>نوع المعاملة</th><th>نوع الجهاز</th><th>الإجمالي</th><th>المبلغ المدفوع</th><th>الباقي</th><th>ملاحظات</th></tr>';
+
+        filtered.forEach((c, idx) => {
+            const mData = managerData[c.rowIndex] || {};
+            html += `<tr>`;
+            html += `<td>${idx + 1}</td>`;
+            html += `<td style="font-weight:700">${c.name}</td>`;
+            html += `<td style="direction:ltr">${c.phone}</td>`;
+            html += `<td>${c.state || '-'}</td>`;
+            html += `<td>${mData.transaction_type || c.transactionType || '-'}</td>`;
+            html += `<td>${getDeviceType(mData)}</td>`;
+            html += `<td>${mData.total || '-'}</td>`;
+            html += `<td>${mData.paid || '-'}</td>`;
+            html += `<td>${mData.remaining || '-'}</td>`;
+            html += `<td>${mData.notes || '-'}</td>`;
+            html += `</tr>`;
+        });
+    } else {
+        // Supervisor view: full daily report format with manager financial data
+        html += `<h2 style="text-align:center;color:#667eea;margin-bottom:5px">Zoom - التقرير اليومي</h2>`;
+        html += `<p style="text-align:center;color:#666;margin-bottom:20px">${reportDate.toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>`;
+
+        html += '<table class="report-table">';
+        html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الولاية</th><th>نوع التركيب</th><th>نوع الجهاز</th><th>الفني</th><th>حالة التركيب</th><th>الإجمالي</th><th>المبلغ المدفوع</th><th>الباقي</th><th>ملاحظات</th></tr>';
 
         filtered.forEach((c, idx) => {
             const sData = supervisorData[c.rowIndex] || {};
@@ -2710,6 +2706,9 @@ function generateDailyReport(){
             html += `<td>${getDeviceType(mData)}</td>`;
             html += `<td>${sData.technician || '-'}</td>`;
             html += `<td>${sData.installation_status || 'قيد الانتظار'}</td>`;
+            html += `<td>${mData.total || '-'}</td>`;
+            html += `<td>${mData.paid || '-'}</td>`;
+            html += `<td>${mData.remaining || '-'}</td>`;
             html += `<td>${sData.notes || mData.notes || '-'}</td>`;
             html += `</tr>`;
         });
@@ -2719,76 +2718,6 @@ function generateDailyReport(){
     html += '</div>';
 
     document.getElementById('reportResults').innerHTML = html;
-}
-
-// ═══════════════════════════════════════════════════════════
-// SAVE ROUTE EDIT (for manager daily report)
-// ═══════════════════════════════════════════════════════════
-async function saveRouteEdit(rowIndex){
-    const row = document.querySelector(`tr[data-row="${rowIndex}"]`);
-    if(!row) return;
-
-    const cells = row.querySelectorAll('.editable-cell');
-    const updates = {};
-
-    cells.forEach(cell => {
-        const field = cell.dataset.field;
-        const value = cell.textContent.trim();
-        updates[field] = value;
-    });
-
-    // Find the customer
-    const customer = customers.find(c => c.rowIndex === rowIndex);
-    if(!customer){
-        showAlert('❌ العميل غير موجود','error');
-        return;
-    }
-
-    showSaveIndicator(true);
-    showAlert('⏳ جاري الحفظ...','info');
-
-    // Prepare data to send to sheet
-    const payload = {
-        customerName: customer.name,
-        rowIndex: rowIndex,
-        managerData: {
-            name: updates.name || customer.name,
-            phone: updates.phone || customer.phone,
-            notes: updates.notes || '',
-            supervisor_name: updates.supervisor || ''
-        },
-        supervisorData: {},
-        action: 'saveData',
-        timestamp: new Date().toISOString()
-    };
-
-    // Update local managerData
-    if(!managerData[rowIndex]) managerData[rowIndex] = {};
-    if(updates.notes) managerData[rowIndex].notes = updates.notes;
-    if(updates.supervisor) managerData[rowIndex].supervisor_name = updates.supervisor;
-    saveToLocalStorage();
-
-    // Send to sheet
-    try{
-        await fetch(CONFIG.GAS_URL,{
-            method:'POST',
-            headers:{'Content-Type':'text/plain;charset=utf-8'},
-            body:JSON.stringify(payload),
-            mode:'no-cors'
-        });
-
-        await new Promise(resolve=>setTimeout(resolve,2000));
-
-        showSaveIndicator(false);
-        showAlert('✅ تم الحفظ في الشيت!','success');
-
-        // Refresh data to show updates
-        await loadSheetData(true);
-
-    }catch(error){
-        showSaveIndicator(false);
-        showAlert('⚠️ تم الحفظ محلياً لكن فشل الإرسال للشيت','error');
-    }
 }
 
 // ═══════════════════════════════════════════════════════════
