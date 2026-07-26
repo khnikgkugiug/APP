@@ -858,7 +858,7 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 7;
+const APP_VERSION = 8;
 
 // Check version on page load - reload once if needed
 (function checkVersion(){
@@ -1496,7 +1496,18 @@ function renderCustomers(){
                             return `<div class="supervisor-name">👤 ${supName}</div>`;
                         }
                         return '';
-                    })()}${customer.parsedDate ? `<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>` : ''}${unsyncedBadge}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS&&(installationStatus==='تركيب وتشغيل'||installationStatus==='تركيب بدون تشغيل'||installationStatus==='تركيب جزئي')?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
+                    })()}${customer.parsedDate ? `<div class="date-badge ${dateBadgeClass}">📅 ${dateBadgeText}</div>` : ''}${unsyncedBadge}${(() => {
+                        if(currentUser !== 'supervisor') return '';
+                        const sData = supervisorData[customer.rowIndex] || {};
+                        let html = '';
+                        if(sData.amount_paid && sData.amount_paid !== '') {
+                            html += `<div class="supervisor-name" style="color:#00b894">💰 المدفوع: ${sData.amount_paid}</div>`;
+                        }
+                        if(sData.balance && sData.balance !== '' && parseFloat(sData.balance) > 0) {
+                            html += `<div class="supervisor-name" style="color:#e74c3c">📊 الباقي: ${sData.balance}</div>`;
+                        }
+                        return html;
+                    })()}</div><span class="customer-status ${statusClass}">${statusText}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${hasS&&(installationStatus==='تركيب وتشغيل'||installationStatus==='تركيب بدون تشغيل'||installationStatus==='تركيب جزئي')?'100%':hasM?'50%':'0%'}"></div></div><div class="customer-actions">${currentUser==='manager'?`<button class="btn btn-primary" onclick="openManagerModal(${index})">${hasM?'✏️ تعديل':'📝 ملء البيانات'}</button>`:`<button class="btn btn-primary" onclick="openSupervisorModal(${index})">${hasS?'✏️ تعديل':'👨‍💼 ملء البيانات'}</button>`}<button class="btn btn-secondary" onclick="viewDetails(${index})">👁️ عرض</button></div>${printBtn}`;
         grid.appendChild(card);
     });
 }
@@ -2692,7 +2703,7 @@ function generateDailyReport(){
         html += `<p style="text-align:center;color:#666;margin-bottom:20px">${reportDate.toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>`;
 
         html += '<table class="report-table">';
-        html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الولاية</th><th>نوع التركيب</th><th>نوع الجهاز</th><th>الفني</th><th>حالة التركيب</th><th>الإجمالي</th><th>المبلغ المدفوع</th><th>الباقي</th><th>ملاحظات</th></tr>';
+        html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الولاية</th><th>نوع التركيب</th><th>نوع الجهاز</th><th>الفني</th><th>حالة التركيب</th><th>الإجمالي</th><th>المدفوع (مدير)</th><th>المدفوع (مشرف)</th><th>الباقي</th><th>ملاحظات</th></tr>';
 
         filtered.forEach((c, idx) => {
             const sData = supervisorData[c.rowIndex] || {};
@@ -2708,6 +2719,7 @@ function generateDailyReport(){
             html += `<td>${sData.installation_status || 'قيد الانتظار'}</td>`;
             html += `<td>${mData.total || '-'}</td>`;
             html += `<td>${mData.paid || '-'}</td>`;
+            html += `<td>${sData.amount_paid || '-'}</td>`;
             html += `<td>${mData.remaining || '-'}</td>`;
             html += `<td>${sData.notes || mData.notes || '-'}</td>`;
             html += `</tr>`;
