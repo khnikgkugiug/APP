@@ -392,6 +392,7 @@ input[type="time"]:focus {
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -860,7 +861,7 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 9;
+const APP_VERSION = 10;
 
 // Check version on page load - reload once if needed
 (function checkVersion(){
@@ -1204,9 +1205,6 @@ async function loadSheetData(forceRefresh=false){
         });
         customers.forEach(c=>{c.parsedDate=parseSheetDate(c.date);});
 
-        // Merge duplicate customers - keep latest date, merge supervisor data
-        customers = mergeDuplicateCustomers(customers);
-
         // === THE FIX ===
         // The Sheet is ALWAYS the source of truth. Period.
         // Whatever is in the Sheet right now is what the user sees.
@@ -1372,76 +1370,7 @@ function hasMeaningfulSupervisorData(sData){
 // ═══════════════════════════════════════════════════════════
 // MERGE DUPLICATE CUSTOMERS (same name+phone)
 // Keep latest date, merge supervisor data from all occurrences
-// ═══════════════════════════════════════════════════════════
-function mergeDuplicateCustomers(rawCustomers) {
-    const customerMap = new Map();
 
-    rawCustomers.forEach(c => {
-        const key = (c.name + '|' + c.phone).trim().toLowerCase();
-
-        if (!customerMap.has(key)) {
-            customerMap.set(key, {
-                latest: c,
-                allRows: [c.rowIndex],
-                latestDate: c.parsedDate
-            });
-        } else {
-            const existing = customerMap.get(key);
-            existing.allRows.push(c.rowIndex);
-
-            // Keep the one with latest date
-            if (c.parsedDate && existing.latestDate) {
-                if (c.parsedDate > existing.latestDate) {
-                    existing.latest = c;
-                    existing.latestDate = c.parsedDate;
-                }
-            } else if (c.parsedDate && !existing.latestDate) {
-                existing.latest = c;
-                existing.latestDate = c.parsedDate;
-            }
-        }
-    });
-
-    // Merge supervisor data from ALL rows into the latest row
-    const mergedCustomers = [];
-    customerMap.forEach((data, key) => {
-        const mainCustomer = data.latest;
-        const mainIdx = mainCustomer.rowIndex;
-
-        // Find best supervisor data across all rows
-        let bestSupervisorData = supervisorData[mainIdx] || {};
-        let bestSupervisorRow = mainIdx;
-
-        data.allRows.forEach(rowIdx => {
-            const sData = supervisorData[rowIdx];
-            if (sData && hasMeaningfulSupervisorData(sData)) {
-                // Prefer the one with installation_status
-                if (sData.installation_status && !bestSupervisorData.installation_status) {
-                    bestSupervisorData = sData;
-                    bestSupervisorRow = rowIdx;
-                }
-            }
-        });
-
-        // Copy best supervisor data to main row
-        if (bestSupervisorRow !== mainIdx && Object.keys(bestSupervisorData).length > 0) {
-            supervisorData[mainIdx] = { ...bestSupervisorData, _mergedFrom: bestSupervisorRow };
-        }
-
-        // Mark if this customer was delayed from a previous date
-        const anyDelayed = data.allRows.some(rowIdx => {
-            const sData = supervisorData[rowIdx];
-            return sData && sData.installation_status === 'تأجيل';
-        });
-
-        mainCustomer._wasDelayed = anyDelayed;
-        mainCustomer._allRowIndices = data.allRows;
-
-        mergedCustomers.push(mainCustomer);
-    });
-
-    return mergedCustomers;
-}
 
 function renderCustomers(){
     const grid=document.getElementById('customersGrid');
@@ -1461,10 +1390,7 @@ function renderCustomers(){
         let statusText='قيد الانتظار',statusClass='status-pending';
         const sDataForStatus=supervisorData[index]||{};
         const installationStatus=sDataForStatus.installation_status||'';
-        // Show actual supervisor status
-        const wasDelayed = customer._wasDelayed || false;
-
-        if(installationStatus==='تأجيل' || wasDelayed){statusText='مؤجل';statusClass='status-delayed';}
+        if(installationStatus==='تأجيل'){statusText='مؤجل';statusClass='status-delayed';}
         else if(installationStatus==='تركيب بدون تشغيل'){statusText='تركيب بدون تشغيل';statusClass='status-manager-done';}
         else if(installationStatus==='تركيب جزئي'){statusText='تركيب جزئي';statusClass='status-manager-done';}
         else if(installationStatus==='تركيب وتشغيل'){statusText='تركيب وتشغيل';statusClass='status-completed';}
