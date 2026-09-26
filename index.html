@@ -393,6 +393,7 @@ input[type="time"]:focus {
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="alert" id="alert"></div>
@@ -534,6 +535,11 @@ input[type="time"]:focus {
 <h3 id="dailyReportTitle">التقرير اليومي</h3>
 <p id="dailyReportDesc">عملاء في يوم معين للطباعة</p>
 </div>
+<div class="login-card" onclick="showReport('softener')" style="min-width:auto;padding:25px">
+<div class="icon">🧂</div>
+<h3>تقرير السوفتنرات</h3>
+<p>اللي ركبوا سوفتنر في فترة معينة حسب المقاس</p>
+</div>
 </div>
 </div>
 
@@ -584,6 +590,15 @@ input[type="time"]:focus {
 <div class="filter-group" id="reportSingleDateGroup" style="display:none">
 <label>التاريخ</label>
 <input type="date" id="reportSingleDate">
+</div>
+<div class="filter-group" id="reportSoftenerSizeGroup" style="display:none">
+<label>مقاس السوفتنر</label>
+<select id="reportSoftenerSize">
+<option value="all">كل المقاسات</option>
+<option value="10">10</option>
+<option value="13">13</option>
+<option value="16">16</option>
+</select>
 </div>
 </div>
 <div class="filter-actions">
@@ -861,7 +876,7 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════════════
 // APP VERSION - CHANGE THIS NUMBER ON EVERY DEPLOY
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 10;
+const APP_VERSION = 11;
 
 // Check version on page load - reload once if needed
 (function checkVersion(){
@@ -2268,7 +2283,8 @@ function showReport(type){
     // Show/hide relevant filter groups
     document.getElementById('reportDateFromGroup').style.display = type === 'daily' ? 'none' : 'block';
     document.getElementById('reportDateToGroup').style.display = type === 'daily' ? 'none' : 'block';
-    document.getElementById('reportTechnicianGroup').style.display = type === 'technician' ? 'block' : 'none';
+    document.getElementById('reportTechnicianGroup').style.display = (type === 'technician' || type === 'softener') ? 'block' : 'none';
+    document.getElementById('reportSoftenerSizeGroup').style.display = type === 'softener' ? 'block' : 'none';
     document.getElementById('reportStateGroup').style.display = type === 'state' ? 'block' : 'none';
     document.getElementById('reportSupervisorGroup').style.display = type === 'daily' ? 'block' : 'none';
     document.getElementById('reportSingleDateGroup').style.display = type === 'daily' ? 'block' : 'none';
@@ -2287,7 +2303,7 @@ function showReport(type){
         document.getElementById('reportSingleDate').value = formatDateForInput(today);
         document.getElementById('reportSupervisor').disabled = false;
     } else {
-        titleEl.textContent = type === 'technician' ? '👷 فلاتر تقرير الفنيين' : '📍 فلاتر تقرير الولايات';
+        titleEl.textContent = type === 'technician' ? '👷 فلاتر تقرير الفنيين' : type === 'softener' ? '🧂 فلاتر تقرير السوفتنرات' : '📍 فلاتر تقرير الولايات';
         document.getElementById('reportDateFrom').value = formatDateForInput(thirtyDaysAgo);
         document.getElementById('reportDateTo').value = formatDateForInput(today);
     }
@@ -2308,6 +2324,8 @@ function generateReport(){
         generateStateReport();
     } else if(currentReportType === 'daily'){
         generateDailyReport();
+    } else if(currentReportType === 'softener'){
+        generateSoftenerReport();
     }
 }
 
@@ -2542,6 +2560,120 @@ function showStateDetails(state, fromStr, toStr){
         html += `<div class="report-card-item"><span class="label">👨‍💼 المشرف:</span><span class="value">${sData.supervisor_name || mData.supervisor_name || '-'}</span></div>`;
         html += `</div></div>`;
     });
+
+    document.getElementById('reportResults').innerHTML = html;
+}
+
+// ===== REPORT 2.5: SOFTENER INSTALLATIONS REPORT =====
+// Shows customers who ACTUALLY installed a softener in a given period,
+// filterable by softener size (10/13/16) and technician.
+function getCustomerSoftenerSize(c){
+    const mData = managerData[c.rowIndex] || {};
+    const sData = supervisorData[c.rowIndex] || {};
+    // Manager data is authoritative for size
+    if(mData.softener === 'نعم' && mData.softener_size) return mData.softener_size;
+    // Fallback to supervisor's softener field (10/13/16/دبل/منفرد)
+    if(sData.supervisor_softener) return sData.supervisor_softener;
+    return '';
+}
+
+function getCustomerSoftenerType(c){
+    const mData = managerData[c.rowIndex] || {};
+    const sData = supervisorData[c.rowIndex] || {};
+    if(mData.softener_type) return mData.softener_type;
+    if(sData.supervisor_softener === 'دبل') return 'دبل';
+    if(sData.supervisor_softener === 'منفرد') return 'سنجل';
+    return '';
+}
+
+function generateSoftenerReport(){
+    const fromDate = parseSheetDate(document.getElementById('reportDateFrom').value);
+    const toDate = parseSheetDate(document.getElementById('reportDateTo').value);
+    const selectedTech = document.getElementById('reportTechnician').value;
+    const selectedSize = document.getElementById('reportSoftenerSize').value;
+
+    if(!fromDate || !toDate){
+        showAlert('❌ اختر التاريخ من والى','error');
+        return;
+    }
+
+    fromDate.setHours(0,0,0,0);
+    toDate.setHours(0,0,0,0);
+
+    // Customers in the date range who ACTUALLY got installed (have supervisor data)
+    // AND have a softener
+    const filtered = customers.filter(c => {
+        if(!c.parsedDate) return false;
+        const date = new Date(c.parsedDate);
+        date.setHours(0,0,0,0);
+        return date >= fromDate && date <= toDate;
+    }).filter(c => {
+        // Must have meaningful supervisor data = actually installed
+        const sData = supervisorData[c.rowIndex];
+        if(!hasMeaningfulSupervisorData(sData)) return false;
+        // Must have a softener
+        const size = getCustomerSoftenerSize(c);
+        if(!size) return false;
+        if(selectedSize !== 'all' && size !== selectedSize) return false;
+        // Optional technician filter
+        if(selectedTech !== 'all'){
+            const sData2 = supervisorData[c.rowIndex] || {};
+            const techList = (sData2.technician || '').split(',').map(t => t.trim()).filter(t => t);
+            if(!techList.includes(selectedTech)) return false;
+        }
+        return true;
+    });
+
+    if(filtered.length === 0){
+        document.getElementById('reportResults').innerHTML = `
+            <div class="empty-state">
+                <div class="icon">📭</div>
+                <h3>لا يوجد تركيبات سوفتنر</h3>
+                <p>لا توجد تركيبات سوفتنر في هذه الفترة${selectedSize !== 'all' ? ' بهذا المقاس' : ''}</p>
+            </div>`;
+        return;
+    }
+
+    // Count per size for summary
+    const sizeStats = {};
+    filtered.forEach(c => {
+        const size = getCustomerSoftenerSize(c) || 'غير محدد';
+        sizeStats[size] = (sizeStats[size] || 0) + 1;
+    });
+
+    let html = '<div class="report-summary">';
+    html += `<div class="report-summary-item"><div class="number">${filtered.length}</div><div class="label">إجمالي السوفتنرات</div></div>`;
+    Object.entries(sizeStats).sort().forEach(([size, count]) => {
+        html += `<div class="report-summary-item"><div class="number">${count}</div><div class="label">مقاس ${size}</div></div>`;
+    });
+    html += '</div>';
+
+    html += '<div id="dailyReportPrintArea">';
+    html += `<h2 style="text-align:center;color:#667eea;margin-bottom:5px">Zoom - تقرير السوفتنرات</h2>`;
+    html += `<p style="text-align:center;color:#666;margin-bottom:20px">الفترة: ${document.getElementById('reportDateFrom').value} إلى ${document.getElementById('reportDateTo').value}${selectedSize !== 'all' ? ' | مقاس ' + selectedSize : ''}</p>`;
+
+    html += '<table class="report-table">';
+    html += '<tr><th>#</th><th>اسم العميل</th><th>رقم الهاتف</th><th>الولاية</th><th>مقاس السوفتنر</th><th>نوع السوفتنر</th><th>الفني</th><th>حالة التركيب</th><th>المشرف</th><th>التاريخ</th></tr>';
+
+    filtered.forEach((c, idx) => {
+        const sData = supervisorData[c.rowIndex] || {};
+        const mData = managerData[c.rowIndex] || {};
+        html += `<tr>`;
+        html += `<td>${idx + 1}</td>`;
+        html += `<td style="font-weight:700">${c.name}</td>`;
+        html += `<td style="direction:ltr">${c.phone}</td>`;
+        html += `<td>${c.state || '-'}</td>`;
+        html += `<td style="font-weight:700;color:#667eea">${getCustomerSoftenerSize(c)}</td>`;
+        html += `<td>${getCustomerSoftenerType(c) || '-'}</td>`;
+        html += `<td>${sData.technician || '-'}</td>`;
+        html += `<td>${sData.installation_status || '-'}</td>`;
+        html += `<td>${sData.supervisor_name || mData.supervisor_name || '-'}</td>`;
+        html += `<td>${c.parsedDate ? c.parsedDate.toLocaleDateString('ar-SA') : '-'}</td>`;
+        html += `</tr>`;
+    });
+
+    html += '</table>';
+    html += '</div>';
 
     document.getElementById('reportResults').innerHTML = html;
 }
